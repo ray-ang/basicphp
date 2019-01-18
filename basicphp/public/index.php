@@ -209,4 +209,22 @@ if ( $_SERVER['REQUEST_URI'] == '/' . SUB_PATH ) {
 // Example: 'http://localhost/basicphp/public/sample/route/1/2'
 url_route('sample', 'route', 'sample-route');
 
+/*
+|--------------------------------------------------------------------------
+| Handle Invalid URL
+|--------------------------------------------------------------------------
+|
+| Invalid URL's only include the front controller or index.php.
+| Any valid page rendered, even the error page, will need to require a file
+| other than the front controller file. The front controller should run this
+| script last to avoid conflict with routing configuration.
+|
+*/
+
+if (count(get_included_files())==1) {
+
+	echo 'This is an Invalid Page.';
+
+}
+
 ?>
