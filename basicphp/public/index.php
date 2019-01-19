@@ -211,7 +211,7 @@ url_route('sample', 'route', 'sample-route');
 
 /*
 |--------------------------------------------------------------------------
-| Handle Invalid URL
+| Handle Error 404 - Page Not Found - Invalid URL
 |--------------------------------------------------------------------------
 |
 | Invalid URL's only include the front controller or index.php.
@@ -223,7 +223,7 @@ url_route('sample', 'route', 'sample-route');
 
 if (count(get_included_files())==1) {
 
-	echo 'This is an Invalid Page.';
+	echo '<h4>Error 404. Page not found. This is an Invalid URL.</h4>';
 
 }
 
