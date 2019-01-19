@@ -13,7 +13,7 @@ $param2 = url_value(4);
 $param3 = url_value(5);
 
 // Set array as a variable and use to render view
-$age = array('James'=>"23", 'Joseph'=>"23", 'Chris'=>"35");
+$person = array('James'=>"23", 'Joseph'=>"23", 'Chris'=>"35");
 
 // Show header and menu
 require '../template/header.php';
