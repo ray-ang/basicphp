@@ -184,13 +184,13 @@ if ( $_SERVER['REQUEST_URI'] == '/' . SUB_PATH ) {
 
 	}
 
-	// Show 404-error page if first URL substring is not a controller file
+	// Show Error page if first URL substring is not a controller file
 	if (! file_exists($filename) && ! isset($url_value_2)) {
 
 		// Set $error_message for the error page
 		$error_message = 'This is not a valid webpage.';
 
-		require '../controllers/pages/404-error.php';
+		require '../controllers/pages/error.php';
 
 	}
 
