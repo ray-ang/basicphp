@@ -2,8 +2,8 @@
 <p>Variables can be used to render view after defining them in the controller file.</p>
 <p>Templating is done using native PHP templating.</p>
 <h4>Passing Data from Controller</h4>
-<?php foreach($age as $x => $x_value): ?>
-The name is <?= $x ?> and the age is <?= $x_value ?>.
+<?php foreach($person as $name => $age): ?>
+The name is <?= $name ?> and the age is <?= $age ?>.
 <br>
 <?php endforeach ?>
 <h4>Using URL substring as parameter.</h4>
