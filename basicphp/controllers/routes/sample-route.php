@@ -7,10 +7,13 @@
  * files. The variables can then be used in the view file.
  */
 
-// Set sub-url string as variable in controller
+// Set sub-url strings as variables
 $param1 = url_value(3);
 $param2 = url_value(4);
 $param3 = url_value(5);
+
+// Set array as a variable and use to render view
+$age = array('James'=>"23", 'Joseph'=>"23", 'Chris'=>"35");
 
 // Show header and menu
 require '../template/header.php';
@@ -23,7 +26,7 @@ if (isset($param3)) {
 	$error_message = 'You can only set 2 parameters.';
 
 	// Render error page
-	require '../views/pages/404_error.php';
+	require '../views/pages/error.php';
 
 }
 
