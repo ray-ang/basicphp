@@ -20,5 +20,3 @@ require '../views/pages/welcome.php';
 
 // Show footer
 require '../template/footer.php';
-
-?>
