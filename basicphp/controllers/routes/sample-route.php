@@ -41,5 +41,3 @@ if (! isset($param3)) {
 
 // Show footer
 require '../template/footer.php';
-
-?>
