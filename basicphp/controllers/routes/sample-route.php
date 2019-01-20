@@ -15,9 +15,7 @@ $param3 = url_value(5);
 // Set array as a variable and use to render view
 $person = array('James'=>"23", 'Joseph'=>"23", 'Chris'=>"35");
 
-// Show header and menu
-require '../template/header.php';
-require '../template/menu.php';
+$data = compact('param1', 'param2', 'param3', 'person');
 
 // Limit valid sub-url string
 if (isset($param3)) {
@@ -25,19 +23,15 @@ if (isset($param3)) {
 	// Set $error_message for the error page
 	$error_message = 'You can only set 2 parameters.';
 
-	// Render error page
-	require '../views/pages/error.php';
+	$data = compact('error_message');
+
+	Theme::page('error', $data);
 
 }
 
 // Display page
 if (! isset($param3)) {
 
-	// Render sample_route view
-	// Use variables inside view using native PHP templating
-	require '../views/routes/sample_route.php';
+	Theme::route('sample_route', $data);
 
 }
-
-// Show footer
-require '../template/footer.php';
