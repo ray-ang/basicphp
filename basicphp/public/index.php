@@ -187,10 +187,13 @@ if ( $_SERVER['REQUEST_URI'] == '/' . SUB_PATH ) {
 	// Show Error page if first URL substring is not a controller file
 	if (! file_exists($filename) && ! isset($url_value_2)) {
 
-		// Set $error_message for the error page
+		// Set $error_message as error message
 		$error_message = 'This is not a valid webpage.';
 
-		require '../controllers/pages/error.php';
+		// Set $data as data payload using compact()
+		$data = compact('error_message');
+
+		Theme::page('error', $data);
 
 	}
 
