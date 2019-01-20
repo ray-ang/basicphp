@@ -7,12 +7,4 @@
  * files. The variables can then be used in the view file.
  */
 
-// Show header and menu
-require '../template/header.php';
-require '../template/menu.php';
-
-// Render home view
-require '../views/pages/home.php';
-
-// Show footer
-require '../template/footer.php';
+Theme::page('home');
