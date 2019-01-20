@@ -34,9 +34,17 @@ $variable = // result of SQL query using PDO abstraction layer;
 require '../views/view_file.php'; // renders the View with data $variable
 ```
 
-Or, using an abstraction layer to the 'require' statements to render the View for templating purposes
+OR, use an abstraction layer to the 'require' statements to render the View for templating and data handling purposes
 
 ```
+// Prepare data as data payload
+$variable1 = 'value1';
+$variable2 = 'value2';
+$variable3 = 'value3';
+
+$data = compact('variable1', 'variable2', 'variable3');
+
+// Render View using abstraction layer in the 'require' statements, and pass the $data variable array
 Theme::page('page_view', $data);
 ```
 
