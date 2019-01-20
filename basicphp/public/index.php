@@ -226,5 +226,3 @@ if (count(get_included_files())==1) {
 	echo '<h4>Error 404. Page not found. This is an Invalid URL.</h4>';
 
 }
-
-?>
