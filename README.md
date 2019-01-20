@@ -1,10 +1,10 @@
 # BasicPHP
 
-A PHP micro-framework that adheres closely to native PHP, built-in functions and a modified MVC approach. Features include a front controller, class autoloading, routing, and handling 404 error - page not found.
+A PHP micro-framework that adheres closely to vanilla or pure PHP, built-in functions and a modified MVC approach. Features include a front controller, class autoloading, routing, and handling 404 error - page not found.
 
 ### Configuration
 
-The default setting is set to a development environment with 'basicphp' folder located under the server DocumentRoot.
+The default setting is set to a development environment with 'basicphp' folder located under the server DocumentRoot. Once installed under the server root directory for development use, the site can be accessed at:
 
 ```
 http://localhost/basicphp/public/
@@ -13,12 +13,12 @@ http://localhost/basicphp/public/
 If 'public' folder is set as DocumentRoot, you can access the application using the domain name.
 
 ```
-http://domain-name.com
+http://localhost OR http://domain-name.com
 ```
 
 ### Modified MVC Approach
 
-BasicPHP uses a modified MVC approach. Business logic and database layer (Model) is embedded in the Controller using the PDO abstraction layer. The Controller handles user input and renders the view. The main function of the Controller is to prepare if-elseif statements, define variables and functions, and pass these variables to the view file using 'require' or 'include' statements, without the need to add an abstraction layer in rendering the view. The View file gets its data from the Controller and renders the layout using native PHP templating, such as <?= $variable ?>:
+BasicPHP uses a modified MVC approach where there is still separation between the Controller and View, but the Model is embedded in the Controller. Business logic and database layer (Model) is embedded in the Controller using the PDO abstraction layer. The Controller handles user input, pass data to and renders the View. The main function of the Controller is to prepare if-elseif statements, define variables and functions, and pass these variables to the View using 'require' or 'include' statements, without the need to add an abstraction layer in rendering the View. The View file gets its data from the Controller and renders the layout using native PHP templating, such as:
 
 ```
 <p><?= $variable ?></p>
@@ -31,7 +31,7 @@ $user_input = $_POST['input-name'];
 
 $variable = // result of SQL query using PDO abstraction layer;
 
-require '../views/view_file.php';
+require '../views/view_file.php'; // renders the View with data $variable
 ```
 
 #### View
