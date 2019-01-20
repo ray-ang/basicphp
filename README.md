@@ -18,7 +18,7 @@ http://localhost OR http://domain-name.com
 
 ### Modified MVC Approach
 
-BasicPHP uses a modified MVC approach where there is still separation between the Controller and View, but the Model is embedded in the Controller. Business logic and database layer (Model) is embedded in the Controller using the PDO abstraction layer. The Controller handles user input, pass data to and renders the View. The main function of the Controller is to prepare if-elseif statements, define variables and functions, and pass these variables to the View using 'require' or 'include' statements, without the need to add an abstraction layer in rendering the View. The View file gets its data from the Controller and renders the layout using native PHP templating, such as:
+BasicPHP uses a modified MVC approach where there is still separation between the Controller and View, but the Model is embedded in the Controller. Business logic and database layer (Model) is embedded in the Controller using the PDO abstraction layer. The Controller handles user input, passes data to and renders the View. The main function of the Controller is to prepare if-elseif statements, define variables and functions, and pass these variables to the View using 'require' or 'include' statements. An abstraction layer can be added to render the 'require' or 'include' statements in the View for code efficiency. The View gets its data from the Controller, with the Controller passing the $data variable containing the necessary variables and their values using compact() function. Native PHP templating is used in rendering the layout, such as:
 
 ```
 <p><?= $variable ?></p>
