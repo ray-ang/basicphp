@@ -7,16 +7,9 @@
  * files. The variables can then be used in the view file.
  */
 
-// Show header and menu
-require '../template/header.php';
-require '../template/menu.php';
-
 // Set variable in controller
 $param1 = url_value(1);
 
-// Render welcome view
-// Use variable inside view using native PHP templating
-require '../views/pages/welcome.php';
+$data = compact('param1');
 
-// Show footer
-require '../template/footer.php';
+Theme::page('welcome', $data);
