@@ -16,5 +16,3 @@ require '../views/pages/error.php';
 
 // Show footer
 require '../template/footer.php';
-
-?>
