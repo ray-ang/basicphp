@@ -207,6 +207,7 @@ if ( $_SERVER['REQUEST_URI'] == '/' . SUB_PATH ) {
 // Browse 'http://localhost/basicphp/public/sample/route'
 // Based on the controller, only 2 parameters can be set after /route
 // Example: 'http://localhost/basicphp/public/sample/route/1/2'
+
 url_route('sample', 'route', 'sample-route');
 
 /*
