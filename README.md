@@ -38,7 +38,7 @@ OR, use an abstraction layer to the 'require' statements to render the View for 
 
 ```
 // Prepare data as data payload
-$variable1 = 'value1';
+$variable1 = array(); // Associative array
 $variable2 = 'value2';
 $variable3 = 'value3';
 
@@ -52,6 +52,14 @@ Theme::page('page_view', $data);
 
 ```
 <?php foreach( $variable as $row ): ?>
+<p>The patient's name is <?= $row['name'] ?>, and his age is <?= $row['age'] ?>.</p>
+<?php endforeach ?>
+```
+
+OR, when using an abstraction layer to the View
+
+```
+<?php foreach( $data['variable1'] as $row ): ?>
 <p>The patient's name is <?= $row['name'] ?>, and his age is <?= $row['age'] ?>.</p>
 <?php endforeach ?>
 ```
