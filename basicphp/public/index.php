@@ -139,7 +139,7 @@ function url_route($sub1, $sub2, $controller)
 
 		require '../controllers/' . $controller . '.php';
 
-	} elseif ( ! empty($url_1) && $sub1==$url_1 && empty($url_2) && $sub2=='' ) {
+	} elseif ( ! empty($url_1) && $sub1==$url_1 && ! isset($url_2) && $sub2=='' ) {
 
 		require '../controllers/' . $controller . '.php';
 
