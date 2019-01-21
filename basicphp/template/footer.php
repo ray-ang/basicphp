@@ -1,1 +1,0 @@
-<h4>This is the Footer. Place Javascript here.</h4>
