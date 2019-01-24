@@ -1,7 +1,9 @@
 <?php
 
 /**
- * BasicPHP - A PHP Micro-Framework for Decoupled Application and Presentation Logic
+ * BasicPHP - A PHP Micro-Framework for Decoupled Application Logic and Presentation
+ *          - The aim of the project is for developers to build applications that
+ *          - are framework-independent.
  *
  * @package  BasicPHP
  * @author   Raymund John Ang <raymund@open-nis.org>
@@ -13,6 +15,7 @@
 |--------------------------------------------------------------------------
 |
 | Classes that need to be autoloaded should be placed in the 'classes' folder.
+| Class-based Controllers are placed in 'controllers/classes/' folder
 |
 */
 
@@ -23,6 +26,18 @@ spl_autoload_register(function ($class_name) {
 	if (file_exists($filename) && is_readable($filename)) {
 
 		require_once '../classes/' . $class_name . '.php';
+
+	}
+
+});
+
+spl_autoload_register(function ($class_name) {
+
+	$filename = '../controllers/classes/' . $class_name . '.php';
+
+	if (file_exists($filename) && is_readable($filename)) {
+
+		require_once '../controllers/classes/' . $class_name . '.php';
 
 	}
 
@@ -83,18 +98,14 @@ define('SUB_ORDER', $sub_order);
 
 /*
 |--------------------------------------------------------------------------
-| Set Routing Configuration
+| BasicPHP Helper Functions
 |--------------------------------------------------------------------------
 | 
-| If there are two substrings after the /public/ path separated by a '/',
-| load the Controller file in the 'controllers' folder.
-| 
-| Functions url_value() and url_route() are used to retrieve the value of
-| the URL substring, and to implement routing if there are two substrings
-| after the /public/ path.
-| 
-| Note: If 'public' folder is the DocumentRoot, the two substrings will be
-| in reference to the domain name, not the /public/ path.
+| These are functions necessary to run the micro-framework:
+|
+| 1. url_value() - retrieve the URL substring
+| 2. route_class() - route to Class-based Controllers
+| 3. route_file() - route to File-based Controllers
 |
 */
 
@@ -121,14 +132,15 @@ function url_value($position)
 }
 
 /**
- * Load Controller file if two substrings are set
+ * Load Class-based Controller if two substrings are set
  * @param string $sub1 - First substring after /public/ path
  * @param string $sub2 - Second substring after /public/ path
- * @param string $controller - Controller file
- * Exlude .php extension from $controller argument.
+ * @param string $class - Controller class
+ * @param string $method - Controller instance method
  */
 
-function url_route($sub1, $sub2, $controller)
+// Route to Class-based Controllers
+function route_class($sub1, $sub2, $class, $method)
 
 {
 
@@ -137,40 +149,105 @@ function url_route($sub1, $sub2, $controller)
 
 	if ( ! empty($url_1) && $sub1==$url_1 && ! empty($url_2) && $sub2==$url_2 )  {
 
-		require '../controllers/' . $controller . '.php';
+		$class_object = new $class();
 
-	} elseif ( ! empty($url_1) && $sub1==$url_1 && ! isset($url_2) && $sub2=='' ) {
+		call_user_func(array($class_object, $method));
 
-		require '../controllers/' . $controller . '.php';
+	} elseif ( ! empty($url_1) && $sub1==$url_1 && ! isset($url_2) && $sub2==null ) {
+
+		$class_object = new $class();
+
+		call_user_func(array($class_object, $method));
 
 	}
 
 }
 
-// Render 'controllers/pages/home.php' as Homepage
+/**
+ * Load File-based Controller if two substrings are set
+ * @param string $sub1 - First substring after /public/ path
+ * @param string $sub2 - Second substring after /public/ path
+ * @param string $controller - Controller file
+ * Exlude .php extension from $controller argument.
+ */
+
+// Route to File-based Controllers
+function route_file($sub1, $sub2, $controller)
+
+{
+
+	$url_1 = url_value(1);
+	$url_2 = url_value(2);
+
+	if ( ! empty($url_1) && $sub1==$url_1 && ! empty($url_2) && $sub2==$url_2 )  {
+
+		require '../controllers/files/' . $controller . '.php';
+
+	} elseif ( ! empty($url_1) && $sub1==$url_1 && ! isset($url_2) && $sub2==null ) {
+
+		require '../controllers/files/' . $controller . '.php';
+
+	}
+
+}
+
+/*
+|--------------------------------------------------------------------------
+| Set Routing Configuration
+|--------------------------------------------------------------------------
+| 
+| If there are two substrings after the /public/ path separated by a '/',
+| load the Controller file in the 'controllers' folder.
+| 
+| Functions url_value() and url_route() are used to retrieve the value of
+| the URL substring, and to implement routing if there are two substrings
+| after the /public/ path.
+| 
+| Note: If 'public' folder is the DocumentRoot, the two substrings will be
+| in reference to the domain name, not the /public/ path.
+|
+*/
+
+// Render Homepage
 if ( $_SERVER['REQUEST_URI'] == '/' . SUB_PATH ) {
 
-	require '../controllers/home.php';
+	$class_object = new Cont_Home();
+
+	call_user_func(array($class_object, 'index'));
 
 }
 
 /**
- * Manual Routing
+ * Manual Routing Using Class-based Controllers
  * Set first substring after /public/ path as the first argument.
  * Set second substring after /public/ path as the second argument.
- * Set controller in 'controllers' folder as the third argument.
- * Exclude .php extension in $controller argument.
+ * Set class as the third argument.
+ * Set instance method as the fourth argument.
  */
 
-url_route('home', '', 'home');
-url_route('welcome', '', 'welcome');
-url_route('error', '', 'error');
+route_class('home', null, 'Cont_Home', 'index');
+route_class('welcome', null, 'Cont_Welcome', 'index');
+route_class('error', null, 'Cont_Error', 'index');
 
-// Browse 'http://localhost/basicphp/public/sample/route'
-// Based on the controller, only 2 parameters can be set after /route
-// Example: 'http://localhost/basicphp/public/sample/route/1/2'
+/**
+ * Browse 'http://localhost/basicphp/public/sample/route'
+ * Based on the controller, only 2 parameters can be set after /route
+ * Example: 'http://localhost/basicphp/public/sample/route/1/2'
+ */
 
-url_route('sample', 'route', 'sample-route');
+route_class('sample', 'route', 'Cont_Sample', 'route');
+
+/**
+ * Below are examples of file-based Controllers.
+ * To ensure proper decoupling, but still adhere to conventional method of
+ * assigning a Controller to a specific route, it is recommended to use
+ * class-based Controllers instead.
+ */
+
+ // route_file('home', '', 'home');
+ // route_file('welcome', '', 'welcome');
+ // route_file('error', '', 'error');
+ // route_file('sample', 'route', 'sample-route');
 
 /*
 |--------------------------------------------------------------------------
