@@ -19,6 +19,10 @@
 |
 */
 
+$time_start = floatval(microtime());
+
+session_start();
+
 spl_autoload_register(function ($class_name) {
 
 	$filename = '../classes/' . $class_name . '.php';
@@ -266,3 +270,23 @@ if (count(get_included_files())==1) {
 	echo '<h3 style="text-align: center;">Error 404. Page not found. This is an Invalid URL.</h3>';
 
 }
+
+$time_end = floatval(microtime());
+
+$time_lapse = $time_end - $time_start;
+
+echo 'Start: ' . $time_start . '<br/>';
+
+echo 'End: ' . $time_end . '<br/>';
+
+echo 'Lapse Time: ' . $time_lapse . '<br/>';
+
+if (! isset($_SESSION['speed'])) $_SESSION['speed'] = array();
+
+array_push($_SESSION['speed'], $time_lapse);
+
+var_dump($_SESSION['speed']);
+
+echo 'The average load speed is: ' . (array_sum($_SESSION['speed'])/count($_SESSION['speed']));
+
+session_destroy();

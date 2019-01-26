@@ -7,4 +7,4 @@
  * files. The variables can then be used in the view file.
  */
 
-Theme::page('error');
+Page::view('error');

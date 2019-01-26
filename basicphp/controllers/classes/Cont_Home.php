@@ -15,7 +15,7 @@ class Cont_Home
 
 	{
 
-		Theme::page('home');
+		Page::view('home');
 
 	}
 

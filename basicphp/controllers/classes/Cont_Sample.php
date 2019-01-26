@@ -33,14 +33,14 @@ class Cont_Sample
 
 			$data = compact('error_message');
 
-			Theme::page('error', $data);
+			Page::view('error', $data);
 
 		}
 
 		// Display page
 		if (! isset($param3)) {
 
-			Theme::page('sample_route', $data);
+			Page::view('sample_route', $data);
 
 		}
 

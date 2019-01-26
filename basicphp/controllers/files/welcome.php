@@ -12,4 +12,4 @@ $param1 = url_value(1);
 
 $data = compact('param1');
 
-Theme::page('welcome', $data);
+Page::view('welcome', $data);

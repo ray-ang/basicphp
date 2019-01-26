@@ -15,7 +15,7 @@ class Cont_Error
 
 	{
 
-		Theme::page('error');
+		Page::view('error');
 
 	}
 

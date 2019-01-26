@@ -20,7 +20,7 @@ class Cont_Welcome
 
 		$data = compact('param1');
 
-		Theme::page('welcome', $data);
+		Page::view('welcome', $data);
 
 	}
 
