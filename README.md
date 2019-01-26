@@ -1,6 +1,6 @@
 # BasicPHP
 
-A PHP micro-framework that adheres closely to vanilla or pure PHP, built-in functions and a modified MVC approach. Features include a front controller, class autoloading, routing, and handling 404 error - page not found.
+A PHP micro-framework that promotes framework independence through decoupled application logic (Controller) and presentation (View) approach. This is done through the use of vanilla or native PHP, built-in functions and a modified MVC approach. Features include front controller, class autoloading, routing, and handling 404 error - page not found.
 
 ### Configuration
 
