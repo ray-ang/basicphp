@@ -3,25 +3,30 @@
 /**
  * BasicPHP - A PHP Micro-Framework for Decoupled Application Logic and Presentation
  *          - The aim of the project is for developers to build applications that
- *          - are framework-independent.
+ *          - are framework-independent by decoupling the Controller and View from
+ *          - any framework, making the application portable and compatible with the
+ *          - the developer's framework of choice or vanilla PHP.
  *
  * @package  BasicPHP
  * @author   Raymund John Ang <raymund@open-nis.org>
+ * @license  MIT License
  */
+
+// Register the start time as a float value
+$time_start = floatval(microtime());
+
+// Start sessions
+session_start();
 
 /*
 |--------------------------------------------------------------------------
-| Register The Auto Loader
+| Register The Class Autoloader
 |--------------------------------------------------------------------------
 |
-| Classes that need to be autoloaded should be placed in the 'classes' folder.
-| Class-based Controllers are placed in 'controllers/classes/' folder
+| Classes that need to be autoloaded should be placed in the 'classes/' folder.
+| Class-based Controllers should be placed in 'controllers/classes/' folder.
 |
 */
-
-$time_start = floatval(microtime());
-
-session_start();
 
 spl_autoload_register(function ($class_name) {
 
@@ -61,13 +66,19 @@ spl_autoload_register(function ($class_name) {
 
 define('ENV', 'development');
 
-if (ENV == 'development') {
+switch (ENV) {
 
-	error_reporting(E_ALL);
+    case 'development':
 
-} elseif (ENV == 'production') {
+        error_reporting(E_ALL);
 
-	error_reporting(0);
+        break;
+
+    case 'production':
+
+        error_reporting(0);
+
+        break;
 
 }
 
@@ -79,15 +90,16 @@ if (ENV == 'development') {
 | Define 'BASE_URL' as the domain with '/' at the end, such as
 | 'http://example.com/' or 'https://example.com/'.
 | 
-| If 'public' folder is set as the DocumentRoot of the host or virtual host,
+| If 'public/' folder is set as the DocumentRoot of the host or virtual host,
 | set 'SUB_PATH' to ''.
 | 
-| If 'basicphp' folder is located under the DocumentRoot folder, define
-| 'SUB_PATH' as 'basicphp/public/' using the format 'sub-url/sub-url/'.
+| If 'basicphp/' folder is located under the DocumentRoot folder, define
+| 'SUB_PATH' as 'basicphp/public/' using the format 'sub-url/sub-url/'. This
+| is the case when accessing the site at 'http://localhost/basicphp/public/'.
 | 
 | SUB_ORDER is the number of URL substrings from domain to /public/ path.
-| If 'public' folder is set as the DocumentRoot, SUB_ORDER is automatically
-| set to 0. If 'basicphp' folder is located under server DocumentRoot,
+| If 'public/' folder is set as the DocumentRoot, SUB_ORDER is automatically
+| set to 0. If 'basicphp/' folder is located under server DocumentRoot,
 | SUB_ORDER is automatically set to 2.
 |
 */
@@ -114,10 +126,11 @@ define('SUB_ORDER', $sub_order);
 */
 
 /**
- * Get URL substring after /public/ path separated by '/'
- * SUB_ORDER should be set to 0 if 'public' folder is server DocumentRoot
- * SUB_ORDER should be set to 2 if 'public' folder is two folders below DocumentRoot,
- * such as when accessing 'http://localhost/basicphp/public/'
+ * Get URL substring value after /public/ path separated by '/'
+ * SUB_ORDER should be set to 0 if 'public/' folder is server DocumentRoot
+ * SUB_ORDER should be set to 2 if 'public/' folder is two folders below
+ * the server DocumentRoot folder - such as when accessing the application at
+ * 'http://localhost/basicphp/public/'.
  * @param integer $position - Substring position from /public/ path
  */
 
@@ -139,7 +152,7 @@ function url_value($position)
  * Load Class-based Controller if two substrings are set
  * @param string $sub1 - First substring after /public/ path
  * @param string $sub2 - Second substring after /public/ path
- * @param string $class - Controller class
+ * @param string $class - Controller class name
  * @param string $method - Controller instance method
  */
 
@@ -155,13 +168,13 @@ function route_class($sub1, $sub2, $class, $method)
 
 		$class_object = new $class();
 
-		call_user_func(array($class_object, $method));
+		$class_object->$method();
 
 	} elseif ( ! empty($url_1) && $sub1==$url_1 && ! isset($url_2) && $sub2==null ) {
 
 		$class_object = new $class();
 
-		call_user_func(array($class_object, $method));
+		$class_object->$method();
 
 	}
 
@@ -201,13 +214,13 @@ function route_file($sub1, $sub2, $controller)
 |--------------------------------------------------------------------------
 | 
 | If there are two substrings after the /public/ path separated by a '/',
-| load the Controller file in the 'controllers' folder.
+| load the class-based Controller in the 'controllers/classes/' folder.
 | 
-| Functions url_value() and url_route() are used to retrieve the value of
+| Functions url_value() and route_class() are used to retrieve the value of
 | the URL substring, and to implement routing if there are two substrings
 | after the /public/ path.
 | 
-| Note: If 'public' folder is the DocumentRoot, the two substrings will be
+| Note: If 'public/' folder is the DocumentRoot, the two substrings will be
 | in reference to the domain name, not the /public/ path.
 |
 */
@@ -225,7 +238,7 @@ if ( $_SERVER['REQUEST_URI'] == '/' . SUB_PATH ) {
  * Manual Routing Using Class-based Controllers
  * Set first substring after /public/ path as the first argument.
  * Set second substring after /public/ path as the second argument.
- * Set class as the third argument.
+ * Set class name as the third argument.
  * Set instance method as the fourth argument.
  */
 
@@ -235,30 +248,30 @@ route_class('error', null, 'Cont_Error', 'index');
 
 /**
  * Browse 'http://localhost/basicphp/public/sample/route'
- * Based on the controller, only 2 parameters can be set after /route
+ * Based on the controller, only 2 parameters can be set after /route/
  * Example: 'http://localhost/basicphp/public/sample/route/1/2'
  */
 
 route_class('sample', 'route', 'Cont_Sample', 'route');
 
 /**
- * Below are examples of file-based Controllers.
+ * Below are examples of File-based Controllers.
  * To ensure proper decoupling, but still adhere to conventional method of
  * assigning a Controller to a specific route, it is recommended to use
  * class-based Controllers instead.
  */
 
- // route_file('home', '', 'home');
- // route_file('welcome', '', 'welcome');
- // route_file('error', '', 'error');
+ // route_file('home', null, 'home');
+ // route_file('welcome', null, 'welcome');
+ // route_file('error', null, 'error');
  // route_file('sample', 'route', 'sample-route');
 
 /*
 |--------------------------------------------------------------------------
-| Handle Error 404 - Page Not Found - Invalid URL
+| Handle Error 404 - Page Not Found - Invalid URI
 |--------------------------------------------------------------------------
 |
-| Invalid URL's only include the front controller or index.php.
+| Invalid URI's only include the front controller or index.php.
 | Any valid page rendered, even the error page, will need to require a file
 | other than the front controller file. The front controller should run this
 | script last to avoid conflict with routing configuration.
@@ -271,8 +284,10 @@ if (count(get_included_files())==1) {
 
 }
 
+// Register the end time as a float value
 $time_end = floatval(microtime());
 
+// Compute the elapsed time
 $time_lapse = $time_end - $time_start;
 
 echo 'Start: ' . $time_start . '<br/>';
@@ -281,12 +296,15 @@ echo 'End: ' . $time_end . '<br/>';
 
 echo 'Lapse Time: ' . $time_lapse . '<br/>';
 
+// Compute average load speed. Set $_SESSION['speed'] as an array.
 if (! isset($_SESSION['speed'])) $_SESSION['speed'] = array();
 
 array_push($_SESSION['speed'], $time_lapse);
 
 var_dump($_SESSION['speed']);
 
+// Average load speed
 echo 'The average load speed is: ' . (array_sum($_SESSION['speed'])/count($_SESSION['speed']));
 
+// Place a comment on session_destroy() to start computing average load speed.
 session_destroy();
