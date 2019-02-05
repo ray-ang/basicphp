@@ -23,11 +23,11 @@ class Cont_Post
 		$conn = new PDO("mysql:host=$this->servername;dbname=$this->dbname", $this->username, $this->password);
 		$conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-	    $stmt = $conn->prepare("SELECT post_id, post_title, post_content FROM posts");
-	    $stmt->execute();
-	    $conn = null;
+		$stmt = $conn->prepare("SELECT post_id, post_title, post_content FROM posts");
+		$stmt->execute();
+		$conn = null;
 
-	    $data = compact('stmt');
+		$data = compact('stmt');
 
 		Page::view('post_list', $data);
 
@@ -51,12 +51,12 @@ class Cont_Post
 
 		$post_id = url_value(3);
 
-	    $stmt = $conn->prepare("SELECT post_id, post_title, post_content FROM posts WHERE post_id = :post_id");
-	    $stmt->bindParam(':post_id', $post_id);
-	    $stmt->execute();
-	    $conn = null;
+		$stmt = $conn->prepare("SELECT post_id, post_title, post_content FROM posts WHERE post_id = :post_id");
+		$stmt->bindParam(':post_id', $post_id);
+		$stmt->execute();
+		$conn = null;
 
-	    $data = compact('stmt');
+		$data = compact('stmt');
 
 		Page::view('post_view', $data);
 
@@ -75,9 +75,9 @@ class Cont_Post
 			VALUES (:post_title, :post_content)");
 			$stmt->bindParam(':post_title', $_POST['title']);
 			$stmt->bindParam(':post_content', $_POST['content']);
-		    $stmt->execute();
-	        $new_id = $conn->lastInsertId();
-		    $conn = null;
+			$stmt->execute();
+			$new_id = $conn->lastInsertId();
+			$conn = null;
 
 			header('Location: ' . BASE_URL . SUB_PATH . 'post/view/' . $new_id);
 			exit();
@@ -92,35 +92,35 @@ class Cont_Post
 
 	{
 
-		if (isset($_POST['edit-post'])) {
-
-			$conn = new PDO("mysql:host=$this->servername;dbname=$this->dbname", $this->username, $this->password);
-			$conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-
-			$post_id = url_value(3);
-
-			$stmt = $conn->prepare("UPDATE posts SET post_title = :post_title, post_content = :post_content WHERE post_id = :post_id");
-			$stmt->bindParam(':post_title', $_POST['title']);
-			$stmt->bindParam(':post_content', $_POST['content']);
-			$stmt->bindParam(':post_id', $post_id);
-		    $stmt->execute();
-    		$conn = null;
-
-		}
+	if (isset($_POST['edit-post'])) {
 
 		$conn = new PDO("mysql:host=$this->servername;dbname=$this->dbname", $this->username, $this->password);
 		$conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
 		$post_id = url_value(3);
 
-		$sql = $conn->prepare("SELECT post_title, post_content FROM posts WHERE post_id = :post_id");
-		$sql->bindParam(':post_id', $post_id);
-		$sql->execute();
+		$stmt = $conn->prepare("UPDATE posts SET post_title = :post_title, post_content = :post_content WHERE post_id = :post_id");
+		$stmt->bindParam(':post_title', $_POST['title']);
+		$stmt->bindParam(':post_content', $_POST['content']);
+		$stmt->bindParam(':post_id', $post_id);
+		$stmt->execute();
 		$conn = null;
 
-		$data = compact('sql');
+	}
 
-		Page::view('post_edit', $data);
+	$conn = new PDO("mysql:host=$this->servername;dbname=$this->dbname", $this->username, $this->password);
+	$conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+	$post_id = url_value(3);
+
+	$sql = $conn->prepare("SELECT post_title, post_content FROM posts WHERE post_id = :post_id");
+	$sql->bindParam(':post_id', $post_id);
+	$sql->execute();
+	$conn = null;
+
+	$data = compact('sql');
+
+	Page::view('post_edit', $data);
 
 	}
 
