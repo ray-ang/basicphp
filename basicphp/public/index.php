@@ -253,6 +253,11 @@ route_class('error', null, 'Cont_Error', 'index');
  */
 
 route_class('sample', 'route', 'Cont_Sample', 'route');
+route_class('post', 'list', 'Cont_Post', 'list');
+route_class('post', 'view', 'Cont_Post', 'view');
+route_class('post', 'add', 'Cont_Post', 'add');
+route_class('post', 'edit', 'Cont_Post', 'edit');
+
 
 /**
  * Below are examples of File-based Controllers.
@@ -280,10 +285,15 @@ route_class('sample', 'route', 'Cont_Sample', 'route');
 
 if (count(get_included_files())==1) {
 
-	echo '<h3 style="text-align: center;">Error 404. Page not found. This is an Invalid URL.</h3>';
+	$error_message = '<h3 style="text-align: center;">Error 404. Page not found. This is an Invalid URL.</h3>';
+
+	$data = compact('error_message');
+
+	Page::view('error', $data);
 
 }
 
+/*
 // Register the end time as a float value
 $time_end = floatval(microtime());
 
@@ -301,10 +311,11 @@ if (! isset($_SESSION['speed'])) $_SESSION['speed'] = array();
 
 array_push($_SESSION['speed'], $time_lapse);
 
-var_dump($_SESSION['speed']);
-
 // Average load speed
 echo 'The average load speed is: ' . (array_sum($_SESSION['speed'])/count($_SESSION['speed']));
 
+var_dump($_SESSION['speed']);
+
 // Place a comment on session_destroy() to start computing average load speed.
 session_destroy();
+*/
