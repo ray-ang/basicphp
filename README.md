@@ -68,6 +68,10 @@ OR, when using an abstraction layer to the View
 
 *Raymund John Ang*
 
+### Contributors
+
+Jake Pomperada - *Testing*
+
 ## License
 
 This project is licensed under the MIT License.
