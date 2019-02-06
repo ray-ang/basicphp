@@ -122,6 +122,7 @@ define('SUB_ORDER', $sub_order);
 | 1. url_value() - retrieve the URL substring
 | 2. route_class() - route to Class-based Controllers
 | 3. route_file() - route to File-based Controllers
+| 4. esc() - uses htmlspecialchars() to prevent XSS
 |
 */
 
@@ -205,6 +206,19 @@ function route_file($sub1, $sub2, $controller)
 		require '../controllers/files/' . $controller . '.php';
 
 	}
+
+}
+
+/**
+ * Uses htmlspecialchars() to prevent XSS
+ * @param string $string - String to escape
+ */
+
+function esc($string)
+
+{
+
+	echo htmlspecialchars($string, ENT_QUOTES, 'UTF-8');
 
 }
 

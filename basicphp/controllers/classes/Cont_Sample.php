@@ -26,10 +26,12 @@ class Cont_Sample
 		$data = compact('param1', 'param2', 'param3', 'person');
 
 		// Limit valid sub-url string
-		if (isset($param3)) {
+		if (isset($param3)
+			OR (! isset($param3) && isset($param1) && ! is_numeric($param1))
+			OR (! isset($param3) && isset($param2) && ! is_numeric($param2))) {
 
 			// Set $error_message for the error page
-			$error_message = 'You can only set 2 parameters.';
+			$error_message = 'You can only set 2 numbers as parameters.';
 
 			$data = compact('error_message');
 
@@ -38,7 +40,9 @@ class Cont_Sample
 		}
 
 		// Display page
-		if (! isset($param3)) {
+		if (! isset($param3) && ! isset($param1)
+			OR (! isset($param3) && isset($param1) && is_numeric($param1) && ! isset($param2))
+			OR (! isset($param3) && isset($param1) && is_numeric($param1) && isset($param2) && is_numeric($param2))) {
 
 			Page::view('sample_route', $data);
 

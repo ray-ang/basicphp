@@ -12,13 +12,13 @@
 			  <div class="form-group">
 			    <label class="control-label col-sm-2" for="title">Title:</label>
 			    <div class="col-sm-10">
-			      <input type="text" class="form-control" id="title" placeholder="Enter title" name="title" value="<?= $post_title ?>">
+			      <input type="text" class="form-control" id="title" placeholder="Enter title" name="title" value="<?= esc($post_title) ?>">
 			    </div>
 			  </div>
 			  <div class="form-group">
 			    <label class="control-label col-sm-2" for="content">Content:</label>
 			    <div class="col-sm-10"> 
-			      <textarea class="form-control" rows="5" id="content" placeholder="Enter content" name="content"><?= $post_content ?></textarea>
+			      <textarea class="form-control" rows="5" id="content" placeholder="Enter content" name="content"><?= esc($post_content) ?></textarea>
 			    </div>
 			  </div>
 			  <div class="form-group"> 
