@@ -123,6 +123,7 @@ define('SUB_ORDER', $sub_order);
 | 2. route_class() - route to Class-based Controllers
 | 3. route_file() - route to File-based Controllers
 | 4. esc() - uses htmlspecialchars() to prevent XSS
+| 5. csrf_token() - uses sessions to create per request CSRF token
 |
 */
 
@@ -210,6 +211,7 @@ function route_file($sub1, $sub2, $controller)
 }
 
 /**
+ * Helper function to prevent Cross-Site Scripting (XSS)
  * Uses htmlspecialchars() to prevent XSS
  * @param string $string - String to escape
  */
@@ -219,6 +221,21 @@ function esc($string)
 {
 
 	return htmlspecialchars($string, ENT_QUOTES, 'UTF-8');
+
+}
+
+/**
+ * Helper function to prevent Cross-Site Request Forgery (CSRF)
+ * Creates a per request token to handle CSRF using sessions
+ */
+
+function csrf_token()
+
+{
+
+	$_SESSION['csrf-token'] = base64_encode(openssl_random_pseudo_bytes(32));
+
+	return $_SESSION['csrf-token'];
 
 }
 

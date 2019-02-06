@@ -9,6 +9,7 @@
           <p><?= nl2br(esc($row['post_content'])) ?></p>
        		<form action="" method="post">
       			<div class="col-sm-offset-2 col-sm-10">
+              <input type="hidden" name="csrf-token" value="<?= csrf_token() ?>">
               <button type="submit" class="btn btn-default" name="goto-edit">Edit</button>
       				<button type="submit" class="btn btn-default" name="delete-post">Delete</button>
       			</div>

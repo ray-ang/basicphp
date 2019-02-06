@@ -37,7 +37,7 @@ class Cont_Post
 
 	{
 
-		if (isset($_POST['delete-post'])) $this->delete();
+		if (Condition::post_delete()) $this->delete();
 
 		if (isset($_POST['goto-edit'])) {
 
@@ -66,7 +66,7 @@ class Cont_Post
 
 	{
 
-		if (isset($_POST['submit-post'])) {
+		if (Condition::post_add()) {
 
 			$conn = new PDO("mysql:host=$this->servername;dbname=$this->dbname", $this->username, $this->password);
 			$conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
@@ -92,7 +92,7 @@ class Cont_Post
 
 	{
 
-	if (isset($_POST['edit-post'])) {
+	if (Condition::post_edit()) {
 
 		$conn = new PDO("mysql:host=$this->servername;dbname=$this->dbname", $this->username, $this->password);
 		$conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
