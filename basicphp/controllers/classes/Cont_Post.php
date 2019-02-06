@@ -23,7 +23,7 @@ class Cont_Post
 		$conn = new PDO("mysql:host=$this->servername;dbname=$this->dbname", $this->username, $this->password);
 		$conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-		$stmt = $conn->prepare("SELECT post_id, post_title, post_content FROM posts");
+		$stmt = $conn->prepare("SELECT post_id, post_title, post_content FROM posts ORDER BY post_id DESC");
 		$stmt->execute();
 		$conn = null;
 
