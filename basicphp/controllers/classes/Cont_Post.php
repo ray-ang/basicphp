@@ -11,18 +11,12 @@ class Cont_Post
 
 {
 
-	private $servername = "localhost";
-	private $username = "root";
-	private $password = "";
-	private $dbname = "basicphp";
-
 	public function conn()
 
 	{
 
-		$conn = new PDO("mysql:host=$this->servername;dbname=$this->dbname", $this->username, $this->password);
-		$conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-		$conn->setAttribute(PDO::ATTR_PERSISTENT, true);
+		$database = new Database;
+		$conn = $database->conn();
 
 		return $conn;
 
