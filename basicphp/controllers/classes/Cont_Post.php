@@ -16,16 +16,25 @@ class Cont_Post
 	private $password = "";
 	private $dbname = "basicphp";
 
-	public function list()
+	public function conn()
 
 	{
 
 		$conn = new PDO("mysql:host=$this->servername;dbname=$this->dbname", $this->username, $this->password);
 		$conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+		$conn->setAttribute(PDO::ATTR_PERSISTENT, true);
 
+		return $conn;
+
+	}
+
+	public function list()
+
+	{
+
+		$conn = $this->conn();
 		$stmt = $conn->prepare("SELECT post_id, post_title, post_content FROM posts ORDER BY post_id DESC");
 		$stmt->execute();
-		$conn = null;
 
 		$data = compact('stmt');
 
@@ -46,15 +55,12 @@ class Cont_Post
 
 		}
 
-		$conn = new PDO("mysql:host=$this->servername;dbname=$this->dbname", $this->username, $this->password);
-		$conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-
 		$post_id = url_value(3);
 
+		$conn = $this->conn();
 		$stmt = $conn->prepare("SELECT post_id, post_title, post_content FROM posts WHERE post_id = :post_id");
 		$stmt->bindParam(':post_id', $post_id);
 		$stmt->execute();
-		$conn = null;
 
 		$data = compact('stmt');
 
@@ -68,16 +74,14 @@ class Cont_Post
 
 		if (Condition::post_add()) {
 
-			$conn = new PDO("mysql:host=$this->servername;dbname=$this->dbname", $this->username, $this->password);
-			$conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-
+			$conn = $this->conn();
 			$stmt = $conn->prepare("INSERT INTO posts (post_title, post_content)
 			VALUES (:post_title, :post_content)");
 			$stmt->bindParam(':post_title', $_POST['title']);
 			$stmt->bindParam(':post_content', $_POST['content']);
 			$stmt->execute();
+
 			$new_id = $conn->lastInsertId();
-			$conn = null;
 
 			header('Location: ' . BASE_URL . SUB_PATH . 'post/view/' . $new_id);
 			exit();
@@ -94,29 +98,26 @@ class Cont_Post
 
 	if (Condition::post_edit()) {
 
-		$conn = new PDO("mysql:host=$this->servername;dbname=$this->dbname", $this->username, $this->password);
-		$conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-
 		$post_id = url_value(3);
 
+		$conn = $this->conn();
 		$stmt = $conn->prepare("UPDATE posts SET post_title = :post_title, post_content = :post_content WHERE post_id = :post_id");
 		$stmt->bindParam(':post_title', $_POST['title']);
 		$stmt->bindParam(':post_content', $_POST['content']);
 		$stmt->bindParam(':post_id', $post_id);
 		$stmt->execute();
-		$conn = null;
+
+		header('Location: ' . BASE_URL . SUB_PATH . 'post/view/' . url_value(3));
+		exit();
 
 	}
 
-	$conn = new PDO("mysql:host=$this->servername;dbname=$this->dbname", $this->username, $this->password);
-	$conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-
 	$post_id = url_value(3);
 
+	$conn = $this->conn();
 	$sql = $conn->prepare("SELECT post_title, post_content FROM posts WHERE post_id = :post_id");
 	$sql->bindParam(':post_id', $post_id);
 	$sql->execute();
-	$conn = null;
 
 	$data = compact('sql');
 
@@ -128,15 +129,12 @@ class Cont_Post
 
 	{
 
-		$conn = new PDO("mysql:host=$this->servername;dbname=$this->dbname", $this->username, $this->password);
-		$conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-
 		$post_id = url_value(3);
 
+		$conn = $this->conn();
 		$stmt = $conn->prepare("DELETE FROM posts WHERE post_id = :post_id");
 		$stmt->bindParam(':post_id', $post_id);
 		$stmt->execute();
-		$conn = null;
 
 		header('Location: ' . BASE_URL . SUB_PATH . 'post/list');
 		exit();
