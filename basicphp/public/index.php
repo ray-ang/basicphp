@@ -5,12 +5,12 @@
  *          - The aim of the project is for developers to build applications that
  *          - are framework-independent by decoupling the Controller and View from
  *          - any framework, making the application portable and compatible with the
- *          - the developer's framework of choice or vanilla PHP.
- *			-
- *			- BasicPHP's index.php code, with minor modifications, can be embedded
- *			- in the chosen framework's front controller, and the (1) classes,
- *			- (2) controllers and (3) views folders copied one folder above the
- *			- front controller of the chosen framework.
+ *          - developer's framework of choice or vanilla PHP.
+ *          -
+ *          - BasicPHP's index.php code, with minor modifications, can be embedded
+ *          - in the chosen framework's front controller, and the (1) classes,
+ *          - (2) controllers and (3) views folders copied one folder above the
+ *          - front controller of the chosen framework.
  *
  * @package  BasicPHP
  * @author   Raymund John Ang <raymund@open-nis.org>
