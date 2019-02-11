@@ -25,13 +25,13 @@ if (isset($param3)) {
 
 	$data = compact('error_message');
 
-	Page::view('error', $data);
+	View::page('error', $data);
 
 }
 
 // Display page
 if (! isset($param3)) {
 
-	Page::view('sample_route', $data);
+	View::page('sample_route', $data);
 
 }

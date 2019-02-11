@@ -47,11 +47,11 @@ spl_autoload_register(function ($class_name) {
 
 spl_autoload_register(function ($class_name) {
 
-	$filename = '../controllers/classes/' . $class_name . '.php';
+	$filename = '../controllers/' . $class_name . '.php';
 
 	if (file_exists($filename) && is_readable($filename)) {
 
-		require_once '../controllers/classes/' . $class_name . '.php';
+		require_once '../controllers/' . $class_name . '.php';
 
 	}
 
@@ -319,13 +319,15 @@ route_class('post', 'edit', 'Cont_Post', 'edit');
 |
 */
 
+use Basic_View as View;
+
 if (count(get_included_files())==1) {
 
 	$error_message = '<h3 style="text-align: center;">Error 404. Page not found. This is an Invalid URL.</h3>';
 
 	$data = compact('error_message');
 
-	Page::view('error', $data);
+	View::page('error', $data);
 
 }
 

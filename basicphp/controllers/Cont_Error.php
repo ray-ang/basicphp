@@ -7,9 +7,18 @@
  * files. The variables can then be used in the view file.
  */
 
-// Set variable in controller
-$param1 = url_value(1);
+use Basic_View as View;
 
-$data = compact('param1');
+class Cont_Error
 
-View::page('welcome', $data);
+{
+
+	public function index()
+
+	{
+
+		View::page('error');
+
+	}
+
+}
