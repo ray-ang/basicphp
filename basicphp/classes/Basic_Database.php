@@ -13,9 +13,9 @@ class Basic_Database
 {
 
 	private $servername = "localhost";
+	private $dbname = "basicphp";
 	private $username = "root";
 	private $password = "";
-	private $dbname = "basicphp";
 
 	public function conn()
 
