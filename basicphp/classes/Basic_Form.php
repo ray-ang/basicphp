@@ -12,7 +12,7 @@ class Basic_Form
 
 {
 
-	public function open( $class='form-horizontal', $method='post' )
+	public function open( $class, $method='post' )
 
 	{
 
