@@ -11,8 +11,8 @@
           <?php
             $form = new Basic_Form;
             $form->open('form-inline');
-            $form->button('btn btn-default', 'goto-edit', 'Edit');
-            $form->button('btn btn-warning', 'delete-post', 'Delete');
+            $form->button('goto-edit', 'Edit', 'btn btn-default');
+            $form->button('delete-post', 'Delete', 'btn btn-warning');
             $form->csrfToken();
             $form->close();
           ?>

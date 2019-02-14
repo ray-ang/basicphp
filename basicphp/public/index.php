@@ -28,30 +28,27 @@ session_start();
 | Register The Class Autoloader
 |--------------------------------------------------------------------------
 |
-| Classes that need to be autoloaded should be placed in the 'classes/' folder.
-| Class-based Controllers should be placed in 'controllers/classes/' folder.
+| Folders containing classes that need to be autoloaded should be added to
+| the array variable $class_folders.
 |
 */
 
 spl_autoload_register(function ($class_name) {
 
-	$filename = '../classes/' . $class_name . '.php';
+	// Declare $class_folders as an array variable
+	$class_folders = array();
 
-	if (file_exists($filename) && is_readable($filename)) {
+	// Add class folders to autoload
+	$class_folders[] = 'classes/';
+	$class_folders[] = 'controllers/';
 
-		require_once '../classes/' . $class_name . '.php';
+	foreach ($class_folders as $folder) {
 
-	}
+		if (file_exists('../' . $folder . $class_name . '.php') && is_readable('../' . $folder . $class_name . '.php')) {
 
-});
+			require_once '../' . $folder . $class_name . '.php';
 
-spl_autoload_register(function ($class_name) {
-
-	$filename = '../controllers/' . $class_name . '.php';
-
-	if (file_exists($filename) && is_readable($filename)) {
-
-		require_once '../controllers/' . $class_name . '.php';
+		}
 
 	}
 
@@ -302,10 +299,10 @@ route_class('post', 'edit', 'Cont_Post', 'edit');
  * class-based Controllers instead.
  */
 
- // route_file('home', null, 'home');
- // route_file('welcome', null, 'welcome');
- // route_file('error', null, 'error');
- // route_file('sample', 'route', 'sample-route');
+// route_file('home', null, 'home');
+// route_file('welcome', null, 'welcome');
+// route_file('error', null, 'error');
+// route_file('sample', 'route', 'sample-route');
 
 /*
 |--------------------------------------------------------------------------
@@ -331,29 +328,27 @@ if (count(get_included_files())==1) {
 
 }
 
-/*
-// Register the end time as a float value
-$time_end = floatval(microtime());
+// // Register the end time as a float value
+// $time_end = floatval(microtime());
 
-// Compute the elapsed time
-$time_lapse = $time_end - $time_start;
+// // Compute the elapsed time
+// $time_lapse = $time_end - $time_start;
 
-echo 'Start: ' . $time_start . '<br/>';
+// echo 'Start: ' . $time_start . '<br/>';
 
-echo 'End: ' . $time_end . '<br/>';
+// echo 'End: ' . $time_end . '<br/>';
 
-echo 'Lapse Time: ' . $time_lapse . '<br/>';
+// echo 'Lapse Time: ' . $time_lapse . '<br/>';
 
-// Compute average load speed. Set $_SESSION['speed'] as an array.
-if (! isset($_SESSION['speed'])) $_SESSION['speed'] = array();
+// // Compute average load speed. Set $_SESSION['speed'] as an array.
+// if (! isset($_SESSION['speed'])) $_SESSION['speed'] = array();
 
-array_push($_SESSION['speed'], $time_lapse);
+// array_push($_SESSION['speed'], $time_lapse);
 
-// Average load speed
-echo 'The average load speed is: ' . (array_sum($_SESSION['speed'])/count($_SESSION['speed']));
+// // Average load speed
+// echo 'The average load speed is: ' . (array_sum($_SESSION['speed'])/count($_SESSION['speed']));
 
-var_dump($_SESSION['speed']);
+// var_dump($_SESSION['speed']);
 
-// Place a comment on session_destroy() to start computing average load speed.
-session_destroy();
-*/
+// // Place a comment on session_destroy() to start computing average load speed.
+// session_destroy();

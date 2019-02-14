@@ -47,7 +47,7 @@ class Basic_Form
 
 	}
 
-	public function button( $class, $name, $label = null )
+	public function button( $name, $label, $class )
 
 	{
 
