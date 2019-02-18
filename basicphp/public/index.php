@@ -35,18 +35,15 @@ session_start();
 
 spl_autoload_register(function ($class_name) {
 
-	// Declare $class_folders as an array variable
-	$class_folders = array();
-
 	// Add class folders to autoload
-	$class_folders[] = 'classes/';
-	$class_folders[] = 'controllers/';
+	$class_folders[] = 'classes';
+	$class_folders[] = 'controllers';
 
 	foreach ($class_folders as $folder) {
 
-		if (file_exists('../' . $folder . $class_name . '.php') && is_readable('../' . $folder . $class_name . '.php')) {
+		if (file_exists('../' . $folder . '/' . $class_name . '.php') && is_readable('../' . $folder . '/' . $class_name . '.php')) {
 
-			require_once '../' . $folder . $class_name . '.php';
+			require_once '../' . $folder . '/' . $class_name . '.php';
 
 		}
 
@@ -110,9 +107,7 @@ define('BASE_URL', 'http://localhost/');
 
 define('SUB_PATH', 'basicphp/public/');
 
-$sub_order = substr_count(SUB_PATH, '/');
-
-define('SUB_ORDER', $sub_order);
+define('SUB_ORDER', substr_count(SUB_PATH, '/'));
 
 /*
 |--------------------------------------------------------------------------
@@ -167,6 +162,7 @@ function route_class($sub1, $sub2, $class, $method)
 
 	$url_1 = url_value(1);
 	$url_2 = url_value(2);
+	$url_3 = url_value(3);
 
 	if ( ! empty($url_1) && $sub1==$url_1 && ! empty($url_2) && $sub2==$url_2 )  {
 
@@ -174,7 +170,7 @@ function route_class($sub1, $sub2, $class, $method)
 
 		$class_object->$method();
 
-	} elseif ( ! empty($url_1) && $sub1==$url_1 && ! isset($url_2) && $sub2==null ) {
+	} elseif ( ! empty($url_1) && $sub1==$url_1 && empty($url_2) && $sub2==null && ! isset($url_3) ) {
 
 		$class_object = new $class();
 
@@ -199,12 +195,13 @@ function route_file($sub1, $sub2, $controller)
 
 	$url_1 = url_value(1);
 	$url_2 = url_value(2);
+	$url_3 = url_value(3);
 
 	if ( ! empty($url_1) && $sub1==$url_1 && ! empty($url_2) && $sub2==$url_2 )  {
 
 		require '../controllers/files/' . $controller . '.php';
 
-	} elseif ( ! empty($url_1) && $sub1==$url_1 && ! isset($url_2) && $sub2==null ) {
+	} elseif ( ! empty($url_1) && $sub1==$url_1 && empty($url_2) && $sub2==null && ! isset($url_3) ) {
 
 		require '../controllers/files/' . $controller . '.php';
 
@@ -262,8 +259,7 @@ function csrf_token()
 if ( $_SERVER['REQUEST_URI'] == '/' . SUB_PATH ) {
 
 	$class_object = new Cont_Home();
-
-	call_user_func(array($class_object, 'index'));
+	$class_object->index();
 
 }
 
@@ -322,7 +318,9 @@ if (count(get_included_files())==1) {
 
 	$error_message = '<h3 style="text-align: center;">Error 404. Page not found. This is an Invalid URL.</h3>';
 
-	$data = compact('error_message');
+	$page_title = 'Error 404';
+
+	$data = compact('error_message', 'page_title');
 
 	View::page('error', $data);
 
@@ -341,9 +339,9 @@ if (count(get_included_files())==1) {
 // echo 'Lapse Time: ' . $time_lapse . '<br/>';
 
 // // Compute average load speed. Set $_SESSION['speed'] as an array.
-// if (! isset($_SESSION['speed'])) $_SESSION['speed'] = array();
+// if (! isset($_SESSION['speed'])) $_SESSION['speed'] = [];
 
-// array_push($_SESSION['speed'], $time_lapse);
+// $_SESSION['speed'][] = $time_lapse;
 
 // // Average load speed
 // echo 'The average load speed is: ' . (array_sum($_SESSION['speed'])/count($_SESSION['speed']));

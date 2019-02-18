@@ -17,7 +17,9 @@ class Cont_Home
 
 	{
 
-		View::page('home');
+		$data = ['page_title' => 'Starter Application'];
+
+		View::page('home', $data);
 
 	}
 

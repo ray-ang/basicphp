@@ -25,7 +25,18 @@ class Cont_Sample
 		// Set array as a variable and use to render view
 		$person = array('James'=>"23", 'Joseph'=>"23", 'Chris'=>"35");
 
-		$data = compact('param1', 'param2', 'param3', 'person');
+		$page_title = 'Sample Route Page';
+
+		$data = compact('param1', 'param2', 'param3', 'person', 'page_title');
+
+		// Display page
+		if (! isset($param3) && ! isset($param1)
+			OR (! isset($param3) && isset($param1) && is_numeric($param1) && ! isset($param2))
+			OR (! isset($param3) && isset($param1) && is_numeric($param1) && isset($param2) && is_numeric($param2))) {
+
+			View::page('sample_route', $data);
+
+		}
 
 		// Limit valid sub-url string
 		if (isset($param3)
@@ -35,18 +46,9 @@ class Cont_Sample
 			// Set $error_message for the error page
 			$error_message = 'You can only set 2 numbers as parameters.';
 
-			$data = compact('error_message');
+			$data = compact('error_message', 'page_title');
 
 			View::page('error', $data);
-
-		}
-
-		// Display page
-		if (! isset($param3) && ! isset($param1)
-			OR (! isset($param3) && isset($param1) && is_numeric($param1) && ! isset($param2))
-			OR (! isset($param3) && isset($param1) && is_numeric($param1) && isset($param2) && is_numeric($param2))) {
-
-			View::page('sample_route', $data);
 
 		}
 

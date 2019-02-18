@@ -17,7 +17,9 @@ class Cont_Error
 
 	{
 
-		View::page('error');
+		$data = ['page_title' => 'Error'];
+
+		View::page('error', $data);
 
 	}
 

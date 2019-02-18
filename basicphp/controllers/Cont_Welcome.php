@@ -20,7 +20,9 @@ class Cont_Welcome
 		// Set variable in controller
 		$param1 = url_value(1);
 
-		$data = compact('param1');
+		$page_title = 'Welcome!';
+
+		$data = compact('param1', 'page_title');
 
 		View::page('welcome', $data);
 

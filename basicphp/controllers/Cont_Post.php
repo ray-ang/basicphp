@@ -34,7 +34,9 @@ class Cont_Post
 		$stmt = $conn->prepare("SELECT post_id, post_title, post_content FROM posts ORDER BY post_id DESC");
 		$stmt->execute();
 
-		$data = compact('stmt');
+		$page_title = 'List of Posts';
+
+		$data = compact('stmt', 'page_title');
 
 		View::page('post_list', $data);
 
@@ -44,7 +46,7 @@ class Cont_Post
 
 	{
 
-		if (Condition::post_delete()) $this->delete();
+		if (Condition::ifPostDelete()) $this->delete();
 
 		if (isset($_POST['goto-edit'])) {
 
@@ -60,9 +62,23 @@ class Cont_Post
 		$stmt->bindParam(':post_id', $post_id);
 		$stmt->execute();
 
-		$data = compact('stmt');
+		$page_title = 'View Post';
 
-		View::page('post_view', $data);
+		if ( $stmt->rowCount() > 0 ) {
+
+			$data = compact('stmt', 'page_title');
+
+			View::page('post_view', $data);
+
+		} else {
+
+			$error_message = "The Post ID does not exist.";
+
+			$data = compact('error_message', 'page_title');
+
+			View::page('error', $data);
+
+		}
 
 	}
 
@@ -70,7 +86,7 @@ class Cont_Post
 
 	{
 
-		if (Condition::post_add()) {
+		if (Condition::ifPostAdd()) {
 
 			$conn = $this->conn();
 			$stmt = $conn->prepare("INSERT INTO posts (post_title, post_content)
@@ -86,7 +102,9 @@ class Cont_Post
 
 		}
 
-		View::page('post_add');
+		$data = ['page_title' => 'Add a Post'];
+
+		View::page('post_add', $data);
 
 	}
 
@@ -94,32 +112,46 @@ class Cont_Post
 
 	{
 
-	if (Condition::post_edit()) {
+		if (Condition::ifPostEdit()) {
+
+			$post_id = url_value(3);
+
+			$conn = $this->conn();
+			$stmt = $conn->prepare("UPDATE posts SET post_title = :post_title, post_content = :post_content WHERE post_id = :post_id");
+			$stmt->bindParam(':post_title', $_POST['title']);
+			$stmt->bindParam(':post_content', $_POST['content']);
+			$stmt->bindParam(':post_id', $post_id);
+			$stmt->execute();
+
+			header('Location: ' . BASE_URL . SUB_PATH . 'post/view/' . url_value(3));
+			exit();
+
+		}
 
 		$post_id = url_value(3);
 
 		$conn = $this->conn();
-		$stmt = $conn->prepare("UPDATE posts SET post_title = :post_title, post_content = :post_content WHERE post_id = :post_id");
-		$stmt->bindParam(':post_title', $_POST['title']);
-		$stmt->bindParam(':post_content', $_POST['content']);
-		$stmt->bindParam(':post_id', $post_id);
-		$stmt->execute();
+		$sql = $conn->prepare("SELECT post_title, post_content FROM posts WHERE post_id = :post_id");
+		$sql->bindParam(':post_id', $post_id);
+		$sql->execute();
 
-		header('Location: ' . BASE_URL . SUB_PATH . 'post/view/' . url_value(3));
-		exit();
+		$page_title = 'Edit Post';
 
-	}
+		if ( $sql->rowCount() > 0 ) {
 
-	$post_id = url_value(3);
+			$data = compact('sql', 'page_title');
 
-	$conn = $this->conn();
-	$sql = $conn->prepare("SELECT post_title, post_content FROM posts WHERE post_id = :post_id");
-	$sql->bindParam(':post_id', $post_id);
-	$sql->execute();
+			View::page('post_edit', $data);
 
-	$data = compact('sql');
+		} else {
 
-	View::page('post_edit', $data);
+			$error_message = "The Post ID does not exist.";
+
+			$data = compact('error_message', 'page_title');
+
+			View::page('error', $data);
+
+		}
 
 	}
 
