@@ -46,7 +46,7 @@ class PostController
 
 	{
 
-		if (Condition::ifPostDelete()) $this->delete();
+		if (Condition::isPostDelete()) $this->delete();
 
 		if (isset($_POST['goto-edit'])) {
 
@@ -86,7 +86,7 @@ class PostController
 
 	{
 
-		if (Condition::ifPostAdd()) {
+		if (Condition::isPostAdd()) {
 
 			$conn = $this->conn();
 			$stmt = $conn->prepare("INSERT INTO posts (post_title, post_content)
@@ -112,7 +112,7 @@ class PostController
 
 	{
 
-		if (Condition::ifPostEdit()) {
+		if (Condition::isPostEdit()) {
 
 			$post_id = url_value(3);
 

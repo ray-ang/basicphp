@@ -13,7 +13,7 @@ class Basic_Condition
 
 {
 
-	public static function ifPostAdd()
+	public static function isPostAdd()
 
 	{
 
@@ -21,7 +21,7 @@ class Basic_Condition
 
 	}
 
-	public static function ifPostEdit()
+	public static function isPostEdit()
 
 	{
 
@@ -29,7 +29,7 @@ class Basic_Condition
 
 	}
 
-	public static function ifPostDelete()
+	public static function isPostDelete()
 
 	{
 
