@@ -258,7 +258,7 @@ function csrf_token()
 // Render Homepage
 if ( $_SERVER['REQUEST_URI'] == '/' . SUB_PATH ) {
 
-	$class_object = new Cont_Home();
+	$class_object = new HomeController();
 	$class_object->index();
 
 }
@@ -271,9 +271,9 @@ if ( $_SERVER['REQUEST_URI'] == '/' . SUB_PATH ) {
  * Set instance method as the fourth argument.
  */
 
-route_class('home', null, 'Cont_Home', 'index');
-route_class('welcome', null, 'Cont_Welcome', 'index');
-route_class('error', null, 'Cont_Error', 'index');
+route_class('home', null, 'HomeController', 'index');
+route_class('welcome', null, 'WelcomeController', 'index');
+route_class('error', null, 'ErrorController', 'index');
 
 /**
  * Browse 'http://localhost/basicphp/public/sample/route'
@@ -281,11 +281,11 @@ route_class('error', null, 'Cont_Error', 'index');
  * Example: 'http://localhost/basicphp/public/sample/route/1/2'
  */
 
-route_class('sample', 'route', 'Cont_Sample', 'route');
-route_class('post', 'list', 'Cont_Post', 'list');
-route_class('post', 'view', 'Cont_Post', 'view');
-route_class('post', 'add', 'Cont_Post', 'add');
-route_class('post', 'edit', 'Cont_Post', 'edit');
+route_class('sample', 'route', 'SampleController', 'route');
+route_class('post', 'list', 'PostController', 'list');
+route_class('post', 'view', 'PostController', 'view');
+route_class('post', 'add', 'PostController', 'add');
+route_class('post', 'edit', 'PostController', 'edit');
 
 
 /**
