@@ -11,6 +11,9 @@
             <li class="nav-item <?php if (url_value(1) == 'welcome') echo 'active'; ?>">
               <a class="nav-link" href="<?php echo BASE_URL . SUB_PATH; ?>welcome">Welcome</a>
             </li>
+            <li class="nav-item <?php if (url_value(1) == 'request') echo 'active'; ?>">
+              <a class="nav-link" href="<?php echo BASE_URL . SUB_PATH; ?>request">Request</a>
+            </li>
             <li class="dropdown <?php if (url_value(1) == 'post') echo 'active'; ?>">
 	          <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Posts <span class="caret"></span></a>
 	          <ul class="dropdown-menu">

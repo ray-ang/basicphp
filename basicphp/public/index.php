@@ -194,23 +194,54 @@ function route_class($http_method, $sub1, $sub2, $class, $method)
  */
 
 // Route to File-based Controllers
-function route_file($sub1, $sub2, $controller)
+function route_file($http_method, $sub1, $sub2, $controller)
 
 {
 
-	$url_1 = url_value(1);
-	$url_2 = url_value(2);
-	$url_3 = url_value(3);
+	if ( $_SERVER['REQUEST_METHOD'] == $http_method ) {
 
-	if ( ! empty($url_1) && $sub1==$url_1 && ! empty($url_2) && $sub2==$url_2 )  {
+		$url_1 = url_value(1);
+		$url_2 = url_value(2);
+		$url_3 = url_value(3);
 
-		require '../controllers/files/' . $controller . '.php';
+		if ( ! empty($url_1) && $sub1==$url_1 && ! empty($url_2) && $sub2==$url_2 )  {
 
-	} elseif ( ! empty($url_1) && $sub1==$url_1 && empty($url_2) && $sub2==null && ! isset($url_3) ) {
+			require '../controllers/files/' . $controller . '.php';
 
-		require '../controllers/files/' . $controller . '.php';
+		} elseif ( ! empty($url_1) && $sub1==$url_1 && empty($url_2) && $sub2==null && ! isset($url_3) ) {
+
+			require '../controllers/files/' . $controller . '.php';
+
+		}
 
 	}
+
+}
+
+function call_api($http_method, $url, $data_input=null) {
+
+	// Initialize cURL
+	$ch = curl_init();
+
+	// Convert data to JSON string to avoid errors when using nested arrays
+	$data_json = ['json' => json_encode($data_input)];
+
+	// Set cURL options
+	curl_setopt($ch, CURLOPT_URL, $url);
+	curl_setopt($ch, CURLOPT_CUSTOMREQUEST, $http_method);
+	curl_setopt($ch, CURLOPT_POSTFIELDS, $data_json);
+	curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+
+	// Execute cURL
+	$result = curl_exec($ch);
+
+	// Close cURL connection
+	curl_close ($ch);
+
+	// Convert JSON response from external server to an array
+	$data_output = json_decode($result, true);
+
+	return $data_output;
 
 }
 
@@ -276,9 +307,12 @@ if ( $_SERVER['REQUEST_URI'] == '/' . SUB_PATH ) {
  * Set instance method as the fourth argument.
  */
 
+// Sample URL routing for pages using Class-based controllers
 route_class('GET', 'home', null, 'HomeController', 'index');
 route_class('GET', 'welcome', null, 'WelcomeController', 'index');
 route_class('GET', 'error', null, 'ErrorController', 'index');
+route_class('GET', 'request', null, 'RequestController', 'index');
+route_class('POST', 'request', null, 'RequestController', 'index');
 
 /**
  * Browse 'http://localhost/basicphp/public/sample/route'
@@ -286,6 +320,7 @@ route_class('GET', 'error', null, 'ErrorController', 'index');
  * Example: 'http://localhost/basicphp/public/sample/route/1/2'
  */
 
+// Sample URL routing for routes using Class-based controllers
 route_class('GET', 'sample', 'route', 'SampleController', 'route');
 route_class('GET', 'post', 'list', 'PostController', 'list');
 route_class('GET', 'post', 'view', 'PostController', 'view');
@@ -295,7 +330,8 @@ route_class('POST', 'post', 'add', 'PostController', 'add');
 route_class('GET', 'post', 'edit', 'PostController', 'edit');
 route_class('POST', 'post', 'edit', 'PostController', 'edit');
 
-
+// Sample URL routing for API using file-based controller
+route_file('POST', 'api', 'response', 'api-response');
 
 /**
  * Below are examples of File-based Controllers.
