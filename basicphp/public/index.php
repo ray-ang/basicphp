@@ -149,6 +149,7 @@ function url_value($position)
 
 /**
  * Load Class-based Controller if two substrings are set
+ * @param string $http_method - HTTP method (e.g. GET, POST, PUT, DELETE)
  * @param string $sub1 - First substring after /public/ path
  * @param string $sub2 - Second substring after /public/ path
  * @param string $class - Controller class name
@@ -156,25 +157,29 @@ function url_value($position)
  */
 
 // Route to Class-based Controllers
-function route_class($sub1, $sub2, $class, $method)
+function route_class($http_method, $sub1, $sub2, $class, $method)
 
 {
 
-	$url_1 = url_value(1);
-	$url_2 = url_value(2);
-	$url_3 = url_value(3);
+	if ( $_SERVER['REQUEST_METHOD'] == $http_method ) {
 
-	if ( ! empty($url_1) && $sub1==$url_1 && ! empty($url_2) && $sub2==$url_2 )  {
+		$url_1 = url_value(1);
+		$url_2 = url_value(2);
+		$url_3 = url_value(3);
 
-		$class_object = new $class();
+		if ( ! empty($url_1) && $sub1==$url_1 && ! empty($url_2) && $sub2==$url_2 )  {
 
-		$class_object->$method();
+			$class_object = new $class();
 
-	} elseif ( ! empty($url_1) && $sub1==$url_1 && empty($url_2) && $sub2==null && ! isset($url_3) ) {
+			$class_object->$method();
 
-		$class_object = new $class();
+		} elseif ( ! empty($url_1) && $sub1==$url_1 && empty($url_2) && $sub2==null && ! isset($url_3) ) {
 
-		$class_object->$method();
+			$class_object = new $class();
+
+			$class_object->$method();
+
+		}
 
 	}
 
@@ -271,9 +276,9 @@ if ( $_SERVER['REQUEST_URI'] == '/' . SUB_PATH ) {
  * Set instance method as the fourth argument.
  */
 
-route_class('home', null, 'HomeController', 'index');
-route_class('welcome', null, 'WelcomeController', 'index');
-route_class('error', null, 'ErrorController', 'index');
+route_class('GET', 'home', null, 'HomeController', 'index');
+route_class('GET', 'welcome', null, 'WelcomeController', 'index');
+route_class('GET', 'error', null, 'ErrorController', 'index');
 
 /**
  * Browse 'http://localhost/basicphp/public/sample/route'
@@ -281,11 +286,15 @@ route_class('error', null, 'ErrorController', 'index');
  * Example: 'http://localhost/basicphp/public/sample/route/1/2'
  */
 
-route_class('sample', 'route', 'SampleController', 'route');
-route_class('post', 'list', 'PostController', 'list');
-route_class('post', 'view', 'PostController', 'view');
-route_class('post', 'add', 'PostController', 'add');
-route_class('post', 'edit', 'PostController', 'edit');
+route_class('GET', 'sample', 'route', 'SampleController', 'route');
+route_class('GET', 'post', 'list', 'PostController', 'list');
+route_class('GET', 'post', 'view', 'PostController', 'view');
+route_class('POST', 'post', 'view', 'PostController', 'view');
+route_class('GET', 'post', 'add', 'PostController', 'add');
+route_class('POST', 'post', 'add', 'PostController', 'add');
+route_class('GET', 'post', 'edit', 'PostController', 'edit');
+route_class('POST', 'post', 'edit', 'PostController', 'edit');
+
 
 
 /**
