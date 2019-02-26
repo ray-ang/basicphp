@@ -416,8 +416,6 @@ route_file('POST', 'api', 'response', 'api-response');
 |
 */
 
-use Basic_View as View;
-
 if (count(get_included_files())==1) {
 
 	$error_message = '<h3 style="text-align: center;">Error 404. Page not found. This is an Invalid URL.</h3>';
@@ -426,7 +424,7 @@ if (count(get_included_files())==1) {
 
 	$data = compact('error_message', 'page_title');
 
-	View::page('error', $data);
+	view('error', $data);
 
 }
 
