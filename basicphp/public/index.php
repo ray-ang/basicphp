@@ -273,7 +273,7 @@ function response($data, $message=null) {
  *
  * @param string $http_method - HTTP request method (e.g. 'GET', 'POST')
  * @param string $url - URL of external server API
- * @param string $data_input - POST fields in array
+ * @param string $data - POST fields in array
  */
 
 function call_api($http_method, $url, $data=null) {
