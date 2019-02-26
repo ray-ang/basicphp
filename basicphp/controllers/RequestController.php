@@ -7,8 +7,6 @@
  * files. The variables can then be used in the view file.
  */
 
-use Basic_View as View;
-
 class RequestController
 
 {
@@ -39,13 +37,13 @@ class RequestController
 
 			$data = compact('data_output', 'page_title');
 
-			View::page('request', $data);
+			view('request', $data);
 
 		} else {
 
 			$data = ['page_title' => 'API Request'];
 
-			View::page('request', $data);
+			view('request', $data);
 
 		}
 

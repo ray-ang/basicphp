@@ -7,8 +7,6 @@
  * files. The variables can then be used in the view file.
  */
 
-use Basic_View as View;
-
 class SampleController
 
 {
@@ -34,7 +32,7 @@ class SampleController
 			OR (! isset($param3) && isset($param1) && is_numeric($param1) && ! isset($param2))
 			OR (! isset($param3) && isset($param1) && is_numeric($param1) && isset($param2) && is_numeric($param2))) {
 
-			View::page('sample_route', $data);
+			view('sample_route', $data);
 
 		}
 
@@ -48,7 +46,7 @@ class SampleController
 
 			$data = compact('error_message', 'page_title');
 
-			View::page('error', $data);
+			view('error', $data);
 
 		}
 

@@ -9,7 +9,6 @@
 
 use Basic_Condition as Condition;
 use Basic_Database as Database;
-use Basic_View as View;
 
 class PostController
 
@@ -38,7 +37,7 @@ class PostController
 
 		$data = compact('stmt', 'page_title');
 
-		View::page('post_list', $data);
+		view('post_list', $data);
 
 	}
 
@@ -68,7 +67,7 @@ class PostController
 
 			$data = compact('stmt', 'page_title');
 
-			View::page('post_view', $data);
+			view('post_view', $data);
 
 		} else {
 
@@ -76,7 +75,7 @@ class PostController
 
 			$data = compact('error_message', 'page_title');
 
-			View::page('error', $data);
+			view('error', $data);
 
 		}
 
@@ -104,7 +103,7 @@ class PostController
 
 		$data = ['page_title' => 'Add a Post'];
 
-		View::page('post_add', $data);
+		view('post_add', $data);
 
 	}
 
@@ -141,7 +140,7 @@ class PostController
 
 			$data = compact('sql', 'page_title');
 
-			View::page('post_edit', $data);
+			view('post_edit', $data);
 
 		} else {
 
@@ -149,7 +148,7 @@ class PostController
 
 			$data = compact('error_message', 'page_title');
 
-			View::page('error', $data);
+			view('error', $data);
 
 		}
 

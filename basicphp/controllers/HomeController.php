@@ -7,8 +7,6 @@
  * files. The variables can then be used in the view file.
  */
 
-use Basic_View as View;
-
 class HomeController
 
 {
@@ -19,7 +17,7 @@ class HomeController
 
 		$data = ['page_title' => 'Starter Application'];
 
-		View::page('home', $data);
+		view('home', $data);
 
 	}
 

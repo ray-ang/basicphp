@@ -7,32 +7,6 @@
  * @license MIT License
  */
 
-// // Disable error reporting in production
-// error_reporting(0);
-
-/**
- * Handles the HTTP REST API Response
- *
- * @param array $data - Array to be encoded to JSON
- * @param string $message - Message to send with response
- */
-
-function response($data, $message=null) {
-
-	// Define content type as JSON data through the header
-	header("Content-Type: application/json; charset=utf-8");
-
-	// Data as an array to send with response
-	$response['data'] = $data;
-
-	// Message to send with response
-	$response['message'] = $message;
-
-	// Encode $response array to JSON
-	echo json_encode($response);
-
-}
-
 // $license_key as an array of valid license keys
 $license_key = [];
 $license_key[] = ['user' => 'John', 'key' => 12345];

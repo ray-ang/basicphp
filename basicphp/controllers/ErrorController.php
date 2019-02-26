@@ -7,8 +7,6 @@
  * files. The variables can then be used in the view file.
  */
 
-use Basic_View as View;
-
 class ErrorController
 
 {
@@ -19,7 +17,7 @@ class ErrorController
 
 		$data = ['page_title' => 'Error'];
 
-		View::page('error', $data);
+		view('error', $data);
 
 	}
 

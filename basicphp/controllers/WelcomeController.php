@@ -7,8 +7,6 @@
  * files. The variables can then be used in the view file.
  */
 
-use Basic_View as View;
-
 class WelcomeController
 
 {
@@ -24,7 +22,7 @@ class WelcomeController
 
 		$data = compact('param1', 'page_title');
 
-		View::page('welcome', $data);
+		view('welcome', $data);
 
 	}
 

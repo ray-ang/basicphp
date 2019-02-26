@@ -111,16 +111,19 @@ define('SUB_ORDER', substr_count(SUB_PATH, '/'));
 
 /*
 |--------------------------------------------------------------------------
-| BasicPHP Helper Functions
+| BasicPHP Core Functions
 |--------------------------------------------------------------------------
 | 
-| These are functions necessary to run the micro-framework:
+| These are core functions necessary to run the micro-framework:
 |
-| 1. url_value() - retrieve the URL substring
-| 2. route_class() - route to Class-based Controllers
-| 3. route_file() - route to File-based Controllers
-| 4. esc() - uses htmlspecialchars() to prevent XSS
-| 5. csrf_token() - uses sessions to create per request CSRF token
+| 1. url_value() - retrieves the URL substring separated by '/'
+| 2. route_class() - routes URL request to Class-based Controllers
+| 3. route_file() - routes URL request to File-based Controllers
+| 4. view() - passes data and renders the View
+| 5. response() - handles API response
+| 6. call_api() - handles API call
+| 7. esc() - uses htmlspecialchars() to prevent XSS
+| 8. csrf_token() - uses sessions to create per request CSRF token
 |
 */
 
@@ -130,6 +133,7 @@ define('SUB_ORDER', substr_count(SUB_PATH, '/'));
  * SUB_ORDER should be set to 2 if 'public/' folder is two folders below
  * the server DocumentRoot folder - such as when accessing the application at
  * 'http://localhost/basicphp/public/'.
+ *
  * @param integer $position - Substring position from /public/ path
  */
 
@@ -148,7 +152,8 @@ function url_value($position)
 }
 
 /**
- * Load Class-based Controller if two substrings are set
+ * Load Class-based Controller based on substrings
+ *
  * @param string $http_method - HTTP method (e.g. GET, POST, PUT, DELETE)
  * @param string $sub1 - First substring after /public/ path
  * @param string $sub2 - Second substring after /public/ path
@@ -156,7 +161,6 @@ function url_value($position)
  * @param string $method - Controller instance method
  */
 
-// Route to Class-based Controllers
 function route_class($http_method, $sub1, $sub2, $class, $method)
 
 {
@@ -186,14 +190,14 @@ function route_class($http_method, $sub1, $sub2, $class, $method)
 }
 
 /**
- * Load File-based Controller if two substrings are set
+ * Load File-based Controller based on substrings
+ *
  * @param string $sub1 - First substring after /public/ path
  * @param string $sub2 - Second substring after /public/ path
  * @param string $controller - Controller file
  * Exlude .php extension from $controller argument.
  */
 
-// Route to File-based Controllers
 function route_file($http_method, $sub1, $sub2, $controller)
 
 {
@@ -218,13 +222,67 @@ function route_file($http_method, $sub1, $sub2, $controller)
 
 }
 
-function call_api($http_method, $url, $data_input=null) {
+/**
+ * Passes data and renders the View
+ *
+ * @param string $view - View file, excluding .php extension
+ * @param array $data - Data as an array to pass to the View
+ */
+
+function view($view, $data=null)
+
+{
+
+	// Show Header and Menu
+	require '../views/template/header.php';
+	require '../views/template/menu.php';
+
+	// Render Page View
+	require '../views/' . $view . '.php';
+
+	// Show Footer
+	require '../views/template/footer.php';
+
+}
+
+/**
+ * Handles the HTTP REST API Response
+ *
+ * @param array $data - Array to be encoded to JSON
+ * @param string $message - Message to send with response
+ */
+
+function response($data, $message=null) {
+
+	// Define content type as JSON data through the header
+	header("Content-Type: application/json; charset=utf-8");
+
+	// Data as an array to send with response
+	$response['data'] = $data;
+
+	// Message to send with response
+	$response['message'] = $message;
+
+	// Encode $response array to JSON
+	echo json_encode($response);
+
+}
+
+/**
+ * Handles the HTTP REST API Calls
+ *
+ * @param string $http_method - HTTP request method (e.g. 'GET', 'POST')
+ * @param string $url - URL of external server API
+ * @param string $data_input - POST fields in array
+ */
+
+function call_api($http_method, $url, $data=null) {
 
 	// Initialize cURL
 	$ch = curl_init();
 
 	// Convert data to JSON string to avoid errors when using nested arrays
-	$data_json = ['json' => json_encode($data_input)];
+	$data_json = ['json' => json_encode($data)];
 
 	// Set cURL options
 	curl_setopt($ch, CURLOPT_URL, $url);
@@ -248,6 +306,7 @@ function call_api($http_method, $url, $data_input=null) {
 /**
  * Helper function to prevent Cross-Site Scripting (XSS)
  * Uses htmlspecialchars() to prevent XSS
+ *
  * @param string $string - String to escape
  */
 
@@ -307,7 +366,7 @@ if ( $_SERVER['REQUEST_URI'] == '/' . SUB_PATH ) {
  * Set instance method as the fourth argument.
  */
 
-// Sample URL routing for pages using Class-based controllers
+// URL routing for pages using Class-based controllers
 route_class('GET', 'home', null, 'HomeController', 'index');
 route_class('GET', 'welcome', null, 'WelcomeController', 'index');
 route_class('GET', 'error', null, 'ErrorController', 'index');
@@ -320,7 +379,7 @@ route_class('POST', 'request', null, 'RequestController', 'index');
  * Example: 'http://localhost/basicphp/public/sample/route/1/2'
  */
 
-// Sample URL routing for routes using Class-based controllers
+// URL routing for routes using Class-based controllers
 route_class('GET', 'sample', 'route', 'SampleController', 'route');
 route_class('GET', 'post', 'list', 'PostController', 'list');
 route_class('GET', 'post', 'view', 'PostController', 'view');
@@ -330,7 +389,7 @@ route_class('POST', 'post', 'add', 'PostController', 'add');
 route_class('GET', 'post', 'edit', 'PostController', 'edit');
 route_class('POST', 'post', 'edit', 'PostController', 'edit');
 
-// Sample URL routing for API using file-based controller
+// URL routing for API using File-based controller
 route_file('POST', 'api', 'response', 'api-response');
 
 /**
