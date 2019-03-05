@@ -120,10 +120,11 @@ define('SUB_ORDER', substr_count(SUB_PATH, '/'));
 | 2. route_class() - routes URL request to Class-based Controllers
 | 3. route_file() - routes URL request to File-based Controllers
 | 4. view() - passes data and renders the View
-| 5. response() - handles API response
-| 6. call_api() - handles API call
-| 7. esc() - uses htmlspecialchars() to prevent XSS
-| 8. csrf_token() - uses sessions to create per request CSRF token
+| 5. pdo_conn() - PHP Data Objects (PDO) database connection
+| 6. response() - handles API response
+| 7. call_api() - handles API call
+| 8. esc() - uses htmlspecialchars() to prevent XSS
+| 9. csrf_token() - uses sessions to create per request CSRF token
 |
 */
 
@@ -242,6 +243,29 @@ function view($view, $data=null)
 
 	// Show Footer
 	require '../views/template/footer.php';
+
+}
+
+/**
+ * PHP Data Objects (PDO) database connection
+ *
+ * @param string $database - Database (e.g. mysql)
+ * @param string $servername - Server Name (e.g localhost)
+ * @param string $dbname - Database Name
+ * @param string $username - Username
+ * @param string $password - Password
+ */
+
+function pdo_conn($database, $servername, $dbname, $username, $password)
+
+{
+
+	$conn = new PDO("$database:host=$servername;dbname=$dbname", $username, $password, array(
+		PDO::ATTR_PERSISTENT => true
+	));
+	$conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+	return $conn;
 
 }
 

@@ -8,28 +8,16 @@
  */
 
 use Basic_Condition as Condition;
-use Basic_Database as Database;
 
 class PostController
 
 {
 
-	public function conn()
-
-	{
-
-		$database = new Database;
-		$conn = $database->conn();
-
-		return $conn;
-
-	}
-
 	public function list()
 
 	{
 
-		$conn = $this->conn();
+		$conn = pdo_conn('mysql', 'localhost', 'basicphp', 'root', '');
 		$stmt = $conn->prepare("SELECT post_id, post_title, post_content FROM posts ORDER BY post_id DESC");
 		$stmt->execute();
 
@@ -56,7 +44,7 @@ class PostController
 
 		$post_id = url_value(3);
 
-		$conn = $this->conn();
+		$conn = pdo_conn('mysql', 'localhost', 'basicphp', 'root', '');
 		$stmt = $conn->prepare("SELECT post_id, post_title, post_content FROM posts WHERE post_id = :post_id");
 		$stmt->bindParam(':post_id', $post_id);
 		$stmt->execute();
@@ -87,7 +75,7 @@ class PostController
 
 		if (Condition::isPostAdd()) {
 
-			$conn = $this->conn();
+			$conn = pdo_conn('mysql', 'localhost', 'basicphp', 'root', '');
 			$stmt = $conn->prepare("INSERT INTO posts (post_title, post_content)
 			VALUES (:post_title, :post_content)");
 			$stmt->bindParam(':post_title', $_POST['title']);
@@ -115,7 +103,7 @@ class PostController
 
 			$post_id = url_value(3);
 
-			$conn = $this->conn();
+			$conn = pdo_conn('mysql', 'localhost', 'basicphp', 'root', '');
 			$stmt = $conn->prepare("UPDATE posts SET post_title = :post_title, post_content = :post_content WHERE post_id = :post_id");
 			$stmt->bindParam(':post_title', $_POST['title']);
 			$stmt->bindParam(':post_content', $_POST['content']);
@@ -129,7 +117,7 @@ class PostController
 
 		$post_id = url_value(3);
 
-		$conn = $this->conn();
+		$conn = pdo_conn('mysql', 'localhost', 'basicphp', 'root', '');
 		$sql = $conn->prepare("SELECT post_title, post_content FROM posts WHERE post_id = :post_id");
 		$sql->bindParam(':post_id', $post_id);
 		$sql->execute();
@@ -160,7 +148,7 @@ class PostController
 
 		$post_id = url_value(3);
 
-		$conn = $this->conn();
+		$conn = pdo_conn('mysql', 'localhost', 'basicphp', 'root', '');
 		$stmt = $conn->prepare("DELETE FROM posts WHERE post_id = :post_id");
 		$stmt->bindParam(':post_id', $post_id);
 		$stmt->execute();
