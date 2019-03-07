@@ -109,9 +109,9 @@ class PostController
 
 	{
 
-		if (Condition::isPostEdit()) {
+		$post_id = url_value(3);
 
-			$post_id = url_value(3);
+		if (Condition::isPostEdit()) {
 
 			$conn = $this->conn();
 			$stmt = $conn->prepare("UPDATE posts SET post_title = :post_title, post_content = :post_content WHERE post_id = :post_id");
@@ -124,8 +124,6 @@ class PostController
 			exit();
 
 		}
-
-		$post_id = url_value(3);
 
 		$conn = $this->conn();
 		$sql = $conn->prepare("SELECT post_title, post_content FROM posts WHERE post_id = :post_id");
