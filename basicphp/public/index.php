@@ -159,12 +159,20 @@ function url_value($position)
  * @param string $sub1 - First substring after /public/ path
  * @param string $sub2 - Second substring after /public/ path
  * @param string $class - Controller class name
- * @param string $method - Controller instance method
  */
 
-function route_class($http_method, $sub1, $sub2, $class, $method)
+function route_class($http_method, $sub1, $sub2, $class)
 
 {
+
+	switch ($sub2) {
+	    case null:
+	        $method = 'index';
+	        break;
+	    case ! null:
+	        $method = $sub2;
+	        break;
+	}
 
 	if ( $_SERVER['REQUEST_METHOD'] == $http_method ) {
 
@@ -391,11 +399,11 @@ if ( $_SERVER['REQUEST_URI'] == '/' . SUB_PATH ) {
  */
 
 // URL routing for pages using Class-based controllers
-route_class('GET', 'home', null, 'HomeController', 'index');
-route_class('GET', 'welcome', null, 'WelcomeController', 'index');
-route_class('GET', 'error', null, 'ErrorController', 'index');
-route_class('GET', 'request', null, 'RequestController', 'index');
-route_class('POST', 'request', null, 'RequestController', 'index');
+route_class('GET', 'home', null, 'HomeController');
+route_class('GET', 'welcome', null, 'WelcomeController');
+route_class('GET', 'error', null, 'ErrorController');
+route_class('GET', 'request', null, 'RequestController');
+route_class('POST', 'request', null, 'RequestController');
 
 /**
  * Browse 'http://localhost/basicphp/public/sample/route'
@@ -404,14 +412,14 @@ route_class('POST', 'request', null, 'RequestController', 'index');
  */
 
 // URL routing for routes using Class-based controllers
-route_class('GET', 'sample', 'route', 'SampleController', 'route');
-route_class('GET', 'post', 'list', 'PostController', 'list');
-route_class('GET', 'post', 'view', 'PostController', 'view');
-route_class('POST', 'post', 'view', 'PostController', 'view');
-route_class('GET', 'post', 'add', 'PostController', 'add');
-route_class('POST', 'post', 'add', 'PostController', 'add');
-route_class('GET', 'post', 'edit', 'PostController', 'edit');
-route_class('POST', 'post', 'edit', 'PostController', 'edit');
+route_class('GET', 'sample', 'route', 'SampleController');
+route_class('GET', 'post', 'list', 'PostController');
+route_class('GET', 'post', 'view', 'PostController');
+route_class('POST', 'post', 'view', 'PostController');
+route_class('GET', 'post', 'add', 'PostController');
+route_class('POST', 'post', 'add', 'PostController');
+route_class('GET', 'post', 'edit', 'PostController');
+route_class('POST', 'post', 'edit', 'PostController');
 
 // URL routing for API using File-based controller
 route_file('POST', 'api', 'response', 'api-response');
