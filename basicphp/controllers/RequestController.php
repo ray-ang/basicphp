@@ -31,7 +31,7 @@ class RequestController
 			// $data_input as an array containing $_POST keys and values
 			$data_input = ['user' => 'Peter', 'age' => 23, 'state' => ['New York', 'New Jersey'], 'key' => 12345, 'search' =>$_POST['patient']];
 
-			$data_output = call_api('POST', 'http://localhost/basicphp/public/api/response', $data_input);
+			$data_output = api_call('POST', 'http://localhost/basicphp/public/api/response', $data_input);
 
 			$page_title = 'API Response';
 

@@ -43,11 +43,11 @@ if ( $_SERVER['REQUEST_METHOD'] == 'POST' && in_array(['user' => $_POST['user'],
 
 	if (! empty($data_output)) {
 
-		response($data_output, 'Your search has some results.');
+		api_response($data_output, 'Your search has some results.');
 
 	} else {
 
-		response($data=null, 'No Patient name found on search.');
+		api_response($data=null, 'No Patient name found on search.');
 
 	}
 
@@ -55,6 +55,6 @@ if ( $_SERVER['REQUEST_METHOD'] == 'POST' && in_array(['user' => $_POST['user'],
 
 	$message = 'You do not have the right credentials.';
 
-	response($data=null, $message);
+	api_response($data=null, $message);
 
 }

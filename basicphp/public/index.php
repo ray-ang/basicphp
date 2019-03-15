@@ -121,8 +121,8 @@ define('SUB_ORDER', substr_count(SUB_PATH, '/'));
 | 3. route_file() - routes URL request to File-based Controllers
 | 4. view() - passes data and renders the View
 | 5. pdo_conn() - PHP Data Objects (PDO) database connection
-| 6. response() - handles API response
-| 7. call_api() - handles API call
+| 6. api_response() - handles API response
+| 7. api_call() - handles API call
 | 8. esc() - uses htmlspecialchars() to prevent XSS
 | 9. csrf_token() - uses sessions to create per request CSRF token
 |
@@ -280,7 +280,7 @@ function pdo_conn($database, $servername, $dbname, $username, $password)
  * @param string $message - Message to send with response
  */
 
-function response($data, $message=null) {
+function api_response($data, $message=null) {
 
 	// Define content type as JSON data through the header
 	header("Content-Type: application/json; charset=utf-8");
@@ -304,7 +304,7 @@ function response($data, $message=null) {
  * @param string $data - POST fields in array
  */
 
-function call_api($http_method, $url, $data=null) {
+function api_call($http_method, $url, $data=null) {
 
 	// Initialize cURL
 	$ch = curl_init();
@@ -427,10 +427,10 @@ route_file('POST', 'api', 'response', 'api-response');
  * class-based Controllers instead.
  */
 
-// route_file('home', null, 'home');
-// route_file('welcome', null, 'welcome');
-// route_file('error', null, 'error');
-// route_file('sample', 'route', 'sample-route');
+// route_file('GET', 'home', null, 'home');
+// route_file('GET', 'welcome', null, 'welcome');
+// route_file('GET', 'error', null, 'error');
+// route_file('GET', 'sample', 'route', 'sample-route');
 
 /*
 |--------------------------------------------------------------------------
