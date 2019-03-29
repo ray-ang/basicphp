@@ -53,11 +53,8 @@ OR
 
 ```
 $data = ['variable1' => $variable1, 'variable2' => $variable2, 'variable3' => $variable3];
-```
 
 // Render the View using view() core function, and pass the $data variable array
-
-```
 view('page_view', $data);
 ```
 
