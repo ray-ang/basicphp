@@ -24,7 +24,10 @@ $data[] = ['patient' => 'Samuel', 'age' => 28];
 $data[] = ['patient' => 'Joseph', 'age' => 65];
 
 // Convert JSON to an array and set as $_POST
-$_POST = json_decode($_POST['json'], true);
+// $_POST = json_decode($_POST['json'], true);
+
+// Convert POSTed JSON to an array and set as $_POST
+$_POST = json_decode(file_get_contents("php://input"), true);
 
 // Authentication: Check if with valid user and license key.
 if ( $_SERVER['REQUEST_METHOD'] == 'POST' && in_array(['user' => $_POST['user'], 'key' => $_POST['key']], $license_key) ) {

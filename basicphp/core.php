@@ -309,14 +309,19 @@ function api_call($http_method, $url, $data=null) {
 	// Initialize cURL
 	$ch = curl_init();
 
-	// Convert data to JSON string to avoid errors when using nested arrays
-	$data_json = ['json' => json_encode($data)];
+	// Convert $data array parameter to JSON
+	$data_json = json_encode($data);
 
 	// Set cURL options
 	curl_setopt($ch, CURLOPT_URL, $url);
 	curl_setopt($ch, CURLOPT_CUSTOMREQUEST, $http_method);
+	curl_setopt($ch, CURLOPT_POST, 1);
 	curl_setopt($ch, CURLOPT_POSTFIELDS, $data_json);
 	curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+	curl_setopt($ch, CURLOPT_HTTPHEADER, array(                                                                          
+	    'Content-Type: application/json',                                                                                
+	    'Content-Length: ' . strlen($data_json))                                                                       
+	);
 
 	// Execute cURL
 	$result = curl_exec($ch);

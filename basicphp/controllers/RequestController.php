@@ -29,7 +29,7 @@ class RequestController
 		if ( isset($_POST['search-patient']) ) {
 
 			// $data_input as an array containing $_POST keys and values
-			$data_input = ['user' => 'Peter', 'age' => 23, 'state' => ['New York', 'New Jersey'], 'key' => 12345, 'search' =>$_POST['patient']];
+			$data_input = ['user' => 'Peter', 'age' => 23, 'state' => ['New York', 'New Jersey'], 'key' => 12345, 'search' =>$_POST['patient-name']];
 
 			$data_output = api_call('POST', 'http://localhost/basicphp/public/api/response', $data_input);
 

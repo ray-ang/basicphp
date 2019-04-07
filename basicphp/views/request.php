@@ -47,7 +47,7 @@ $message = $data_output['message'];
         ?>
         <div class="col-lg-12 text-center">
         <form method="post">
-        	<p><input type="text" name="patient" placeholder="Patient Name" value=""/></p>
+        	<p><input type="text" name="patient-name" placeholder="Patient Name" value=""/></p>
         	<p><button type="submit" name="search-patient">Search</button></p>
         </form>
         </div>
