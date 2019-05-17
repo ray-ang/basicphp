@@ -362,7 +362,7 @@ require_once 'routes.php';
 |
 */
 
-if (count(get_included_files())==2) {
+if (count(get_included_files())==3) {
 
 	$error_message = '<h3 style="text-align: center;">Error 404. Page not found. This is an Invalid URL.</h3>';
 	$page_title = 'Error 404';
