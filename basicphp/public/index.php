@@ -1,4 +1,4 @@
 <?php
 
 // Require BasicPHP core file
-require '../core.php';
+require_once '../core.php';
