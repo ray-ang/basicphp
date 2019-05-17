@@ -66,19 +66,12 @@ spl_autoload_register(function ($class_name) {
 define('ENV', 'development');
 
 switch (ENV) {
-
     case 'development':
-
         error_reporting(E_ALL);
-
         break;
-
     case 'production':
-
         error_reporting(0);
-
         break;
-
 }
 
 /*
@@ -104,9 +97,7 @@ switch (ENV) {
 */
 
 define('BASE_URL', 'http://localhost/');
-
 define('SUB_PATH', 'basicphp/public/');
-
 define('SUB_ORDER', substr_count(SUB_PATH, '/'));
 
 /*
@@ -139,15 +130,12 @@ define('SUB_ORDER', substr_count(SUB_PATH, '/'));
  */
 
 function url_value($position)
-
 {
 
     $url = explode('/', $_SERVER['REQUEST_URI']);
-
     $order = $position + SUB_ORDER;
 
     if (isset($url[$order])) $string = $url[$order];
-
     if (isset($string)) return $string;
 
 }
@@ -162,7 +150,6 @@ function url_value($position)
  */
 
 function route_class($http_method, $sub1, $sub2, $class_method)
-
 {
 
 	$class_method = explode('@', $class_method);
@@ -179,13 +166,11 @@ function route_class($http_method, $sub1, $sub2, $class_method)
 		if ( ! empty($url_1) && $sub1==$url_1 && ! empty($url_2) && $sub2==$url_2 )  {
 
 			$class_object = new $class();
-
 			$class_object->$method();
 
 		} elseif ( ! empty($url_1) && $sub1==$url_1 && empty($url_2) && $sub2==null && ! isset($url_3) ) {
 
 			$class_object = new $class();
-
 			$class_object->$method();
 
 		}
@@ -204,7 +189,6 @@ function route_class($http_method, $sub1, $sub2, $class_method)
  */
 
 function route_file($http_method, $sub1, $sub2, $controller)
-
 {
 
 	if ( $_SERVER['REQUEST_METHOD'] == $http_method ) {
@@ -235,7 +219,6 @@ function route_file($http_method, $sub1, $sub2, $controller)
  */
 
 function view($view, $data=null)
-
 {
 
 	// Show Header and Menu
@@ -261,7 +244,6 @@ function view($view, $data=null)
  */
 
 function pdo_conn($database, $servername, $dbname, $username, $password)
-
 {
 
 	$conn = new PDO("$database:host=$servername;dbname=$dbname", $username, $password, array(
@@ -280,15 +262,14 @@ function pdo_conn($database, $servername, $dbname, $username, $password)
  * @param string $message - Message to send with response
  */
 
-function api_response($data, $message=null) {
+function api_response($data, $message=null)
+{
 
 	// Define content type as JSON data through the header
 	header("Content-Type: application/json; charset=utf-8");
 
-	// Data as an array to send with response
+	// Data and message as arrays to send with response
 	$response['data'] = $data;
-
-	// Message to send with response
 	$response['message'] = $message;
 
 	// Encode $response array to JSON
@@ -304,7 +285,8 @@ function api_response($data, $message=null) {
  * @param string $data - POST fields in array
  */
 
-function api_call($http_method, $url, $data=null, $username=null, $password=null) {
+function api_call($http_method, $url, $data=null, $username=null, $password=null)
+{
 
 	// Initialize cURL
 	$ch = curl_init();
@@ -345,7 +327,6 @@ function api_call($http_method, $url, $data=null, $username=null, $password=null
  */
 
 function esc($string)
-
 {
 
 	return htmlspecialchars($string, ENT_QUOTES, 'UTF-8');
@@ -358,11 +339,9 @@ function esc($string)
  */
 
 function csrf_token()
-
 {
 
 	$_SESSION['csrf-token'] = base64_encode(openssl_random_pseudo_bytes(32));
-
 	return $_SESSION['csrf-token'];
 
 }
@@ -454,7 +433,6 @@ route_file('POST', 'api', 'response', 'api-response');
 if (count(get_included_files())==2) {
 
 	$error_message = '<h3 style="text-align: center;">Error 404. Page not found. This is an Invalid URL.</h3>';
-
 	$page_title = 'Error 404';
 
 	$data = compact('error_message', 'page_title');
@@ -470,14 +448,11 @@ if (count(get_included_files())==2) {
 // $time_lapse = $time_end - $time_start;
 
 // echo 'Start: ' . $time_start . '<br/>';
-
 // echo 'End: ' . $time_end . '<br/>';
-
 // echo 'Lapse Time: ' . $time_lapse . '<br/>';
 
 // // Compute average load speed. Set $_SESSION['speed'] as an array.
 // if (! isset($_SESSION['speed'])) $_SESSION['speed'] = [];
-
 // $_SESSION['speed'][] = $time_lapse;
 
 // // Average load speed

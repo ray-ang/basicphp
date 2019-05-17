@@ -10,21 +10,17 @@
 use Basic_Condition as Condition;
 
 class PostController
-
 {
 
 	private function conn()
-
 	{
 
 		$conn = pdo_conn('mysql', 'localhost', 'basicphp', 'root', '');
-
 		return $conn;
 
 	}
 
 	public function list()
-
 	{
 
 		$conn = $this->conn();
@@ -40,7 +36,6 @@ class PostController
 	}
 
 	public function view()
-
 	{
 
 		if (Condition::isPostDelete()) $this->delete();
@@ -80,14 +75,12 @@ class PostController
 	}
 
 	public function add()
-
 	{
 
 		if (Condition::isPostAdd()) {
 
 			$conn = $this->conn();
-			$stmt = $conn->prepare("INSERT INTO posts (post_title, post_content)
-			VALUES (:post_title, :post_content)");
+			$stmt = $conn->prepare("INSERT INTO posts (post_title, post_content) VALUES (:post_title, :post_content)");
 			$stmt->bindParam(':post_title', $_POST['title']);
 			$stmt->bindParam(':post_content', $_POST['content']);
 			$stmt->execute();
@@ -106,7 +99,6 @@ class PostController
 	}
 
 	public function edit()
-
 	{
 
 		$post_id = url_value(3);
@@ -151,7 +143,6 @@ class PostController
 	}
 
 	public function delete()
-
 	{
 
 		$post_id = url_value(3);

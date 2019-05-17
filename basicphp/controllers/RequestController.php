@@ -8,11 +8,9 @@
  */
 
 class RequestController
-
 {
 
 	public function index()
-
 	{
 
 		/**
@@ -22,9 +20,6 @@ class RequestController
 		 * @license MIT License
 		 */
 
-		// // Disable error reporting in production
-		// error_reporting(0);
-
 		// Execute if "Search" button is clicked
 		if ( isset($_POST['search-patient']) ) {
 
@@ -32,7 +27,6 @@ class RequestController
 			$data_input = ['search' => $_POST['patient-name']];
 
 			$data_output = api_call('POST', 'http://localhost/basicphp/public/api/response', $data_input, 'Peter', 12345);
-
 			$page_title = 'API Response';
 
 			$data = compact('data_output', 'page_title');

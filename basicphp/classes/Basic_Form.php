@@ -9,11 +9,9 @@
  */
 
 class Basic_Form
-
 {
 
 	public function open( $class, $method='post' )
-
 	{
 
 		?><form class="<?= $class ?>" action="" method="<?= $method ?>"><?php
@@ -21,7 +19,6 @@ class Basic_Form
 	}
 
 	public function text( $name, $label, $value = null )
-
 	{
 
 		?><div class="form-group">
@@ -35,7 +32,6 @@ class Basic_Form
 
 
 	public function textArea( $name, $label, $value = null )
-
 	{
 
 		?><div class="form-group">
@@ -48,7 +44,6 @@ class Basic_Form
 	}
 
 	public function button( $name, $label, $class )
-
 	{
 
 		?><div class="form-group">
@@ -60,7 +55,6 @@ class Basic_Form
 	}
 
 	public function csrfToken()
-
 	{
 
 		?><input type="hidden" name="csrf-token" value="<?= csrf_token() ?>"><?php
@@ -68,7 +62,6 @@ class Basic_Form
 	}
 
 	public function close()
-
 	{
 
 		?></form><?php

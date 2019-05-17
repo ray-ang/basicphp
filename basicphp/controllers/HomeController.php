@@ -8,11 +8,9 @@
  */
 
 class HomeController
-
 {
 
 	public function index()
-
 	{
 
 		$data = ['page_title' => 'Starter Application'];

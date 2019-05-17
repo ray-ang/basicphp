@@ -8,11 +8,9 @@
  */
 
 class ErrorController
-
 {
 
 	public function index()
-
 	{
 
 		$data = ['page_title' => 'Error'];

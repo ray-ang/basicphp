@@ -10,11 +10,9 @@
  */
 
 class Basic_Condition
-
 {
 
 	public static function isPostAdd()
-
 	{
 
 		if ( isset($_POST['submit-post']) && $_POST['csrf-token'] == $_SESSION['csrf-token'] ) return true;
@@ -22,7 +20,6 @@ class Basic_Condition
 	}
 
 	public static function isPostEdit()
-
 	{
 
 		if ( isset($_POST['edit-post']) && $_POST['csrf-token'] == $_SESSION['csrf-token'] ) return true;
@@ -30,7 +27,6 @@ class Basic_Condition
 	}
 
 	public static function isPostDelete()
-
 	{
 
 		if ( isset($_POST['delete-post']) && $_POST['csrf-token'] == $_SESSION['csrf-token'] ) return true;

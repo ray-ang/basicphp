@@ -8,16 +8,13 @@
  */
 
 class WelcomeController
-
 {
 
 	public function index()
-
 	{
 
-		// Set variable in controller
+		// Set data to pass as variables
 		$param1 = url_value(1);
-
 		$page_title = 'Welcome!';
 
 		$data = compact('param1', 'page_title');
