@@ -224,12 +224,11 @@ function view($view, $data=null)
 	// Show Header and Menu
 	require '../views/template/header.php';
 	require '../views/template/menu.php';
-
 	// Render Page View
 	require '../views/' . $view . '.php';
-
 	// Show Footer
 	require '../views/template/footer.php';
+	exit();
 
 }
 

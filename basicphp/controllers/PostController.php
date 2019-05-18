@@ -23,13 +23,31 @@ class PostController
 	public function list()
 	{
 
+		if (! isset($_GET['order'])) $_GET['order'] = 0;
+		if (! is_numeric($_GET['order'])) {
+			$error_message = 'Post order value should be numeric.';
+			$page_title = 'Error in order parameter';
+
+			$data = compact('error_message', 'page_title');
+			view('error', $data);
+		}
+		if (isset($_GET['order']) && $_GET['order'] < 0) $_GET['order'] = 0;
+
+		$per_page = 3;
+
 		$conn = $this->conn();
-		$stmt = $conn->prepare("SELECT post_id, post_title, post_content FROM posts ORDER BY post_id DESC");
+		$stmt = $conn->prepare("SELECT post_id, post_title, post_content FROM posts ORDER BY post_id DESC LIMIT $per_page OFFSET " . $_GET['order']);
 		$stmt->execute();
+
+		$conn = $this->conn();
+		$total = $conn->prepare("SELECT post_id, post_title, post_content FROM posts ORDER BY post_id DESC");
+		$total->execute();
+
+		if (isset($_GET['order']) && $_GET['order'] > $total->rowCount()) $_GET['order'] = $total->rowCount();
 
 		$page_title = 'List of Posts';
 
-		$data = compact('stmt', 'page_title');
+		$data = compact('stmt', 'total', 'per_page', 'page_title');
 
 		view('post_list', $data);
 
