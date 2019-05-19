@@ -1,5 +1,7 @@
 # BasicPHP
 
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=BasicPHP&metric=alert_status)](https://sonarcloud.io/dashboard?id=BasicPHP)
+
 A PHP Nano-Framework for Decoupled Application Logic and Presentation. The aim of the project is for developers to build applications that are framework-independent by decoupling the Controller and View from any framework, making the application portable and compatible with the developer's framework of choice or vanilla PHP.
 
 BasicPHP's core file (core.php), particularly the Core Functions, can be embedded in the chosen framework's front controller, and the (1) classes, (2) controllers and (3) views folders copied one folder above the front controller of the chosen framework.
