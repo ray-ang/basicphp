@@ -1,6 +1,6 @@
 # BasicPHP
 
-[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=BasicPHP&metric=alert_status)](https://sonarcloud.io/dashboard?id=BasicPHP)
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=basicphp&metric=alert_status)](https://sonarcloud.io/dashboard?id=basicphp)
 
 A PHP Nano-Framework for Decoupled Application Logic and Presentation. The aim of the project is for developers to build applications that are framework-independent by decoupling the Controller and View from any framework, making the application portable and compatible with the developer's framework of choice or vanilla PHP.
 
