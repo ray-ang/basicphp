@@ -30,13 +30,11 @@ class RequestController
 			$page_title = 'API Response';
 
 			$data = compact('data_output', 'page_title');
-
 			view('request', $data);
 
 		} else {
 
 			$data = ['page_title' => 'API Request'];
-
 			view('request', $data);
 
 		}

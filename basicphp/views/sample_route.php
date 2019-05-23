@@ -8,7 +8,7 @@
 			<p>Templating is done using vanilla or native PHP templating.</p>
 			<h4>Passing Data from Controller</h4>
 			<?php foreach($data['person'] as $name => $age): ?>
-			The name is <?= $name ?> and the age is <?= $age ?>.
+			The name is <?= esc($name) ?> and the age is <?= esc($age) ?>.
 			<br>
 			<?php endforeach ?>
 			<h4>Using URL substring as parameter</h4>

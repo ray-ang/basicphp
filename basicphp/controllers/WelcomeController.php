@@ -18,7 +18,6 @@ class WelcomeController
 		$page_title = 'Welcome!';
 
 		$data = compact('param1', 'page_title');
-
 		view('welcome', $data);
 
 	}

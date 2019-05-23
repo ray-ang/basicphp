@@ -5,7 +5,7 @@
 			<h1 class="mt-5 text-center">Welcome Page</h1>
 			<p>This is the Welcome Page!</p>
 			<p>Sample use case for function url_value().</p>
-			<p>The substring after /publc/ path is "<?= $data['param1'] ?>".</p>
+			<p>The substring after /publc/ path is "<?= esc($data['param1']) ?>".</p>
         </div>
       </div>
     </div>

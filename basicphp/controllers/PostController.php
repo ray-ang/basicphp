@@ -12,14 +12,6 @@ use Basic_Condition as Condition;
 class PostController
 {
 
-	private function conn()
-	{
-
-		$conn = pdo_conn('mysql', 'localhost', 'basicphp', 'root', '');
-		return $conn;
-
-	}
-
 	public function list()
 	{
 
@@ -35,20 +27,15 @@ class PostController
 
 		$per_page = 3;
 
-		$conn = $this->conn();
-		$stmt = $conn->prepare("SELECT post_id, post_title, post_content FROM posts ORDER BY post_id DESC LIMIT $per_page OFFSET " . $_GET['order']);
-		$stmt->execute();
-
-		$conn = $this->conn();
-		$total = $conn->prepare("SELECT post_id, post_title, post_content FROM posts ORDER BY post_id DESC");
-		$total->execute();
+		$posts = new PostModel;
+		$stmt = $posts->list( $per_page, intval($_GET['order']));
+		$total = $posts->total();
 
 		if (isset($_GET['order']) && $_GET['order'] > $total->rowCount()) $_GET['order'] = $total->rowCount();
 
 		$page_title = 'List of Posts';
 
 		$data = compact('stmt', 'total', 'per_page', 'page_title');
-
 		view('post_list', $data);
 
 	}
@@ -65,19 +52,14 @@ class PostController
 
 		}
 
-		$post_id = url_value(3);
-
-		$conn = $this->conn();
-		$stmt = $conn->prepare("SELECT post_id, post_title, post_content FROM posts WHERE post_id = :post_id");
-		$stmt->bindParam(':post_id', $post_id);
-		$stmt->execute();
+		$post = new PostModel;
+		$stmt = $post->view( url_value(3) );
 
 		$page_title = 'View Post';
 
 		if ( $stmt->rowCount() > 0 ) {
 
 			$data = compact('stmt', 'page_title');
-
 			view('post_view', $data);
 
 		} else {
@@ -85,7 +67,6 @@ class PostController
 			$error_message = "The Post ID does not exist.";
 
 			$data = compact('error_message', 'page_title');
-
 			view('error', $data);
 
 		}
@@ -97,13 +78,8 @@ class PostController
 
 		if (Condition::isPostAdd()) {
 
-			$conn = $this->conn();
-			$stmt = $conn->prepare("INSERT INTO posts (post_title, post_content) VALUES (:post_title, :post_content)");
-			$stmt->bindParam(':post_title', $_POST['title']);
-			$stmt->bindParam(':post_content', $_POST['content']);
-			$stmt->execute();
-
-			$new_id = $conn->lastInsertId();
+			$post = new PostModel;
+			$new_id = $post->add();
 
 			header('Location: ' . BASE_URL . SUB_PATH . 'post/view/' . $new_id);
 			exit();
@@ -111,41 +87,30 @@ class PostController
 		}
 
 		$data = ['page_title' => 'Add a Post'];
-
 		view('post_add', $data);
 
 	}
 
 	public function edit()
 	{
-
-		$post_id = url_value(3);
+		$post = new PostModel;
 
 		if (Condition::isPostEdit()) {
 
-			$conn = $this->conn();
-			$stmt = $conn->prepare("UPDATE posts SET post_title = :post_title, post_content = :post_content WHERE post_id = :post_id");
-			$stmt->bindParam(':post_title', $_POST['title']);
-			$stmt->bindParam(':post_content', $_POST['content']);
-			$stmt->bindParam(':post_id', $post_id);
-			$stmt->execute();
+			$post->edit( url_value(3) );
 
 			header('Location: ' . BASE_URL . SUB_PATH . 'post/view/' . url_value(3));
 			exit();
 
 		}
 
-		$conn = $this->conn();
-		$sql = $conn->prepare("SELECT post_title, post_content FROM posts WHERE post_id = :post_id");
-		$sql->bindParam(':post_id', $post_id);
-		$sql->execute();
+		$sql = $post->editView( url_value(3) );
 
 		$page_title = 'Edit Post';
 
 		if ( $sql->rowCount() > 0 ) {
 
 			$data = compact('sql', 'page_title');
-
 			view('post_edit', $data);
 
 		} else {
@@ -153,7 +118,6 @@ class PostController
 			$error_message = "The Post ID does not exist.";
 
 			$data = compact('error_message', 'page_title');
-
 			view('error', $data);
 
 		}
@@ -163,12 +127,8 @@ class PostController
 	public function delete()
 	{
 
-		$post_id = url_value(3);
-
-		$conn = $this->conn();
-		$stmt = $conn->prepare("DELETE FROM posts WHERE post_id = :post_id");
-		$stmt->bindParam(':post_id', $post_id);
-		$stmt->execute();
+		$post = new PostModel;
+		$post->delete( url_value(3) );
 
 		header('Location: ' . BASE_URL . SUB_PATH . 'post/list');
 		exit();

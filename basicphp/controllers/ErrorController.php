@@ -14,7 +14,6 @@ class ErrorController
 	{
 
 		$data = ['page_title' => 'Error'];
-
 		view('error', $data);
 
 	}

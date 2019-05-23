@@ -26,7 +26,7 @@ $message = $data_output['message'];
 
                 foreach ( $data as $row ) {
 
-                    echo "<li>The patient's name is " . $row['name'] . ', and his age is ' . $row['age'] . '.<br/></li>';
+                    echo "<li>The patient's name is " . esc($row['name']) . ', and his age is ' . esc($row['age']) . '.<br/></li>';
 
                 }
 

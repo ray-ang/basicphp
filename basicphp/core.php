@@ -38,6 +38,7 @@ spl_autoload_register(function ($class_name) {
 	// Add class folders to autoload
 	$class_folders[] = 'classes';
 	$class_folders[] = 'controllers';
+	$class_folders[] = 'models';
 
 	foreach ($class_folders as $folder) {
 
