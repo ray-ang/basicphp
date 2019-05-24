@@ -1,5 +1,9 @@
 <?php
 
+/**
+ * Prepare Models using PDO abstraction layer
+ */
+
 class PostModel
 {
 
@@ -21,7 +25,7 @@ class PostModel
 
 	}
 
-	public function list( $per_page, $order )
+	public function list($per_page, $order)
 	{
 
 		$conn = $this->conn();
@@ -32,7 +36,7 @@ class PostModel
 
 	}
 
-	public function view( $post_id )
+	public function view($post_id)
 	{
 
 		$conn = $this->conn();
@@ -57,7 +61,7 @@ class PostModel
 
 	}
 
-	public function edit( $post_id )
+	public function edit($post_id)
 	{
 
 		$conn = $this->conn();
@@ -67,13 +71,15 @@ class PostModel
 		$stmt->bindParam(':post_id', $post_id);
 		$stmt->execute();
 
+		return $stmt;
+
 	}
 
-	public function editView( $post_id                               )
+	public function editView($post_id)
 	{
 
 		$conn = $this->conn();
-		$stmt = $conn->prepare("SELECT post_title, post_content FROM posts WHERE post_id = :post_id");
+		$stmt = $conn->prepare("SELECT post_id, post_title, post_content FROM posts WHERE post_id = :post_id");
 		$stmt->bindParam(':post_id', $post_id);
 		$stmt->execute();
 
@@ -81,7 +87,7 @@ class PostModel
 
 	}
 
-	public function delete( $post_id )
+	public function delete($post_id)
 	{
 
 		$conn = $this->conn();

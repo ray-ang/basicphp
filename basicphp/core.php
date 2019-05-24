@@ -3,14 +3,14 @@
 /**
  * BasicPHP - A PHP Nano-Framework for Decoupled Application Logic and Presentation
  *          - The aim of the project is for developers to build applications that
- *          - are framework-independent by decoupling the Controller and View from
- *          - any framework, making the application portable and compatible with the
- *          - developer's framework of choice or vanilla PHP.
+ *          - are framework-independent by decoupling the Model, View and Controller
+ *          - from any framework, making the application portable and compatible with
+ *          - the developer's framework of choice or plain PHP.
  *          -
  *          - BasicPHP's core file (core.php), particularly the Core Functions, can be
  *          - embedded in the chosen framework's front controller, and the (1) classes,
- *          - (2) controllers and (3) views folders copied one folder above the
- *          - front controller of the chosen framework.
+ *          - (2) models, (3) views, and (4) controllers folders copied one folder above
+ *          - the front controller file of the chosen framework.
  *
  * @package  BasicPHP
  * @author   Raymund John Ang <raymund@open-nis.org>
@@ -37,8 +37,8 @@ spl_autoload_register(function ($class_name) {
 
 	// Add class folders to autoload
 	$class_folders[] = 'classes';
-	$class_folders[] = 'controllers';
 	$class_folders[] = 'models';
+	$class_folders[] = 'controllers';
 
 	foreach ($class_folders as $folder) {
 
@@ -106,7 +106,7 @@ define('SUB_ORDER', substr_count(SUB_PATH, '/'));
 | BasicPHP Core Functions
 |--------------------------------------------------------------------------
 | 
-| These are core functions necessary to run the micro-framework:
+| These are core functions necessary to run the nano-framework:
 |
 | 1. url_value() - retrieves the URL substring separated by '/'
 | 2. route_class() - routes URL request to Class-based Controllers
@@ -136,8 +136,7 @@ function url_value($position)
     $url = explode('/', $_SERVER['REQUEST_URI']);
     $order = $position + SUB_ORDER;
 
-    if (isset($url[$order])) $string = $url[$order];
-    if (isset($string)) return $string;
+    if (isset($url[$order])) return $url[$order];
 
 }
 
@@ -154,7 +153,6 @@ function route_class($http_method, $sub1, $sub2, $class_method)
 {
 
 	$class_method = explode('@', $class_method);
-
 	$class = $class_method[0];
 	$method = $class_method[1];
 
@@ -167,12 +165,12 @@ function route_class($http_method, $sub1, $sub2, $class_method)
 		if ( ! empty($url_1) && $sub1==$url_1 && ! empty($url_2) && $sub2==$url_2 )  {
 
 			$class_object = new $class();
-			$class_object->$method();
+			return $class_object->$method();
 
 		} elseif ( ! empty($url_1) && $sub1==$url_1 && empty($url_2) && $sub2==null && ! isset($url_3) ) {
 
 			$class_object = new $class();
-			$class_object->$method();
+			return $class_object->$method();
 
 		}
 
@@ -186,7 +184,7 @@ function route_class($http_method, $sub1, $sub2, $class_method)
  * @param string $sub1 - First substring after /public/ path
  * @param string $sub2 - Second substring after /public/ path
  * @param string $controller - Controller file
- * Exlude .php extension from $controller argument.
+ * Exclude .php extension from $controller argument.
  */
 
 function route_file($http_method, $sub1, $sub2, $controller)
@@ -200,11 +198,11 @@ function route_file($http_method, $sub1, $sub2, $controller)
 
 		if ( ! empty($url_1) && $sub1==$url_1 && ! empty($url_2) && $sub2==$url_2 )  {
 
-			require '../controllers/files/' . $controller . '.php';
+			require_once '../controllers/files/' . $controller . '.php';
 
 		} elseif ( ! empty($url_1) && $sub1==$url_1 && empty($url_2) && $sub2==null && ! isset($url_3) ) {
 
-			require '../controllers/files/' . $controller . '.php';
+			require_once '../controllers/files/' . $controller . '.php';
 
 		}
 
@@ -223,12 +221,12 @@ function view($view, $data=null)
 {
 
 	// Show Header and Menu
-	require '../views/template/header.php';
-	require '../views/template/menu.php';
+	require_once '../views/template/header.php';
+	require_once '../views/template/menu.php';
 	// Render Page View
-	require '../views/' . $view . '.php';
+	require_once '../views/' . $view . '.php';
 	// Show Footer
-	require '../views/template/footer.php';
+	require_once '../views/template/footer.php';
 	exit();
 
 }
@@ -283,6 +281,8 @@ function api_response($data, $message=null)
  * @param string $http_method - HTTP request method (e.g. 'GET', 'POST')
  * @param string $url - URL of external server API
  * @param string $data - POST fields in array
+ * @param string $username - Username
+ * @param string $password - Password
  */
 
 function api_call($http_method, $url, $data=null, $username=null, $password=null)
@@ -342,6 +342,7 @@ function csrf_token()
 {
 
 	$_SESSION['csrf-token'] = base64_encode(openssl_random_pseudo_bytes(32));
+
 	return $_SESSION['csrf-token'];
 
 }
@@ -354,21 +355,20 @@ require_once 'routes.php';
 | Handle Error 404 - Page Not Found - Invalid URI
 |--------------------------------------------------------------------------
 |
-| Invalid URI's include only two (2) files: the front controller (index.php)
-| and the BasicPHP core file (core.php).
+| Invalid URI's include only two (3) files: the front controller (index.php),
+| BasicPHP core file (core.php), and the routing configuration (routes.php).
 | Any valid page rendered, even the error page, will need to require a file
-| other than the front controller and core files. The script below should be
-| run last to avoid conflict with routing configuration.
+| other than the front controller, core and routes files. The script below
+| should be run last to avoid conflict with routing configuration.
 |
 */
 
-if (count(get_included_files())==3) {
+if ( count(get_included_files()) == 3 ) {
 
 	$error_message = '<h3 style="text-align: center;">Error 404. Page not found. This is an Invalid URL.</h3>';
 	$page_title = 'Error 404';
 
 	$data = compact('error_message', 'page_title');
-
 	view('error', $data);
 
 }

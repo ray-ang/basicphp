@@ -13,7 +13,7 @@
 | after the /public/ path.
 | 
 | Note: If 'public/' folder is the DocumentRoot, the two substrings will be
-| in reference to the domain name, not the /public/ path.
+| in reference after the domain name, not the /public/ path.
 |
 */
 
@@ -21,16 +21,16 @@
 if ( $_SERVER['REQUEST_URI'] == '/' . SUB_PATH ) {
 
 	$class_object = new HomeController();
-	$class_object->index();
+	return $class_object->index();
 
 }
 
 /**
  * Manual Routing Using Class-based Controllers
- * Set first substring after /public/ path as the first argument.
- * Set second substring after /public/ path as the second argument.
- * Set class name as the third argument.
- * Set instance method as the fourth argument.
+ * Set HTTP request method as the first argument.
+ * Set first substring after /public/ path as the second argument.
+ * Set second substring after /public/ path as the third argument.
+ * Set ClassController@method as the fourth argument.
  */
 
 // URL routing for pages using Class-based controllers
@@ -42,7 +42,7 @@ route_class('POST', 'request', null, 'RequestController@index');
 
 /**
  * Browse 'http://localhost/basicphp/public/sample/route'
- * Based on the controller, only 2 parameters can be set after /route/
+ * Based on the controller, only 2 numbers can be set after /route/
  * Example: 'http://localhost/basicphp/public/sample/route/1/2'
  */
 

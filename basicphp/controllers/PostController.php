@@ -2,9 +2,8 @@
 
 /**
  * In the controller file, you can handle and process variables,
- * classes and functions; use if-elseif statements; handle your
- * database connection like PDO abstraction layer; and load/require
- * files. The variables can then be used in the view file.
+ * classes and functions; use if-elseif statements; load models, and
+ * include files. The variables can then be used in the view file.
  */
 
 use Basic_Condition as Condition;
@@ -26,10 +25,11 @@ class PostController
 		if (isset($_GET['order']) && $_GET['order'] < 0) $_GET['order'] = 0;
 
 		$per_page = 3;
+		$order = intval($_GET['order']);
 
-		$posts = new PostModel;
-		$stmt = $posts->list( $per_page, intval($_GET['order']));
-		$total = $posts->total();
+		$post = new PostModel;
+		$stmt = $post->list( $per_page, $order );
+		$total = $post->total();
 
 		if (isset($_GET['order']) && $_GET['order'] > $total->rowCount()) $_GET['order'] = $total->rowCount();
 
@@ -55,16 +55,17 @@ class PostController
 		$post = new PostModel;
 		$stmt = $post->view( url_value(3) );
 
-		$page_title = 'View Post';
+		if ( $stmt->rowCount() == 1 ) {
 
-		if ( $stmt->rowCount() > 0 ) {
+			$page_title = 'View Post';
 
 			$data = compact('stmt', 'page_title');
 			view('post_view', $data);
 
 		} else {
 
-			$error_message = "The Post ID does not exist.";
+			$error_message = 'The Post ID does not exist.';
+			$page_title = 'Error in Post ID';
 
 			$data = compact('error_message', 'page_title');
 			view('error', $data);
@@ -93,6 +94,7 @@ class PostController
 
 	public function edit()
 	{
+
 		$post = new PostModel;
 
 		if (Condition::isPostEdit()) {
@@ -106,9 +108,9 @@ class PostController
 
 		$sql = $post->editView( url_value(3) );
 
-		$page_title = 'Edit Post';
-
 		if ( $sql->rowCount() > 0 ) {
+
+			$page_title = 'Edit Post';
 
 			$data = compact('sql', 'page_title');
 			view('post_edit', $data);
@@ -116,6 +118,7 @@ class PostController
 		} else {
 
 			$error_message = "The Post ID does not exist.";
+			$page_title = 'Error in Post ID';
 
 			$data = compact('error_message', 'page_title');
 			view('error', $data);
