@@ -75,18 +75,6 @@ class PostModel
 
 	}
 
-	public function editView($post_id)
-	{
-
-		$conn = $this->conn();
-		$stmt = $conn->prepare("SELECT post_id, post_title, post_content FROM posts WHERE post_id = :post_id");
-		$stmt->bindParam(':post_id', $post_id);
-		$stmt->execute();
-
-		return $stmt;
-
-	}
-
 	public function delete($post_id)
 	{
 

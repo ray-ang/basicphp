@@ -106,7 +106,7 @@ class PostController
 
 		}
 
-		$sql = $post->editView( url_value(3) );
+		$sql = $post->view( url_value(3) );
 
 		if ( $sql->rowCount() > 0 ) {
 
