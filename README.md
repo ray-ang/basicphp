@@ -2,9 +2,9 @@
 
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=basicphp&metric=alert_status)](https://sonarcloud.io/dashboard?id=basicphp)
 
-A PHP Nano-Framework for Decoupled Application Logic and Presentation. The aim of the project is for developers to build applications that are framework-independent by decoupling the Controller and View from any framework, making the application portable and compatible with the developer's framework of choice or vanilla PHP.
+A PHP Nano-Framework for Decoupled Application Logic and Presentation. The aim of the project is for developers to build applications that are framework-independent by decoupling the Model, View and Controller from any framework, making the application portable and compatible with the developer's framework of choice or plain PHP.
 
-BasicPHP's core file (core.php), particularly the Core Functions, can be embedded in the chosen framework's front controller, and the (1) classes, (2) controllers and (3) views folders copied one folder above the front controller of the chosen framework.
+BasicPHP's core file (core.php), particularly the Core Functions, can be embedded in the chosen framework's front controller, and the (1) classes, (2) models, (3) views, and (4) controllers folders copied one folder above the front controller file of the chosen framework.
 
 Features include class autoloading, routing, helper functions, security (XSS and CSRF protection, and PDO abstraction layer for SQL injection prevention), and handling 404 error - page not found.
 
@@ -22,9 +22,9 @@ If 'public' folder is set as DocumentRoot, you can access the application using 
 http://localhost OR http://domain-name.com
 ```
 
-### Modified MVC Approach
+### Model-View-Controller (MVC) Architecture
 
-BasicPHP uses a modified MVC approach where there is still separation between the Controller and View, but the Model is embedded in the Controller. Business logic and database layer (Model) is embedded in the Controller using the PDO abstraction layer. The Controller handles user input, passes data to and renders the View. The main function of the Controller is to prepare if-elseif statements, define variables and functions, and pass these variables to the View using 'require' or 'include' statements. An abstraction layer using the templating view() core function is added to pass data, and render the 'require' or 'include' statements in the View for code efficiency. The View gets its data from the Controller, with the Controller passing the $data variable containing the necessary variable names and their values using compact() function, or placing the variable names and values in an array using the shorthand [ ] or array(). Native PHP templating can then be used in rendering the layout while escaping output, such as:
+BasicPHP initially used a modified MVC approach where there is still separation between the Controller and View, but the Model is embedded in the Controller. Business logic and database layer (Model) is embedded in the Controller using the PDO abstraction layer. The Controller handles user input, passes data to and renders the View. The main function of the Controller is to prepare if-elseif statements, define variables and functions, and pass these variables to the View using 'require' or 'include' statements. An abstraction layer using the templating view() core function is added to pass data, and render the 'require' or 'include' statements in the View for code efficiency. The View gets its data from the Controller, with the Controller passing the $data variable containing the necessary variable names and their values using compact() function, or placing the variable names and values in an array using the shorthand [ ] or array(). Native PHP templating can then be used in rendering the layout while escaping output, such as:
 
 ```
 <p><?= esc($variable) ?></p>
@@ -75,6 +75,8 @@ OR, when using view() core function to render the View
 <p>The patient's name is <?= esc($row['name']) ?>, and his age is <?= esc($row['age']) ?>.</p>
 <?php endforeach ?>
 ```
+
+#### As of May 23, 2019, BasicPHP is compliant with the MVC approach. The Model is no longer embedded with the Controller and has its own folder and classes.
 
 ## Creator
 
