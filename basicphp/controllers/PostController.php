@@ -47,13 +47,13 @@ class PostController
 
 		if (isset($_POST['goto-edit'])) {
 
-			header('Location: ' . BASE_URL . SUB_PATH . 'post/edit/' . url_value(3));
+			header('Location: ' . BASE_URL . 'post/edit/' . url_value(2));
 			exit();
 
 		}
 
 		$post = new PostModel;
-		$stmt = $post->view( url_value(3) );
+		$stmt = $post->view( url_value(2) );
 
 		if ( $stmt->rowCount() == 1 ) {
 
@@ -82,7 +82,7 @@ class PostController
 			$post = new PostModel;
 			$new_id = $post->add();
 
-			header('Location: ' . BASE_URL . SUB_PATH . 'post/view/' . $new_id);
+			header('Location: ' . BASE_URL . 'post/view/' . $new_id);
 			exit();
 
 		}
@@ -99,16 +99,16 @@ class PostController
 
 		if (Condition::isPostEdit()) {
 
-			$post->edit( url_value(3) );
+			$post->edit( url_value(2) );
 
-			header('Location: ' . BASE_URL . SUB_PATH . 'post/view/' . url_value(3));
+			header('Location: ' . BASE_URL . 'post/view/' . url_value(2));
 			exit();
 
 		}
 
-		$sql = $post->view( url_value(3) );
+		$sql = $post->view( url_value(2) );
 
-		if ( $sql->rowCount() > 0 ) {
+		if ( $sql->rowCount() == 1 ) {
 
 			$page_title = 'Edit Post';
 
@@ -131,9 +131,9 @@ class PostController
 	{
 
 		$post = new PostModel;
-		$post->delete( url_value(3) );
+		$post->delete( url_value(2) );
 
-		header('Location: ' . BASE_URL . SUB_PATH . 'post/list');
+		header('Location: ' . BASE_URL . 'post/list');
 		exit();
 
 	}

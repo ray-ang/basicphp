@@ -13,9 +13,9 @@ class SampleController
 	{
 
 		// Set data to pass as variables
-		$param1 = url_value(3);
-		$param2 = url_value(4);
-		$param3 = url_value(5);
+		$param1 = url_value(2);
+		$param2 = url_value(3);
+		$param3 = url_value(4);
 		$person = ['James'=>"23", 'Joseph'=>"23", 'Chris'=>"35"];
 		$page_title = 'Sample Route Page';
 
@@ -35,7 +35,7 @@ class SampleController
 			OR (! isset($param3) && isset($param2) && ! is_numeric($param2))) {
 
 			// Set $error_message for the error page
-			$error_message = 'You can only set 2 numbers as parameters.';
+			$error_message = 'You can only set 2 numbers and only have 2 parameters.';
 
 			$data = compact('error_message', 'page_title');
 			view('error', $data);

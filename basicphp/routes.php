@@ -18,7 +18,7 @@
 */
 
 // Render Homepage
-if ( $_SERVER['REQUEST_URI'] == '/' . SUB_PATH ) {
+if ( ! isset($_GET['url-path']) ) {
 
 	$class_object = new HomeController();
 	return $class_object->index();

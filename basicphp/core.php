@@ -77,29 +77,15 @@ switch (ENV) {
 
 /*
 |--------------------------------------------------------------------------
-| Set URL and Folder Paths
+| Set BASE_URL
 |--------------------------------------------------------------------------
 |
 | Define 'BASE_URL' as the domain with '/' at the end, such as
 | 'http://example.com/' or 'https://example.com/'.
-| 
-| If 'public/' folder is set as the DocumentRoot of the host or virtual host,
-| set 'SUB_PATH' to ''.
-| 
-| If 'basicphp/' folder is located under the DocumentRoot folder, define
-| 'SUB_PATH' as 'basicphp/public/' using the format 'sub-url/sub-url/'. This
-| is the case when accessing the site at 'http://localhost/basicphp/public/'.
-| 
-| SUB_ORDER is the number of URL substrings from domain to /public/ path.
-| If 'public/' folder is set as the DocumentRoot, SUB_ORDER is automatically
-| set to 0. If 'basicphp/' folder is located under server DocumentRoot,
-| SUB_ORDER is automatically set to 2.
 |
 */
 
-define('BASE_URL', 'http://localhost/');
-define('SUB_PATH', 'basicphp/public/');
-define('SUB_ORDER', substr_count(SUB_PATH, '/'));
+define('BASE_URL', 'http://localhost/basicphp/public/');
 
 /*
 |--------------------------------------------------------------------------
@@ -121,20 +107,15 @@ define('SUB_ORDER', substr_count(SUB_PATH, '/'));
 */
 
 /**
- * Get URL substring value after /public/ path separated by '/'
- * SUB_ORDER should be set to 0 if 'public/' folder is server DocumentRoot
- * SUB_ORDER should be set to 2 if 'public/' folder is two folders below
- * the server DocumentRoot folder - such as when accessing the application at
- * 'http://localhost/basicphp/public/'.
+ * Get URL path string value after /public/ separated by '/'.
  *
- * @param integer $position - Substring position from /public/ path
+ * @param integer $order - Substring position from /public/ path
  */
 
-function url_value($position)
+function url_value($order)
 {
 
-    $url = explode('/', $_SERVER['REQUEST_URI']);
-    $order = $position + SUB_ORDER;
+    if (isset($_GET['url-path'])) $url = explode('/', $_GET['url-path']);
 
     if (isset($url[$order])) return $url[$order];
 
@@ -158,9 +139,9 @@ function route_class($http_method, $sub1, $sub2, $class_method)
 
 	if ( $_SERVER['REQUEST_METHOD'] == $http_method ) {
 
-		$url_1 = url_value(1);
-		$url_2 = url_value(2);
-		$url_3 = url_value(3);
+		$url_1 = url_value(0);
+		$url_2 = url_value(1);
+		$url_3 = url_value(2);
 
 		if ( ! empty($url_1) && $sub1==$url_1 && ! empty($url_2) && $sub2==$url_2 )  {
 
@@ -181,10 +162,10 @@ function route_class($http_method, $sub1, $sub2, $class_method)
 /**
  * Load File-based Controller based on substrings
  *
+ * @param string $http_method - HTTP method (e.g. GET, POST, PUT, DELETE)
  * @param string $sub1 - First substring after /public/ path
  * @param string $sub2 - Second substring after /public/ path
- * @param string $controller - Controller file
- * Exclude .php extension from $controller argument.
+ * @param string $controller - Controller file (exclude .php extension).
  */
 
 function route_file($http_method, $sub1, $sub2, $controller)
@@ -192,9 +173,9 @@ function route_file($http_method, $sub1, $sub2, $controller)
 
 	if ( $_SERVER['REQUEST_METHOD'] == $http_method ) {
 
-		$url_1 = url_value(1);
-		$url_2 = url_value(2);
-		$url_3 = url_value(3);
+		$url_1 = url_value(0);
+		$url_2 = url_value(1);
+		$url_3 = url_value(2);
 
 		if ( ! empty($url_1) && $sub1==$url_1 && ! empty($url_2) && $sub2==$url_2 )  {
 
