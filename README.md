@@ -19,7 +19,7 @@ http://localhost/basicphp/public/
 If 'public' folder is set as DocumentRoot, you can access the application using the domain name.
 
 ```
-http://localhost OR http://domain-name.com
+http://localhost/ OR http://domain-name.com/
 ```
 
 ### Model-View-Controller (MVC) Architecture
@@ -34,7 +34,6 @@ BasicPHP initially used a modified MVC approach where there is still separation 
 
 ```
 $user_input = $_POST['input-name'];
-
 $variable = // result of SQL query using PDO abstraction layer;
 
 require '../views/view_file.php'; // renders the View with data $variable
@@ -49,21 +48,20 @@ $variable2 = 'value2';
 $variable3 = 'value3';
 
 $data = compact('variable1', 'variable2', 'variable3');
+view('page_view', $data);
 ```
 
 OR
 
 ```
 $data = ['variable1' => $variable1, 'variable2' => $variable2, 'variable3' => $variable3];
-
-// Render the View using view() core function, and pass the $data variable array
 view('page_view', $data);
 ```
 
 #### View
 
 ```
-<?php foreach( $variable1 as $row ): ?>
+<?php foreach( $variable as $row ): ?>
 <p>The patient's name is <?= esc($row['name']) ?>, and his age is <?= esc($row['age']) ?>.</p>
 <?php endforeach ?>
 ```
