@@ -115,9 +115,9 @@ define('BASE_URL', 'http://localhost/basicphp/public/');
 function url_value($order)
 {
 
-    if (isset($_GET['url-path'])) $url = explode('/', $_GET['url-path']);
+    if (isset($_GET['url-path'])) { $url = explode('/', $_GET['url-path']); }
 
-    if (isset($url[$order])) return $url[$order];
+    if (isset($url[$order])) { return $url[$order]; }
 
 }
 
@@ -161,6 +161,7 @@ function route_class($http_method, $sub1, $sub2, $class_method)
 
 /**
  * Load File-based Controller based on substrings
+ * Can be used in developing API's
  *
  * @param string $http_method - HTTP method (e.g. GET, POST, PUT, DELETE)
  * @param string $sub1 - First substring after /public/ path
@@ -322,7 +323,7 @@ function esc($string)
 function csrf_token()
 {
 
-	$_SESSION['csrf-token'] = base64_encode(openssl_random_pseudo_bytes(32));
+	$_SESSION['csrf-token'] = bin2hex(random_bytes(32));
 
 	return $_SESSION['csrf-token'];
 

@@ -56,7 +56,7 @@ route_class('POST', 'post', 'add', 'PostController@add');
 route_class('GET', 'post', 'edit', 'PostController@edit');
 route_class('POST', 'post', 'edit', 'PostController@edit');
 
-// URL routing for API using File-based controller
+// URL routing for API's using File-based controller
 route_file('POST', 'api', 'response', 'api-response');
 
 /**
