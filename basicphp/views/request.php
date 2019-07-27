@@ -1,10 +1,8 @@
 <?php
 
-if ( isset($data['data_output']) ) {
+if ( isset($data_output) ) {
 
 // Set array keys as variables
-$data_output = $data['data_output'];
-
 $data = $data_output['data'];
 $message = $data_output['message'];
 
