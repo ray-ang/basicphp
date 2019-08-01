@@ -6,8 +6,6 @@
  * include files. The variables can then be used in the view file.
  */
 
-use Basic_Condition as Condition;
-
 class PostController
 {
 
@@ -43,7 +41,7 @@ class PostController
 	public function view()
 	{
 
-		if (Condition::isPostDelete()) $this->delete();
+		if ($this->isPostDelete()) $this->delete();
 
 		if (isset($_POST['goto-edit'])) {
 
@@ -77,7 +75,7 @@ class PostController
 	public function add()
 	{
 
-		if (Condition::isPostAdd()) {
+		if ($this->isPostAdd()) {
 
 			$post = new PostModel;
 			$new_id = $post->add();
@@ -97,7 +95,7 @@ class PostController
 
 		$post = new PostModel;
 
-		if (Condition::isPostEdit()) {
+		if ($this->isPostEdit()) {
 
 			$post->edit( url_value(2) );
 
@@ -135,6 +133,27 @@ class PostController
 
 		header('Location: ' . BASE_URL . 'post/list');
 		exit();
+
+	}
+
+	private function isPostAdd()
+	{
+
+		if ( isset($_POST['submit-post']) && $_POST['csrf-token'] == $_SESSION['csrf-token'] ) return true;
+
+	}
+
+	private function isPostEdit()
+	{
+
+		if ( isset($_POST['edit-post']) && $_POST['csrf-token'] == $_SESSION['csrf-token'] ) return true;
+
+	}
+
+	private function isPostDelete()
+	{
+
+		if ( isset($_POST['delete-post']) && $_POST['csrf-token'] == $_SESSION['csrf-token'] ) return true;
 
 	}
 
