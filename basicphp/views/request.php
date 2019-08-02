@@ -1,4 +1,9 @@
 <?php
+// Show Header and Menu
+require_once '../template/header.php';
+require_once '../template/menu.php';
+?>
+<?php
 
 if ( isset($data_output) ) {
 
@@ -51,3 +56,7 @@ $message = $data_output['message'];
         </div>
       </div>
     </div>
+<?php
+// Show Footer
+require_once '../template/footer.php';
+?>

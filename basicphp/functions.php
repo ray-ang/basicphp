@@ -118,14 +118,8 @@ function view($view, $data=null)
 	// Convert array keys to variables
 	if ( isset($data) ) { extract($data); }
 
-	// Show Header and Menu
-	require_once '../views/template/header.php';
-	require_once '../views/template/menu.php';
 	// Render Page View
 	require_once '../views/' . $view . '.php';
-	// Show Footer
-	require_once '../views/template/footer.php';
-	exit();
 
 }
 
