@@ -36,6 +36,7 @@ function url_value($order)
 
 /**
  * Load Class-based Controller based on substrings
+ * Can be used in creating pages and route views
  *
  * @param string $http_method - HTTP method (e.g. GET, POST, PUT, DELETE)
  * @param string $sub1 - First substring after the BASE_URL
