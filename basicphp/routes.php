@@ -66,10 +66,14 @@ route_file('POST', 'api', 'response', 'api-response');
 
 if ( count(get_included_files()) == 4 ) {
 
+	header($_SERVER["SERVER_PROTOCOL"]." 404 Not Found");
+
 	$error_message = '<h3 style="text-align: center;">Error 404. Page not found. This is an Invalid URL.</h3>';
 	$page_title = 'Error 404';
 
 	$data = compact('error_message', 'page_title');
 	view('error', $data);
+
+	// var_dump(http_response_code());
 
 }
