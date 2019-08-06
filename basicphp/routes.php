@@ -28,7 +28,6 @@
 /* URL routing for pages using Class-based controllers */
 route_class('GET', 'home', null, 'HomeController@index');
 route_class('GET', 'welcome', null, 'WelcomeController@index');
-route_class('GET', 'error', null, 'ErrorController@index');
 route_class('GET', 'request', null, 'RequestController@index');
 route_class('POST', 'request', null, 'RequestController@index');
 
