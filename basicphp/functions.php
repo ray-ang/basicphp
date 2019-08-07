@@ -234,8 +234,19 @@ function esc($string)
 function csrf_token()
 {
 
-	$_SESSION['csrf-token'] = bin2hex(random_bytes(32));
+	if ( isset($_SESSION) ) {
 
-	return $_SESSION['csrf-token'];
+		$_SESSION['csrf-token'] = bin2hex(random_bytes(32));
+		return $_SESSION['csrf-token'];
+
+	} else {
+
+		$error_message = 'Please initialize Sessions.';
+		$page_title = 'Sessions Error';
+
+		$data = compact('error_message', 'page_title');
+		view('error', $data);
+
+	}
 
 }
