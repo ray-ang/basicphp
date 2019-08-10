@@ -1,7 +1,7 @@
 <?php
 // Show Header and Menu
-require_once '../template/header.php';
-require_once '../template/menu.php';
+require_once 'template/header.php';
+require_once 'template/menu.php';
 ?>
 <?php
 
@@ -58,5 +58,5 @@ $message = $data_output['message'];
     </div>
 <?php
 // Show Footer
-require_once '../template/footer.php';
+require_once 'template/footer.php';
 ?>
