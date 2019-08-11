@@ -15,10 +15,10 @@ require_once 'template/menu.php';
   				</div>
       	 	<?php endforeach ?>
           <?php if ($_GET['order'] > 0): ?>
-          <a href="<?php echo BASE_URL . 'post/list/?order=' . ($_GET['order'] - $per_page);?>"><button>Previous</button></a>
+          <a href="<?php echo BASE_URL . 'post/list/?order=' . ($_GET['order'] - $per_page);?>"><button class="btn btn-info">Previous</button></a>
           <?php endif; ?>
           <?php if ($_GET['order'] < $total->rowCount() - $per_page): ?>
-          <a href="<?php echo BASE_URL . 'post/list/?order=' . ($_GET['order'] + $per_page);?>"><button>Next</button></a>
+          <a href="<?php echo BASE_URL . 'post/list/?order=' . ($_GET['order'] + $per_page);?>"><button class="btn btn-info">Next</button></a>
           <?php endif; ?>
           <br />
           <br />
