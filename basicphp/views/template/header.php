@@ -7,7 +7,7 @@
     <meta name="author" content="">
     <title>BasicPHP | <?= esc($page_title) ?></title>
 	<!-- Latest compiled and minified CSS -->
-	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+	<link rel="stylesheet" href="<?php echo BASE_URL;?>assets/bootstrap.min.css">
 	<!-- Custom styles for this template -->
     <style>
     </style>
