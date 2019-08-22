@@ -10,14 +10,16 @@
 |
 */
 
+// Add class folders to autoload
+$class_folders[] = 'classes';
+$class_folders[] = 'models';
+$class_folders[] = 'controllers';
+
+define('AUTOLOAD_CLASSES', $class_folders);
+
 spl_autoload_register(function ($class_name) {
 
-	// Add class folders to autoload
-	$class_folders[] = 'classes';
-	$class_folders[] = 'models';
-	$class_folders[] = 'controllers';
-
-	foreach ($class_folders as $folder) {
+	foreach (AUTOLOAD_CLASSES as $folder) {
 
 		if (file_exists('../' . $folder . '/' . $class_name . '.php') && is_readable('../' . $folder . '/' . $class_name . '.php')) {
 
@@ -70,9 +72,13 @@ define('BASE_URL', 'http://localhost/basicphp/public/');
 |--------------------------------------------------------------------------
 */
 
+define('HOME_CONTROLLER', 'HomeController');
+
 if ( ! isset($_GET['url-path']) ) {
 
-	$class_object = new HomeController();
+	$home_controller = HOME_CONTROLLER;
+
+	$class_object = new $home_controller();
 	return $class_object->index();
 
 }
