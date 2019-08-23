@@ -13,9 +13,9 @@ class SampleController
 	{
 
 		// Set data to pass as variables
-		$param1 = url_value(2);
-		$param2 = url_value(3);
-		$param3 = url_value(4);
+		$param1 = url_value(3);
+		$param2 = url_value(4);
+		$param3 = url_value(5);
 		$person = ['James'=>"23", 'Joseph'=>"23", 'Chris'=>"35"];
 		$page_title = 'Sample Route Page';
 

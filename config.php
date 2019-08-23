@@ -72,13 +72,13 @@ define('BASE_URL', 'http://localhost/basicphp/public/');
 |--------------------------------------------------------------------------
 */
 
-define('HOME_CONTROLLER', 'HomeController');
+define('HOME_CONTROLLER', 'HomeController@index');
 
-if ( ! isset($_GET['url-path']) ) {
+if ( ! isset($_SERVER['PATH_INFO']) ) {
 
-	$home_controller = HOME_CONTROLLER;
+	list($class, $method) = explode('@', HOME_CONTROLLER);
 
-	$class_object = new $home_controller();
-	return $class_object->index();
+	$class_object = new $class();
+	return $class_object->$method();
 
 }

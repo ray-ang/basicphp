@@ -45,13 +45,13 @@ class PostController
 
 		if (isset($_POST['goto-edit'])) {
 
-			header('Location: ' . BASE_URL . 'post/edit/' . url_value(2));
+			header('Location: ' . BASE_URL . 'post/edit/' . url_value(3));
 			exit();
 
 		}
 
 		$post = new PostModel;
-		$stmt = $post->view( url_value(2) );
+		$stmt = $post->view( url_value(3) );
 
 		if ( $stmt->rowCount() == 1 ) {
 
@@ -97,14 +97,14 @@ class PostController
 
 		if ($this->isPostEdit()) {
 
-			$post->edit( url_value(2) );
+			$post->edit( url_value(3) );
 
-			header('Location: ' . BASE_URL . 'post/view/' . url_value(2));
+			header('Location: ' . BASE_URL . 'post/view/' . url_value(3));
 			exit();
 
 		}
 
-		$sql = $post->view( url_value(2) );
+		$sql = $post->view( url_value(3) );
 
 		if ( $sql->rowCount() == 1 ) {
 
@@ -129,7 +129,7 @@ class PostController
 	{
 
 		$post = new PostModel;
-		$post->delete( url_value(2) );
+		$post->delete( url_value(3) );
 
 		header('Location: ' . BASE_URL . 'post/list');
 		exit();

@@ -13,7 +13,7 @@ class WelcomeController
 	{
 
 		// Set data to pass as variables
-		$param1 = url_value(0);
+		$param1 = url_value(1);
 		$page_title = 'Welcome!';
 
 		$data = compact('param1', 'page_title');

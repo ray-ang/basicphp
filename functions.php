@@ -28,7 +28,7 @@
 function url_value($order)
 {
 
-    if (isset($_GET['url-path'])) { $url = explode('/', $_GET['url-path']); }
+    if (isset($_SERVER['PATH_INFO'])) { $url = explode('/', $_SERVER['PATH_INFO']); }
 
     if (isset($url[$order])) { return $url[$order]; }
 
@@ -47,15 +47,12 @@ function url_value($order)
 function route_class($http_method, $sub1, $sub2, $class_method)
 {
 
-	$class_method = explode('@', $class_method);
-	$class = $class_method[0];
-	$method = $class_method[1];
-
 	if ( $_SERVER['REQUEST_METHOD'] == $http_method ) {
 
-		$url_1 = url_value(0);
-		$url_2 = url_value(1);
-		$url_3 = url_value(2);
+		$url_1 = url_value(1);
+		$url_2 = url_value(2);
+		$url_3 = url_value(3);
+		list($class, $method) = explode('@', $class_method);
 
 		if ( ! empty($url_1) && $sub1==$url_1 && ! empty($url_2) && $sub2==$url_2 )  {
 
@@ -88,9 +85,9 @@ function route_file($http_method, $sub1, $sub2, $controller)
 
 	if ( $_SERVER['REQUEST_METHOD'] == $http_method ) {
 
-		$url_1 = url_value(0);
-		$url_2 = url_value(1);
-		$url_3 = url_value(2);
+		$url_1 = url_value(1);
+		$url_2 = url_value(2);
+		$url_3 = url_value(3);
 
 		if ( ! empty($url_1) && $sub1==$url_1 && ! empty($url_2) && $sub2==$url_2 )  {
 
