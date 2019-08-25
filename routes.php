@@ -28,7 +28,7 @@ route_auto();
 |--------------------------------------------------------------------------
 */
 
-route_class('POST', '/api/response', 'ApiController@index');
+route_class('POST', '/response/from/api', 'ApiController@response');
 
 /*
 |--------------------------------------------------------------------------

@@ -72,11 +72,18 @@ class ApiController
 
 		} else {
 
-			$message = 'You do not have the right credentials.';
+			$message = 'You do not have the right credentials or HTTP method.';
 
 			api_response($data=null, $message);
 
 		}
+
+	}
+
+	public function response()
+	{
+
+		$this->index();
 
 	}
 
