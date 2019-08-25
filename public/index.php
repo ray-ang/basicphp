@@ -20,14 +20,11 @@
 // Register the start time as a float value
 $time_start = floatval(microtime());
 
- // Start sessions
-session_start();
+// Bootstrap configuration
+require_once '../config.php';
 
 // Functions library
 require_once '../functions.php';
-
-// Bootstrap configuration
-require_once '../config.php';
 
 // Routing configuration
 require_once '../routes.php';
