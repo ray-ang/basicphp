@@ -7,9 +7,9 @@
 | 
 | These are core functions necessary to run the nano-framework:
 |
-| 1. url_value() - retrieves the URL substring separated by '/'
-| 2. route_class() - routes URL request to Class-based Controllers
-| 3. route_file() - routes URL request to File-based Controllers
+| 1. url_value() - retrieves the URL path substring separated by '/'
+| 2. route_auto() - automatic routing of URL path to Class and method
+| 3. route_class() - routes URL path request to Controllers
 | 4. view() - passes data and renders the View
 | 5. pdo_conn() - PHP Data Objects (PDO) database connection
 | 6. api_response() - handles API response
@@ -22,7 +22,8 @@
 /**
  * Get URL path string value after the BASE_URL.
  *
- * @param integer $order - Substring position from the BASE_URL
+ * @param integer $order - URL substring position from the BASE_URL
+ *                       - url_value(1) as first string after BASE_URL
  */
 
 function url_value($order)
@@ -35,67 +36,47 @@ function url_value($order)
 }
 
 /**
- * Load Class-based Controller based on substrings
- * Can be used in creating pages and route views
- *
- * @param string $http_method - HTTP method (e.g. GET, POST, PUT, DELETE)
- * @param string $sub1 - First substring after the BASE_URL
- * @param string $sub2 - Second substring after the BASE_URL
- * @param string $class_method - ClassController@method format
+ * Automatic routing of url_value(1) and (2) as Class and method
  */
 
-function route_class($http_method, $sub1, $sub2, $class_method)
+function route_auto()
 {
 
-	if ( $_SERVER['REQUEST_METHOD'] == $http_method ) {
+	$class = ucfirst(url_value(1)) . 'Controller';
+	$method = url_value(2);
+	if ( empty($method) ) $method = 'index';
 
-		$url_1 = url_value(1);
-		$url_2 = url_value(2);
-		$url_3 = url_value(3);
-		list($class, $method) = explode('@', $class_method);
-
-		if ( ! empty($url_1) && $sub1==$url_1 && ! empty($url_2) && $sub2==$url_2 )  {
-
-			$class_object = new $class();
-			return $class_object->$method();
-
-		} elseif ( ! empty($url_1) && $sub1==$url_1 && empty($url_2) && $sub2==null && ! isset($url_3) ) {
-
-			$class_object = new $class();
-			return $class_object->$method();
-
+	if ( class_exists($class) ) {
+		$object = new $class();
+		if ( method_exists($object, $method) ) {
+			return $object->$method();
+		} else {
+			header($_SERVER["SERVER_PROTOCOL"]." 404 Not Found");
 		}
-
 	}
 
 }
 
 /**
- * Load File-based Controller based on substrings
- * Can be used in developing API's
+ * Load Controller based on URL path string and HTTP method
  *
  * @param string $http_method - HTTP method (e.g. GET, POST, PUT, DELETE)
- * @param string $sub1 - First substring after the BASE_URL
- * @param string $sub2 - Second substring after the BASE_URL
- * @param string $controller - Controller file (exclude .php extension).
+ * @param string $string - URL path in the format '/url/string'
+ *                       - May use fnmatch() wildcards, such as '*'
+ * @param string $class_method - ClassController@method format
  */
 
-function route_file($http_method, $sub1, $sub2, $controller)
+function route_class($http_method, $string, $class_method)
 {
 
 	if ( $_SERVER['REQUEST_METHOD'] == $http_method ) {
 
-		$url_1 = url_value(1);
-		$url_2 = url_value(2);
-		$url_3 = url_value(3);
+		if ( fnmatch($string, $_SERVER['PATH_INFO']) )  {
 
-		if ( ! empty($url_1) && $sub1==$url_1 && ! empty($url_2) && $sub2==$url_2 )  {
+			list($class, $method) = explode('@', $class_method);
 
-			require_once '../controllers/files/' . $controller . '.php';
-
-		} elseif ( ! empty($url_1) && $sub1==$url_1 && empty($url_2) && $sub2==null && ! isset($url_3) ) {
-
-			require_once '../controllers/files/' . $controller . '.php';
+			$object = new $class();
+			return $object->$method();
 
 		}
 

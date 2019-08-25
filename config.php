@@ -43,9 +43,9 @@ spl_autoload_register(function ($class_name) {
 |
 */
 
-define('ENV', 'development');
+define('ENVIRONMENT', 'development');
 
-switch (ENV) {
+switch (ENVIRONMENT) {
     case 'development':
         error_reporting(E_ALL);
         break;
@@ -72,4 +72,4 @@ define('BASE_URL', 'http://localhost/basicphp/public/');
 |--------------------------------------------------------------------------
 */
 
-define('HOME_CONTROLLER', 'HomeController@index');
+define('HOME_PAGE', 'HomeController@index');
