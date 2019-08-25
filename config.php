@@ -68,17 +68,8 @@ define('BASE_URL', 'http://localhost/basicphp/public/');
 
 /*
 |--------------------------------------------------------------------------
-| Render Homepage
+| Set Homepage
 |--------------------------------------------------------------------------
 */
 
 define('HOME_CONTROLLER', 'HomeController@index');
-
-if ( ! isset($_SERVER['PATH_INFO']) ) {
-
-	list($class, $method) = explode('@', HOME_CONTROLLER);
-
-	$class_object = new $class();
-	return $class_object->$method();
-
-}

@@ -17,6 +17,20 @@
 |
 */
 
+/*
+|--------------------------------------------------------------------------
+| Render Homepage
+|--------------------------------------------------------------------------
+*/
+
+if ( ! isset($_SERVER['PATH_INFO']) ) {
+
+	list($class, $method) = explode('@', HOME_CONTROLLER);
+	$class_object = new $class();
+	return $class_object->$method();
+
+}
+
 /**
  * Manual Routing Using Class-based Controllers
  * Set HTTP request method as the first argument.
