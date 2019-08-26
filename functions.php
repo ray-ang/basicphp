@@ -31,7 +31,7 @@ function url_value($order)
 
     if (isset($_SERVER[URL_PARSE_METHOD])) { $url = explode('/', $_SERVER[URL_PARSE_METHOD]); }
 
-    if (isset($url[$order])) { return $url[$order]; }
+    if ( isset($url[$order]) || ! empty($url[$order]) ) { return $url[$order]; } else { return false; }
 
 }
 

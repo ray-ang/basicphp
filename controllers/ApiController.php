@@ -23,8 +23,7 @@ class ApiController
 
 	public function response()
 	{
-		$url_3 = url_value(3);
-		if ( ! isset($url_3) ) $this->default_response();
+		if ( url_value(3) == false ) $this->default_response();
 		if ( url_value(3) == 'rest-rpc' && url_value(4) == 'sample-api' ) $this->default_response();
 	}
 	
