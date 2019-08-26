@@ -44,9 +44,9 @@ spl_autoload_register(function ($class_name) {
 | Set The Environment
 |--------------------------------------------------------------------------
 |
-| Set the working environment. When working in a development environment,
-| define 'ENV' as 'development'. When working in a production environment,
-| define 'ENV' as 'production'. Error reporting is turned ON in development,
+| When working in a development environment, define 'ENVIRONMENT' as
+| 'development'. When working in a production environment, define
+| 'ENVIRONMENT' as 'production'. Error reporting is turned ON in development,
 | and OFF in production environment.
 |
 */
@@ -76,6 +76,17 @@ define('BASE_URL', 'http://localhost/basicphp/public/');
 
 /*
 |--------------------------------------------------------------------------
+| Set URL Parse Method
+|--------------------------------------------------------------------------
+|
+| Sets the $_SERVER[''] global variable to parse the URL
+|
+*/
+
+define('URL_PARSE_METHOD', 'PATH_INFO');
+
+/*
+|--------------------------------------------------------------------------
 | Set Homepage
 |--------------------------------------------------------------------------
 */
@@ -86,6 +97,9 @@ define('HOME_PAGE', 'HomeController@index');
 |--------------------------------------------------------------------------
 | Set Controller Suffix
 |--------------------------------------------------------------------------
+|
+| If you are using 'ClassController' convention, set to 'Controller'.
+|
 */
 
 define('CONTROLLER_SUFFIX', 'Controller');
@@ -94,6 +108,8 @@ define('CONTROLLER_SUFFIX', 'Controller');
 |--------------------------------------------------------------------------
 | Set Default Method
 |--------------------------------------------------------------------------
+|
+| If the second URL string is empty, set this method as the default method.
 */
 
 define('METHOD_DEFAULT', 'index');
