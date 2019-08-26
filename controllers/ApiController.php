@@ -47,18 +47,18 @@ class ApiController
 		$data[] = ['patient' => 'Samuel', 'age' => 28];
 		$data[] = ['patient' => 'Joseph', 'age' => 65];
 
+		// Convert JSON to an array and set as $_POST
+		// $_POST = json_decode($_POST['json'], true);
+
+		// Convert POSTed JSON to an array and set as $_POST
+		$_POST = json_decode(file_get_contents("php://input"), true);
+
+		// Retrieve username and password from CURLOPT_USERPWD option
+		if ( isset($_SERVER['PHP_AUTH_USER']) ) $username = $_SERVER['PHP_AUTH_USER'];
+		if ( isset($_SERVER['PHP_AUTH_PW']) ) $password = $_SERVER['PHP_AUTH_PW'];
+
 		// Authentication: Check if with valid user and license key.
 		if ( $_SERVER['REQUEST_METHOD'] == 'POST' && in_array(['user' => $username, 'key' => $password], $license_key) ) {
-
-			// Convert JSON to an array and set as $_POST
-			// $_POST = json_decode($_POST['json'], true);
-
-			// Convert POSTed JSON to an array and set as $_POST
-			$_POST = json_decode(file_get_contents("php://input"), true);
-
-			// Retrieve username and password from CURLOPT_USERPWD option
-			$username = $_SERVER['PHP_AUTH_USER'];
-			$password = $_SERVER['PHP_AUTH_PW'];
 
 			foreach ( $data as $row ) {
 
