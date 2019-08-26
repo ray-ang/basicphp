@@ -6,18 +6,29 @@
  * include files. The variables can then be used in the view file.
  */
 
+/**
+ * BasicPHP - REST-RPC API
+ *
+ * @author  Raymund John Ang <raymund@open-nis.org>
+ * @license MIT License
+ */
+
 class ApiController
 {
 
 	public function index()
 	{
+		$this->default_response();
+	}
 
-		/**
-		 * BasicPHP - Rest API
-		 *
-		 * @author  Raymund John Ang <raymund@open-nis.org>
-		 * @license MIT License
-		 */
+	public function response()
+	{
+		if ( empty(url_value(3)) ) $this->default_response();
+		if ( url_value(3) == 'rest-rpc' && url_value(4) == 'sample-api' ) $this->default_response();
+	}
+	
+	protected function default_response()
+	{
 
 		// $license_key as an array of valid license keys
 		$license_key = [];
@@ -77,13 +88,6 @@ class ApiController
 			api_response($data=null, $message);
 
 		}
-
-	}
-
-	public function response()
-	{
-
-		$this->index();
 
 	}
 
