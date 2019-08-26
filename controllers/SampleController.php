@@ -20,23 +20,14 @@ class SampleController
 		$page_title = 'Sample Route Page';
 
 		// Display page
-		if (! isset($param3) && ! isset($param1)
-			OR (! isset($param3) && isset($param1) && is_numeric($param1) && ! isset($param2))
-			OR (! isset($param3) && isset($param1) && is_numeric($param1) && isset($param2) && is_numeric($param2))) {
+		if ( is_numeric(url_value(3)) && is_numeric(url_value(4)) && url_value(5) == false ) {
 
 			$data = compact('param1', 'param2', 'param3', 'person', 'page_title');
 			view('sample_route', $data);
 
-		}
+		} elseif ( ! is_numeric(url_value(3)) || ! is_numeric(url_value(4)) || url_value(5) !== false ) {
 
-		// Limit valid sub-url string
-		if (isset($param3)
-			OR (! isset($param3) && isset($param1) && ! is_numeric($param1))
-			OR (! isset($param3) && isset($param2) && ! is_numeric($param2))) {
-
-			// Set $error_message for the error page
-			$error_message = 'You can only set 2 numbers and only have 2 parameters.';
-
+			$error_message = 'You can place only 2 numbers as parameters after the /route string, such as /route/1/2 .';
 			$data = compact('error_message', 'page_title');
 			view('error', $data);
 

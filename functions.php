@@ -42,9 +42,8 @@ function url_value($order)
 function route_auto()
 {
 
-	$class = ucfirst(url_value(1)) . CONTROLLER_SUFFIX;
-	$method = url_value(2);
-	if ( empty($method) ) $method = METHOD_DEFAULT;
+	if ( url_value(1) !== false ) { $class = ucfirst(url_value(1)) . CONTROLLER_SUFFIX; }
+	if ( url_value(2) !== false ) { $method = lcfirst(url_value(2)); } else { $method = METHOD_DEFAULT; }
 
 	if ( class_exists($class) ) {
 		$object = new $class();
@@ -53,7 +52,7 @@ function route_auto()
 		} else {
 			header($_SERVER["SERVER_PROTOCOL"]." 404 Not Found");
 		}
-	}
+	} else { header($_SERVER["SERVER_PROTOCOL"]." 404 Not Found"); }
 
 }
 
