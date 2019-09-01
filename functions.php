@@ -49,10 +49,8 @@ function route_auto()
 		$object = new $class();
 		if ( method_exists($object, $method) ) {
 			return $object->$method();
-		} else {
-			header($_SERVER["SERVER_PROTOCOL"]." 404 Not Found");
 		}
-	} else { header($_SERVER["SERVER_PROTOCOL"]." 404 Not Found"); }
+	}
 
 }
 
@@ -61,16 +59,22 @@ function route_auto()
  *
  * @param string $http_method - HTTP method (e.g. GET, POST, PUT, DELETE)
  * @param string $string - URL path in the format '/url/string'
- *                       - May use fnmatch() wildcards, such as '*'
+ *                       - Wildcard convention from Codeigniter 3
+ *                       - (:num) for number and (:any) for string
  * @param string $class_method - ClassController@method format
  */
 
-function route_class($http_method, $string, $class_method)
+function route_class($http_method, $path, $class_method)
 {
 
 	if ( $_SERVER['REQUEST_METHOD'] == $http_method ) {
 
-		if ( fnmatch($string, $_SERVER[URL_PARSE_METHOD]) )  {
+		// Convert '/' and wilcards (:num) and (:any) to RegEx
+		$pattern = str_ireplace( '/', '\/', $path );
+		$pattern = str_ireplace( '(:num)', '[0-9]+', $pattern );
+		$pattern = str_ireplace( '(:any)', '[^\/]+', $pattern );
+		
+		if ( preg_match('/^'.$pattern.'+$/i', $_SERVER[URL_PARSE_METHOD]) )  {
 
 			list($class, $method) = explode('@', $class_method);
 

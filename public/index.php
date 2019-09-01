@@ -20,6 +20,14 @@
 // Register the start time as a float value
 $time_start = floatval(microtime());
 
+// Allow only alphanumeric and GET request characters on the request URI
+if (isset($_SERVER['REQUEST_URI']) && preg_match('/[^a-zA-Z0-9_\/?&=-]/i', $_SERVER['REQUEST_URI']) ) {
+
+    header($_SERVER["SERVER_PROTOCOL"]." 400 Bad Request");
+    exit();
+
+}
+
 // Bootstrap configuration
 require_once '../config.php';
 
