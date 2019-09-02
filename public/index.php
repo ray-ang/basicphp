@@ -7,10 +7,11 @@
  *          - View and Controller from any framework, making the application portable
  *          - and compatible with the developer's framework of choice or plain PHP.
  *          -
- *          - BasicPHP's functions library (functions.php) can be embedded in the
- *          - chosen framework's front controller, and the (1) classes, (2) models,
- *          - (3) views, and (4) controllers folders copied one folder above the front
- *          - controller file of the chosen framework.
+ *          - To embed the application to any framework, copy BasicPHP's configuration
+ *          - file (config.php), functions library (functions.php), and the 'classes',
+ *          - 'models', 'views' and 'controllers' folders one (1) folder above the front
+ *          - controller file of the chosen framework. In the controller file, at the
+ *          - start of the script, include/require config.php and functions.php.
  *
  * @package  BasicPHP
  * @author   Raymund John Ang <raymund@open-nis.org>
@@ -19,14 +20,6 @@
 
 // Register the start time as a float value
 $time_start = floatval(microtime());
-
-// Allow only alphanumeric and GET request characters on the request URI
-if (isset($_SERVER['REQUEST_URI']) && preg_match('/[^a-zA-Z0-9_\/?&=-]/i', $_SERVER['REQUEST_URI']) ) {
-
-    header($_SERVER["SERVER_PROTOCOL"]." 400 Bad Request");
-    exit();
-
-}
 
 // Bootstrap configuration
 require_once '../config.php';
