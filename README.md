@@ -4,9 +4,9 @@
 
 A PHP Nano-Framework for Decoupled Application and Business Logic, and Presentation. The aim of the project is for developers to build applications that are framework-independent by decoupling the Model, View and Controller from any framework, making the application portable and compatible with the developer's framework of choice or plain PHP.
 
-BasicPHP's functions library (functions.php) can be embedded in the chosen framework's front controller, and the (1) classes, (2) models, (3) views, and (4) controllers folders copied one folder above the front controller file of the chosen framework.
+To embed the application to any framework, copy BasicPHP's configuration file (config.php), functions library (functions.php), and the 'classes', 'models', 'views' and 'controllers' folders one (1) folder above the front controller file of the chosen framework. In the controller file, at the start of the script, include/require config.php and functions.php.
 
-Features include class autoloading, routing, helper functions, security (XSS and CSRF protection, and PDO abstraction layer for SQL injection prevention), and handling 404 error - page not found.
+Features include class autoloading, routing, functions library, security (XSS and CSRF protection, and PDO abstraction layer for SQL injection prevention), and handling 404 error - page not found. It also includes automatic routing of /class/method endpoints to Class::method functions.
 
 <br />
 
