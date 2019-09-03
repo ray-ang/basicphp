@@ -42,10 +42,10 @@ function url_value($order)
 function route_auto()
 {
 
-	if ( url_value(1) !== false ) { $class = ucfirst(url_value(1)) . CONTROLLER_SUFFIX; }
-	if ( url_value(2) !== false ) { $method = lcfirst(url_value(2)); } else { $method = METHOD_DEFAULT; }
+	if (url_value(1) !== false) { $class = ucfirst(url_value(1)) . CONTROLLER_SUFFIX; }
+	if (url_value(2) !== false) { $method = lcfirst(url_value(2)); } else { $method = METHOD_DEFAULT; }
 
-	if ( class_exists($class) ) {
+	if (class_exists($class)) {
 		$object = new $class();
 		if ( method_exists($object, $method) ) {
 			return $object->$method();
