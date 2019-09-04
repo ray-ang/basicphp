@@ -6,25 +6,27 @@
 |--------------------------------------------------------------------------
 */
 
-// Check if HTTP request method is 'POST', if there is a POSTed data, and the POSTed is in JSON format.
+// Check if HTTP request method is 'POST', if there is POSTed data, and the POSTed data is in JSON format.
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && file_get_contents('php://input') !== false && json_decode( file_get_contents('php://input'), true ) !== null) {
 
 	$json_rpc = json_decode( file_get_contents('php://input'), true );
 
-	// Requires the 'jsonrpc' and 'method' members of the request object
-	if (isset($json_rpc['jsonrpc']) && isset($json_rpc['method'])) {
+	// Requires the 'jsonrpc', 'method' and 'id' members of the request object
+	if (isset($json_rpc['jsonrpc']) && isset($json_rpc['method']) && isset($json_rpc['id'])) {
 
-		if (strstr($json_rpc['method'], '.') == false) exit(json_encode(['jsonrpc' => '2.0', 'error' => ['code' => 32600, 'message' => "The JSON-RPC 'method' member should have the format 'class.method'."]]));
+		if (strstr($json_rpc['method'], '.') == false) exit(json_encode(['jsonrpc' => '2.0', 'error' => ['code' => 32600, 'message' => "The JSON-RPC 'method' member should have the format 'class.method'."], 'id' => $json_rpc['id']]));
 
 		list($class, $method) = explode('.', $json_rpc['method']);
 		$class = ucfirst($class) . CONTROLLER_SUFFIX;
+		$method = lcfirst($method);
 
 		if (class_exists($class)) {
 			$object = new $class();
 			if ( method_exists($object, $method) ) {
 				return $object->$method();
-			}
-		}
+				exit();
+			} else { exit(json_encode(['jsonrpc' => '2.0', 'error' => ['code' => 32601, 'message' => "Method not found."], 'id' => $json_rpc['id']])); }
+		} else { exit(json_encode(['jsonrpc' => '2.0', 'error' => ['code' => 32601, 'message' => "Class not found."], 'id' => $json_rpc['id']])); }
 	}
 
 }
@@ -62,7 +64,7 @@ if ( ! isset($_SERVER['PATH_INFO']) && ! isset($json_rpc['method']) ) {
 |--------------------------------------------------------------------------
 */
 
-if (! isset($json_rpc['method'])) route_auto();
+route_auto();
 
 /*
 |--------------------------------------------------------------------------
@@ -70,11 +72,7 @@ if (! isset($json_rpc['method'])) route_auto();
 |--------------------------------------------------------------------------
 */
 
-if (! isset($json_rpc['method'])) {
-
-// route_class('GET', '/response/from/(:any)/(:num)', 'ApiController@index');
-
-}
+route_class('GET', '/response/from/(:any)/(:num)', 'ApiController@index');
 
 /*
 |--------------------------------------------------------------------------
