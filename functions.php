@@ -8,14 +8,15 @@
 | These are core functions necessary to run the nano-framework:
 |
 | 1. url_value() - retrieves the URL path substring separated by '/'
-| 2. route_auto() - automatic routing of URL path to Class and method
-| 3. route_class() - routes URL path request to Controllers
-| 4. view() - passes data and renders the View
-| 5. pdo_conn() - PHP Data Objects (PDO) database connection
-| 6. api_response() - handles API response
-| 7. api_call() - handles API call
-| 8. esc() - uses htmlspecialchars() to prevent XSS
-| 9. csrf_token() - uses sessions to create per request CSRF token
+| 2. route_rpc() - JSON-RPC v2.0 compatibility layer
+| 3. route_auto() - automatic routing of URL path to Class and method
+| 4. route_class() - routes URL path request to Controllers
+| 5. view() - passes data and renders the View
+| 6. pdo_conn() - PHP Data Objects (PDO) database connection
+| 7. api_response() - handles API response
+| 8. api_call() - handles API call
+| 9. esc() - uses htmlspecialchars() to prevent XSS
+| 10. csrf_token() - uses sessions to create per request CSRF token
 |
 */
 
@@ -32,6 +33,40 @@ function url_value($order)
     if (isset($_SERVER[URL_PARSE_METHOD])) { $url = explode('/', $_SERVER[URL_PARSE_METHOD]); }
 
     if ( isset($url[$order]) || ! empty($url[$order]) ) { return $url[$order]; } else { return false; }
+
+}
+
+/**
+ * JSON-RPC v2.0 Compatibility Layer with 'method' member as 'class.method'
+ */
+
+function route_rpc()
+{
+
+	// Check if HTTP request method is 'POST', if there is POSTed data, and the POSTed data is in JSON format.
+	if ($_SERVER['REQUEST_METHOD'] == 'POST' && file_get_contents('php://input') !== false && json_decode( file_get_contents('php://input'), true ) !== null) {
+
+		$json_rpc = json_decode( file_get_contents('php://input'), true );
+	
+		// Requires the 'jsonrpc', 'method' and 'id' members of the request object
+		if (isset($json_rpc['jsonrpc']) && isset($json_rpc['method']) && isset($json_rpc['id'])) {
+	
+			if (strstr($json_rpc['method'], '.') == false) exit(json_encode(['jsonrpc' => '2.0', 'error' => ['code' => 32600, 'message' => "The JSON-RPC 'method' member should have the format 'class.method'."], 'id' => $json_rpc['id']]));
+	
+			list($class, $method) = explode('.', $json_rpc['method']);
+			$class = ucfirst($class) . CONTROLLER_SUFFIX;
+			$method = lcfirst($method);
+	
+			if (class_exists($class)) {
+				$object = new $class();
+				if ( method_exists($object, $method) ) {
+					return $object->$method();
+					exit();
+				} else { exit(json_encode(['jsonrpc' => '2.0', 'error' => ['code' => 32601, 'message' => "Method not found."], 'id' => $json_rpc['id']])); }
+			} else { exit(json_encode(['jsonrpc' => '2.0', 'error' => ['code' => 32601, 'message' => "Class not found."], 'id' => $json_rpc['id']])); }
+		}
+	
+	}
 
 }
 
