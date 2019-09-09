@@ -49,7 +49,9 @@ route_auto();
 |--------------------------------------------------------------------------
 */
 
-route_class('GET', '/response/from/(:any)/(:num)', 'ApiController@index');
+route_class('GET', '/posts', 'PostController@list');
+route_class('GET' || 'POST', '/posts/(:num)', 'PostController@restView');
+route_class('GET' || 'POST', '/posts/(:num)/edit', 'PostController@restEdit');
 
 /*
 |--------------------------------------------------------------------------
