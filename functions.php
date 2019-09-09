@@ -84,6 +84,9 @@ function route_auto()
 		$object = new $class();
 		if ( method_exists($object, $method) ) {
 			return $object->$method();
+		} else {
+			header($_SERVER["SERVER_PROTOCOL"]." 404 Not Found");
+			exit();
 		}
 	}
 
