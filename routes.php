@@ -59,7 +59,7 @@ route_class('GET' || 'POST', '/posts/(:num)/edit', 'PostController@restEdit');
 |--------------------------------------------------------------------------
 |
 | Invalid page includes only four (4) files: the front controller (index.php),
-| functions.php, config.php and routes.php.
+| config.php, functions.php and routes.php.
 |
 */
 
