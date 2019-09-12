@@ -105,14 +105,14 @@ function route_auto()
 function route_class($http_method, $path, $class_method)
 {
 
-	if ( $_SERVER['REQUEST_METHOD'] == $http_method ) {
+	if ($_SERVER['REQUEST_METHOD'] == $http_method) {
 
 		// Convert '/' and wilcards (:num) and (:any) to RegEx
 		$pattern = str_ireplace( '/', '\/', $path );
 		$pattern = str_ireplace( '(:num)', '[0-9]+', $pattern );
 		$pattern = str_ireplace( '(:any)', '[^\/]+', $pattern );
 		
-		if ( preg_match('/^'.$pattern.'+$/i', $_SERVER[URL_PARSE]) )  {
+		if (preg_match('/^'.$pattern.'+$/i', $_SERVER[URL_PARSE]))  {
 
 			list($class, $method) = explode('@', $class_method);
 
@@ -136,7 +136,7 @@ function view($view, $data=null)
 {
 
 	// Convert array keys to variables
-	if ( isset($data) ) { extract($data); }
+	if (isset($data)) { extract($data); }
 
 	// Render Page View
 	require_once '../views/' . $view . '.php';
