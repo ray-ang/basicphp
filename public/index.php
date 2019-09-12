@@ -19,7 +19,7 @@
  */
 
 // Register the start time as a float value
-$time_start = floatval(microtime());
+$time_start = microtime(true);
 
 // Bootstrap configuration
 require_once '../config.php';
@@ -31,12 +31,10 @@ require_once '../functions.php';
 require_once '../routes.php';
 
 // // Register the end time as a float value
-// $time_end = floatval(microtime());
+// $time_end = microtime(true);
 // // Compute the elapsed time
 // $time_lapse = $time_end - $time_start;
-// echo 'Start: ' . $time_start . '<br/>';
-// echo 'End: ' . $time_end . '<br/>';
-// echo 'Lapse Time: ' . $time_lapse . '<br/>';
+// echo 'Lapse Time: ' . $time_lapse . '<br />';
 // // Compute average load speed. Set $_SESSION['speed'] as an array.
 // if (! isset($_SESSION['speed'])) { $_SESSION['speed'] = []; }
 // $_SESSION['speed'][] = $time_lapse;
