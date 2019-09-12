@@ -10,12 +10,13 @@ Features include class autoloading, routing, functions library, security (XSS an
 
 <br />
 
-## Features ad 
+## Features
 
 1. Front Controller design pattern
 2. Model-View-Controller (MVC) architectural pattern
 3. Classes and functions for extensibility
 4. Multitier Architecture for API (JSON-RPC, REST-RPC, and REST)
+5. Fast, unopinionated and minimalist
 
 <br />
 
