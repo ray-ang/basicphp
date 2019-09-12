@@ -30,7 +30,7 @@
 function url_value($order)
 {
 
-    if (isset($_SERVER[URL_PARSE_METHOD])) { $url = explode('/', $_SERVER[URL_PARSE_METHOD]); }
+    if (isset($_SERVER[URL_PARSE])) { $url = explode('/', $_SERVER[URL_PARSE]); }
 
     if ( isset($url[$order]) || ! empty($url[$order]) ) { return $url[$order]; } else { return false; }
 
@@ -112,7 +112,7 @@ function route_class($http_method, $path, $class_method)
 		$pattern = str_ireplace( '(:num)', '[0-9]+', $pattern );
 		$pattern = str_ireplace( '(:any)', '[^\/]+', $pattern );
 		
-		if ( preg_match('/^'.$pattern.'+$/i', $_SERVER[URL_PARSE_METHOD]) )  {
+		if ( preg_match('/^'.$pattern.'+$/i', $_SERVER[URL_PARSE]) )  {
 
 			list($class, $method) = explode('@', $class_method);
 

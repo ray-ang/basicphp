@@ -14,7 +14,7 @@ route_rpc();
 |--------------------------------------------------------------------------
 */
 
-if (isset($_SERVER[URL_PARSE_METHOD]) && preg_match('/[^a-zA-Z0-9_\/?&=-]/i', $_SERVER[URL_PARSE_METHOD]) ) {
+if (isset($_SERVER[URL_PARSE]) && preg_match('/[^a-zA-Z0-9_\/?&=-]/i', $_SERVER[URL_PARSE]) ) {
 
     header($_SERVER["SERVER_PROTOCOL"]." 400 Bad Request");
     exit();
@@ -27,7 +27,7 @@ if (isset($_SERVER[URL_PARSE_METHOD]) && preg_match('/[^a-zA-Z0-9_\/?&=-]/i', $_
 |--------------------------------------------------------------------------
 */
 
-if ( ! isset($_SERVER[URL_PARSE_METHOD]) && ! isset($json_rpc['method']) ) {
+if ( ! isset($_SERVER[URL_PARSE]) && ! isset($json_rpc['method']) ) {
 
 	list($class, $method) = explode('@', HOME_PAGE);
 	$object = new $class();

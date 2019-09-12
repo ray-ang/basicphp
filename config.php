@@ -83,7 +83,7 @@ define('BASE_URL', 'http://localhost/basicphp/public/');
 |
 */
 
-define('URL_PARSE_METHOD', 'PATH_INFO');
+define('URL_PARSE', 'PATH_INFO');
 
 /*
 |--------------------------------------------------------------------------
