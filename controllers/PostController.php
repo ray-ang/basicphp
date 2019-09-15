@@ -77,40 +77,6 @@ class PostController
 
 	}
 
-	public function restView()
-	{
-
-		if ($this->isPostDelete()) $this->delete();
-
-		if (isset($_POST['goto-edit'])) {
-
-			header('Location: ' . BASE_URL . 'posts/' . url_value(2) . '/edit');
-			exit();
-
-		}
-
-		$post = new PostModel;
-		$stmt = $post->view( url_value(2) );
-
-		if ( $stmt->rowCount() == 1 ) {
-
-			$page_title = 'View Post';
-
-			$data = compact('stmt', 'page_title');
-			view('post_view', $data);
-
-		} else {
-
-			$error_message = 'The Post ID does not exist.';
-			$page_title = 'Error in Post ID';
-
-			$data = compact('error_message', 'page_title');
-			view('error', $data);
-
-		}
-
-	}
-
 	public function add()
 	{
 
@@ -144,41 +110,6 @@ class PostController
 		}
 
 		$sql = $post->view( url_value(3) );
-
-		if ( $sql->rowCount() == 1 ) {
-
-			$page_title = 'Edit Post';
-
-			$data = compact('sql', 'page_title');
-			view('post_edit', $data);
-
-		} else {
-
-			$error_message = "The Post ID does not exist.";
-			$page_title = 'Error in Post ID';
-
-			$data = compact('error_message', 'page_title');
-			view('error', $data);
-
-		}
-
-	}
-
-	public function restEdit()
-	{
-
-		$post = new PostModel;
-
-		if ($this->isPostEdit()) {
-
-			$post->edit( url_value(2) );
-
-			header('Location: ' . BASE_URL . 'posts/' . url_value(2));
-			exit();
-
-		}
-
-		$sql = $post->view( url_value(2) );
 
 		if ( $sql->rowCount() == 1 ) {
 
