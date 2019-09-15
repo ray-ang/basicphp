@@ -111,13 +111,28 @@ function route_class($http_method, $path, $class_method)
 		$pattern = str_ireplace( '/', '\/', $path );
 		$pattern = str_ireplace( '(:num)', '[0-9]+', $pattern );
 		$pattern = str_ireplace( '(:any)', '[^\/]+', $pattern );
-		
-		if (preg_match('/^'.$pattern.'+$/i', $_SERVER[URL_PARSE]))  {
 
-			list($class, $method) = explode('@', $class_method);
+		if (URL_PARSE == 'REQUEST_URI') {
+			$sub = explode('/', BASE_URL);
+			$sub_1 = $sub[3];
+			$sub_2 = $sub[4];
 
-			$object = new $class();
-			$object->$method();
+			if (preg_match('/^\/' . $sub_1 . '\/' . $sub_2.$pattern . '+$/i', $_SERVER[URL_PARSE]))  {
+
+				list($class, $method) = explode('@', $class_method);
+
+				$object = new $class();
+				$object->$method();
+
+			}
+
+		} elseif (URL_PARSE == 'PATH_INFO') {
+
+			if (preg_match('/^' . $pattern . '+$/i', $_SERVER[URL_PARSE]))  {
+				list($class, $method) = explode('@', $class_method);
+				$object = new $class();
+				$object->$method();
+			}
 
 		}
 

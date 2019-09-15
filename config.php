@@ -69,6 +69,7 @@ switch (ENVIRONMENT) {
 |
 | Define 'BASE_URL' as the domain with '/' at the end, such as
 | 'http://example.com/' or 'https://example.com/'.
+| Include subdirectory if index.php is not in DocumentRoot folder.
 |
 */
 
