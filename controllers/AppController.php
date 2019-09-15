@@ -40,7 +40,11 @@ class AppController
 	public function viewUser()
 	{
 
-		if (isset($_POST['delete-post']) && isset($_POST['csrf-token']) && isset($_SESSION['csrf-token']) && $_POST['csrf-token'] == $_SESSION['csrf-token']) $this->delete();
+		if (isset($_POST['delete-post']) && isset($_POST['csrf-token']) && isset($_SESSION['csrf-token']) && $_POST['csrf-token'] == $_SESSION['csrf-token']) {
+			$this->deleteUser();
+			header('Location: ' . BASE_URL . 'posts');
+			exit();
+		}
 
 		if (isset($_POST['goto-edit'])) {
 
@@ -103,6 +107,14 @@ class AppController
 			view('error', $data);
 
 		}
+
+	}
+
+	public function deleteUser()
+	{
+
+		$post = new PostModel;
+		$post->delete( url_value(2) );
 
 	}
 

@@ -46,7 +46,11 @@ class PostController
 	public function view()
 	{
 
-		if ($this->isPostDelete()) $this->delete();
+		if ($this->isPostDelete()) {
+			$this->delete();
+			header('Location: ' . BASE_URL . 'post/list');
+			exit();
+		}
 
 		if (isset($_POST['goto-edit'])) {
 
@@ -135,9 +139,6 @@ class PostController
 
 		$post = new PostModel;
 		$post->delete( url_value(3) );
-
-		header('Location: ' . BASE_URL . 'post/list');
-		exit();
 
 	}
 
