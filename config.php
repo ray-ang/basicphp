@@ -76,14 +76,22 @@ define('BASE_URL', 'http://localhost/basicphp/public/');
 
 /*
 |--------------------------------------------------------------------------
-| Set URL Parse Method
+| Set URL_PARSE Method as either 'REQUEST_URI' or 'PATH_INFO'.
+| When using Nginx server, 'REQUEST_URI' is recommended.
+| SUB_DIR as the number of subfolders index.php is located from domain.
 |--------------------------------------------------------------------------
 |
-| Sets the $_SERVER[''] global variable to parse the URL
+| Sets the $_SERVER[''] global variable to parse the URL.
 |
 */
 
 define('URL_PARSE', 'PATH_INFO');
+
+if (URL_PARSE == 'PATH_INFO') {
+    define('SUB_DIR', 0);
+} elseif (URL_PARSE == 'REQUEST_URI') {
+    define('SUB_DIR', substr_count(BASE_URL, '/')-3);
+}
 
 /*
 |--------------------------------------------------------------------------
