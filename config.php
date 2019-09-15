@@ -86,7 +86,7 @@ define('BASE_URL', 'http://localhost/basicphp/public/');
 |
 */
 
-define('URL_PARSE', 'PATH_INFO');
+define('URL_PARSE', 'REQUEST_URI');
 
 if (URL_PARSE == 'PATH_INFO') {
     define('SUB_DIR', 0);
