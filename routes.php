@@ -6,11 +6,24 @@
 |--------------------------------------------------------------------------
 */
 
-if (isset($_SERVER['REQUEST_URI']) && preg_match('/[^a-zA-Z0-9_\/?&=-]/i', $_SERVER['REQUEST_URI']) ) {
+if (isset($_SERVER['REQUEST_URI']) && preg_match('/[^a-zA-Z0-9\_\/\?\&\=\-]/i', $_SERVER['REQUEST_URI']) ) {
 
     header($_SERVER["SERVER_PROTOCOL"]." 400 Bad Request");
-    exit('The URI should only contain alphanumeric and GET request characters.');
+    exit('<h1>The URI should only contain alphanumeric and GET request characters.</h2>');
 
+}
+
+/*
+|--------------------------------------------------------------------------
+| Allow only whitelisted characters in $_POST global variable array.
+|--------------------------------------------------------------------------
+*/
+
+if (isset($_POST) && preg_match('/[^a-zA-Z0-9\_\/\?\&\=\-\.]/i', implode('/', $_POST)) ) {
+
+    header($_SERVER["SERVER_PROTOCOL"]." 400 Bad Request");
+	exit('<h1>Submitted data should only contain whitelisted characters.</h1>');
+	
 }
 
 /*
