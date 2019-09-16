@@ -1,5 +1,7 @@
 <?php
 
+var_dump($_POST);
+
 /*
 |--------------------------------------------------------------------------
 | Allow only alphanumeric and GET request characters on the Request URI
@@ -19,7 +21,7 @@ if (isset($_SERVER['REQUEST_URI']) && preg_match('/[^a-zA-Z0-9\_\/\?\&\=\-]/i', 
 |--------------------------------------------------------------------------
 */
 
-if (isset($_POST) && preg_match('/[^a-zA-Z0-9\_\/\?\&\=\-\.]/i', implode('/', $_POST)) ) {
+if (isset($_POST) && preg_match('/[^a-zA-Z0-9\ \s\_\/\?\&\=\-\.\,\'\"\\\]/i', implode('/', $_POST)) ) {
 
     header($_SERVER["SERVER_PROTOCOL"]." 400 Bad Request");
 	exit('<h1>Submitted data should only contain whitelisted characters.</h1>');
