@@ -1,7 +1,5 @@
 <?php
 
-var_dump($_POST);
-
 /*
 |--------------------------------------------------------------------------
 | Allow only alphanumeric and GET request characters on the Request URI
