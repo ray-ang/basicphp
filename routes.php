@@ -2,24 +2,24 @@
 
 /*
 |--------------------------------------------------------------------------
+| Allow only alphanumeric and GET request characters on the Request URI
+|--------------------------------------------------------------------------
+*/
+
+if (isset($_SERVER['REQUEST_URI']) && preg_match('/[^a-zA-Z0-9_\/?&=-]/i', $_SERVER['REQUEST_URI']) ) {
+
+    header($_SERVER["SERVER_PROTOCOL"]." 400 Bad Request");
+    exit('The URI should only contain alphanumeric and GET request characters.');
+
+}
+
+/*
+|--------------------------------------------------------------------------
 | JSON-RPC v2.0 Compatibility Layer with 'method' member as 'class.method'
 |--------------------------------------------------------------------------
 */
 
 route_rpc();
-
-/*
-|--------------------------------------------------------------------------
-| Allow only alphanumeric and GET request characters on the request URI
-|--------------------------------------------------------------------------
-*/
-
-if (isset($_SERVER[URL_PARSE]) && preg_match('/[^a-zA-Z0-9_\/?&=-]/i', $_SERVER[URL_PARSE]) ) {
-
-    header($_SERVER["SERVER_PROTOCOL"]." 400 Bad Request");
-    exit();
-
-}
 
 /*
 |--------------------------------------------------------------------------
