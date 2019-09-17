@@ -28,10 +28,10 @@ $regex_blacklist = "\<\>\{\}\[\]\_\;\*\=\+\'\&\#\%\\$";
 
 $regex_array = explode('\\', $regex_blacklist);
 
-if (isset($_POST) && preg_match('/[' . $regex_blacklist . '\\\]/i', implode('/', $_POST)) ) {
+if (isset($_POST) && preg_match('/[' . $regex_blacklist . '\"\\\]/i', implode('/', $_POST)) ) {
 
 	header($_SERVER["SERVER_PROTOCOL"]." 400 Bad Request");
-	exit('<h1>Submitted data should NOT contain the following characters:</h1><h3><ul>' . implode('<li>', $regex_array) . '<li>\</ul></h3>');
+	exit('<h1>Submitted data should NOT contain the following characters:</h1><h3><ul>' . implode('<li>', $regex_array) . '<li>"<li>\</ul></h3>');
 	
 }
 
