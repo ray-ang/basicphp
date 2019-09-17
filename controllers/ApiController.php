@@ -23,7 +23,7 @@ class ApiController
 
 	public function response()
 	{
-		if ( url_value(3) == false ) $this->default_response();
+		if ( url_value(3) == FALSE ) $this->default_response();
 		if ( url_value(3) == 'rest-rpc' && url_value(4) == 'sample-api' ) $this->default_response();
 	}
 	
@@ -47,10 +47,10 @@ class ApiController
 		$data[] = ['patient' => 'Joseph', 'age' => 65];
 
 		// Convert JSON to an array and set as $_POST
-		// $_POST = json_decode($_POST['json'], true);
+		// $_POST = json_decode($_POST['json'], TRUE);
 
 		// Convert POSTed JSON to an array and set as $_POST
-		$_POST = json_decode(file_get_contents("php://input"), true);
+		$_POST = json_decode(file_get_contents("php://input"), TRUE);
 
 		// Retrieve username and password from CURLOPT_USERPWD option
 		if ( isset($_SERVER['PHP_AUTH_USER']) ) $username = $_SERVER['PHP_AUTH_USER'];
@@ -62,7 +62,7 @@ class ApiController
 			foreach ( $data as $row ) {
 
 				// Add to $data_output array if patient's name contains search string
-				if ( stristr($row['patient'], $_POST['search']) == true ) {
+				if ( stristr($row['patient'], $_POST['search']) == TRUE ) {
 
 					// Change $data_output key names to hide database column names
 					$data_output[] = ['name'=>$row['patient'], 'age'=>$row['age']];
@@ -77,7 +77,7 @@ class ApiController
 
 			} else {
 
-				api_response($data=null, 'No Patient name found on search.');
+				api_response($data=NULL, 'No Patient name found on search.');
 
 			}
 
@@ -85,7 +85,7 @@ class ApiController
 
 			$message = 'You do not have the right credentials or HTTP method.';
 
-			api_response($data=null, $message);
+			api_response($data=NULL, $message);
 
 		}
 

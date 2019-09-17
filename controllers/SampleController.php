@@ -20,12 +20,12 @@ class SampleController
 		$page_title = 'Sample Route Page';
 
 		// Display page
-		if ( is_numeric(url_value(3)) && is_numeric(url_value(4)) && url_value(5) == false ) {
+		if ( is_numeric(url_value(3)) && is_numeric(url_value(4)) && url_value(5) == FALSE ) {
 
 			$data = compact('param1', 'param2', 'param3', 'person', 'page_title');
 			view('sample_route', $data);
 
-		} elseif ( ! is_numeric(url_value(3)) || ! is_numeric(url_value(4)) || url_value(5) !== false ) {
+		} elseif ( ! is_numeric(url_value(3)) || ! is_numeric(url_value(4)) || url_value(5) !== FALSE ) {
 
 			$error_message = 'You can place only 2 numbers as parameters after the /route string, such as /route/1/2 .';
 			$data = compact('error_message', 'page_title');

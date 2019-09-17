@@ -145,21 +145,21 @@ class PostController
 	private function isPostAdd()
 	{
 
-		if ( isset($_POST['submit-post']) && isset($_POST['csrf-token']) && isset($_SESSION['csrf-token']) && $_POST['csrf-token'] == $_SESSION['csrf-token'] ) return true;
+		if ( isset($_POST['submit-post']) && isset($_POST['csrf-token']) && isset($_SESSION['csrf-token']) && $_POST['csrf-token'] == $_SESSION['csrf-token'] ) return TRUE;
 
 	}
 
 	private function isPostEdit()
 	{
 
-		if ( isset($_POST['edit-post']) && isset($_POST['csrf-token']) && isset($_SESSION['csrf-token']) && $_POST['csrf-token'] == $_SESSION['csrf-token'] ) return true;
+		if ( isset($_POST['edit-post']) && isset($_POST['csrf-token']) && isset($_SESSION['csrf-token']) && $_POST['csrf-token'] == $_SESSION['csrf-token'] ) return TRUE;
 
 	}
 
 	private function isPostDelete()
 	{
 
-		if ( isset($_POST['delete-post']) && isset($_POST['csrf-token']) && isset($_SESSION['csrf-token']) && $_POST['csrf-token'] == $_SESSION['csrf-token'] ) return true;
+		if ( isset($_POST['delete-post']) && isset($_POST['csrf-token']) && isset($_SESSION['csrf-token']) && $_POST['csrf-token'] == $_SESSION['csrf-token'] ) return TRUE;
 
 	}
 

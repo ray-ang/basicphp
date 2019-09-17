@@ -18,7 +18,7 @@ class Basic_Form
 
 	}
 
-	public function text( $name, $label, $value = null )
+	public function text( $name, $label, $value = NULL )
 	{
 
 		?><div class="form-group">
@@ -31,7 +31,7 @@ class Basic_Form
 	}
 
 
-	public function textArea( $name, $label, $value = null )
+	public function textArea( $name, $label, $value = NULL )
 	{
 
 		?><div class="form-group">

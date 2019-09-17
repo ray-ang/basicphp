@@ -30,7 +30,7 @@ class PersonController
 
 		if ( $_SERVER['REQUEST_METHOD'] == 'GET' ) {
 
-			if ( url_value(3) !== false && is_numeric(url_value(3)) ) {
+			if ( url_value(3) !== FALSE && is_numeric(url_value(3)) ) {
 
 				foreach ($this->person as $person) {
 
@@ -42,11 +42,11 @@ class PersonController
 
 				if (!empty($person_find)) api_response($person_find, 'A person with that ID number exists.');
 
-				if (empty($person_find)) api_response(null, 'No person exists with that ID number.');
+				if (empty($person_find)) api_response(NULL, 'No person exists with that ID number.');
 
 			} else {
 
-				api_response(null, 'Please indicate ID number.');
+				api_response(NULL, 'Please indicate ID number.');
 				
 			}
 
@@ -59,7 +59,7 @@ class PersonController
 
 		if ( $_SERVER['REQUEST_METHOD'] == 'POST' ) {
 
-			$_POST = json_decode(file_get_contents("php://input"), true);
+			$_POST = json_decode(file_get_contents("php://input"), TRUE);
 
 			$this->person[] = $_POST;
 			api_response($this->person, 'A person was added to the list.');
@@ -73,7 +73,7 @@ class PersonController
 
 		if ( $_SERVER['REQUEST_METHOD'] == 'POST' ) {
 
-			if ( url_value(3) !== false && is_numeric(url_value(3)) ) {
+			if ( url_value(3) !== FALSE && is_numeric(url_value(3)) ) {
 
 				foreach ($this->person as $person) {
 
@@ -85,11 +85,11 @@ class PersonController
 
 				if (!empty($person_find)) api_response($person_find, 'A person with that ID number was updated.');
 
-				if (empty($person_find)) api_response(null, 'No person was updated.');
+				if (empty($person_find)) api_response(NULL, 'No person was updated.');
 
 			} else {
 
-				api_response(null, 'Please indicate ID number.');
+				api_response(NULL, 'Please indicate ID number.');
 				
 			}
 
@@ -102,7 +102,7 @@ class PersonController
 
 		if ( $_SERVER['REQUEST_METHOD'] == 'POST' ) {
 
-			if ( url_value(3) !== false && is_numeric(url_value(3)) ) {
+			if ( url_value(3) !== FALSE && is_numeric(url_value(3)) ) {
 
 				foreach ($this->person as $person) {
 
@@ -114,11 +114,11 @@ class PersonController
 
 				if (!empty($person_find)) api_response($person_find, 'A person with that ID number was deleted.');
 
-				if (empty($person_find)) api_response(null, 'No person was deleted.');
+				if (empty($person_find)) api_response(NULL, 'No person was deleted.');
 
 			} else {
 
-				api_response(null, 'Please indicate ID number.');
+				api_response(NULL, 'Please indicate ID number.');
 				
 			}
 
