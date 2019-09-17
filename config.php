@@ -91,7 +91,7 @@ define('URL_PARSE', 'REQUEST_URI');
 if (URL_PARSE == 'PATH_INFO') {
     define('SUB_DIR', 0);
 } elseif (URL_PARSE == 'REQUEST_URI') {
-    define('SUB_DIR', substr_count(BASE_URL, '/')-3);
+    define('SUB_DIR', substr_count($_SERVER['SCRIPT_NAME'], '/')-1);
 }
 
 /*
