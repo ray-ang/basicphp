@@ -64,16 +64,22 @@ switch (ENVIRONMENT) {
 
 /*
 |--------------------------------------------------------------------------
-| Set BASE_URL
+| Enforce SSL/HTTPS
 |--------------------------------------------------------------------------
-|
-| Define 'BASE_URL' as the domain with '/' at the end, such as
-| 'http://example.com/' or 'https://example.com/'.
-| Include subdirectory if index.php is not in DocumentRoot folder.
-|
 */
 
-define('BASE_URL', 'http://localhost/basicphp/public/');
+define('ENFORCE_SSL', FALSE);
+
+/*
+|--------------------------------------------------------------------------
+| Set BASE_URL
+|--------------------------------------------------------------------------
+*/
+
+if (ENFORCE_SSL == FALSE) { $http_protocol = 'http://'; } else { $http_protocol = 'https://'; }
+if (! empty(dirname($_SERVER['SCRIPT_NAME']))) { $subfolder = dirname($_SERVER['SCRIPT_NAME']); } else { $subfolder = ''; }
+
+define('BASE_URL', $http_protocol . $_SERVER['SERVER_NAME'] . $subfolder . '/');
 
 /*
 |--------------------------------------------------------------------------
@@ -119,6 +125,7 @@ define('CONTROLLER_SUFFIX', 'Controller');
 |--------------------------------------------------------------------------
 |
 | If the second URL string is empty, set this method as the default method.
+|
 */
 
 define('METHOD_DEFAULT', 'index');

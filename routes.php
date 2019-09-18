@@ -2,6 +2,17 @@
 
 /*
 |--------------------------------------------------------------------------
+| Enforce SSL/HTTPS
+|--------------------------------------------------------------------------
+*/
+
+if ( ENFORCE_SSL == TRUE && ( ! isset($_SERVER['HTTPS']) || $_SERVER['HTTPS'] !== 'on' ) ) {
+	header('Location: https://' . $_SERVER['SERVER_NAME'] . $_SERVER['REQUEST_URI']);
+	exit();
+}
+
+/*
+|--------------------------------------------------------------------------
 | Allow only alphanumeric and GET request characters on the Request URI.
 |--------------------------------------------------------------------------
 */
