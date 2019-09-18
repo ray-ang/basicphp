@@ -31,14 +31,14 @@ require_once '../functions.php';
 // Routing configuration
 require_once '../routes.php';
 
-// Register the end time/memory as a float value
-$time_end = microtime(TRUE);
-$memory_end = memory_get_usage();
-// Compute the elapsed time and memory
-$time_lapse = $time_end - $time_start;
-$memory_used = $memory_end - $memory_start;
-echo 'Lapse Time: ' . $time_lapse . ' seconds<br />';
-echo 'Memory Usage: ' . $memory_used . ' bytes<br />';
+// // Register the end time/memory as a float value
+// $time_end = microtime(TRUE);
+// $memory_end = memory_get_usage();
+// // Compute the elapsed time and memory
+// $time_lapse = $time_end - $time_start;
+// $memory_used = $memory_end - $memory_start;
+// echo 'Lapse Time: ' . $time_lapse . ' seconds<br />';
+// echo 'Memory Usage: ' . $memory_used . ' bytes<br />';
 /*
 // Compute average load speed. Set $_SESSION['speed'] as an array.
 if (! isset($_SESSION['speed'])) { $_SESSION['speed'] = []; }

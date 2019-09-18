@@ -25,7 +25,7 @@ class RequestController
 			// $data_input as an array containing $_POST keys and values
 			$data_input = ['search' => $_POST['patient-name']];
 
-			$data_output = api_call('POST', 'http://localhost/basicphp/public/api/response/rest-rpc/sample-api', $data_input, 'Peter', 12345);
+			$data_output = api_call('POST', 'http://localhost/basicphp/public/api', $data_input, 'Peter', 12345);
 			$page_title = 'API Response';
 
 			$data = compact('data_output', 'page_title');
