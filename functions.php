@@ -97,7 +97,7 @@ function route_auto()
  *
  * @param string $http_method - HTTP method (e.g. GET, POST, PUT, DELETE)
  * @param string $string - URL path in the format '/url/string'
- *                       - Wildcard convention from Codeigniter 3
+ *                       - Wildcard convention from Codeigniter
  *                       - (:num) for number and (:any) for string
  * @param string $class_method - ClassController@method format
  */
