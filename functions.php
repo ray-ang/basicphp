@@ -112,7 +112,7 @@ function route_class($http_method, $path, $class_method)
 		$pattern = str_ireplace( '(:num)', '[0-9]+', $pattern );
 		$pattern = str_ireplace( '(:any)', '[^\/]+', $pattern );
 
-		if (URL_PARSE == 'REQUEST_URI') {
+		if (URL_PARSE == 'REQUEST_URI' || 'REDIRECT_URL') {
 				
 			// Check for subfolders from DocumentRoot and include in endpoint
 			$sub = explode('/', dirname($_SERVER['SCRIPT_NAME']));
