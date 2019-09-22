@@ -83,7 +83,7 @@ define('BASE_URL', $http_protocol . $_SERVER['SERVER_NAME'] . $subfolder . '/');
 
 /*
 |--------------------------------------------------------------------------
-| Set URL_PARSE Method as either 'REQUEST_URI' or 'PATH_INFO'.
+| Set URL_PARSE Method as 'REQUEST_URI', 'REDIRECT_URL' or 'PATH_INFO'.
 | When using Nginx server, 'REQUEST_URI' is recommended.
 | SUB_DIR as the number of subfolders index.php is located from domain.
 |--------------------------------------------------------------------------
@@ -92,17 +92,17 @@ define('BASE_URL', $http_protocol . $_SERVER['SERVER_NAME'] . $subfolder . '/');
 |
 */
 
-define('URL_PARSE', 'REQUEST_URI');
+define('URL_PARSE', 'REDIRECT_URL');
 
 if (URL_PARSE == 'PATH_INFO') {
     define('SUB_DIR', 0);
-} elseif (URL_PARSE == 'REQUEST_URI') {
+} elseif (URL_PARSE == 'REQUEST_URI' || 'REDIRECT_URL') {
     define('SUB_DIR', substr_count($_SERVER['SCRIPT_NAME'], '/')-1);
 }
 
 /*
 |--------------------------------------------------------------------------
-| Set Homepage
+| Set Homepage Controller@method
 |--------------------------------------------------------------------------
 */
 
