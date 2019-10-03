@@ -10,37 +10,42 @@ force_ssl();
 
 /*
 |--------------------------------------------------------------------------
-| Allow only alphanumeric and GET request characters on the Request URI.
+| Allow only URI_WHITELISTED characters on the Request URI.
 |--------------------------------------------------------------------------
 */
 
-$regex_whitelist = "\w\/\-\?\=\&";
+if (! empty(URI_WHITELISTED)) {
 
-$regex_array = str_replace('w', 'alphanumeric', $regex_whitelist);
-$regex_array = explode('\\', $regex_array);
+	$regex_array = str_replace('w', 'alphanumeric', URI_WHITELISTED);
+	$regex_array = explode('\\', $regex_array);
 
-if (isset($_SERVER['REQUEST_URI']) && preg_match('/[^' . $regex_whitelist . ']/i', $_SERVER['REQUEST_URI'])) {
+	if (isset($_SERVER['REQUEST_URI']) && preg_match('/[^' . URI_WHITELISTED . ']/i', $_SERVER['REQUEST_URI'])) {
 
-	header($_SERVER["SERVER_PROTOCOL"]." 400 Bad Request");
-	exit('<h1>The URI should only contain alphanumeric and GET request characters:</h1><h3><ul>' . implode('<li>', $regex_array) . '</ul></h3>');
-	
+		header($_SERVER["SERVER_PROTOCOL"]." 400 Bad Request");
+		exit('<h1>The URI should only contain alphanumeric and GET request characters:</h1><h3><ul>' . implode('<li>', $regex_array) . '</ul></h3>');
+		
+	}
+
 }
 
 /*
 |--------------------------------------------------------------------------
-| Deny input with blacklisted characters in $_POST global variable array.
+| Deny POST_BLACKLISTED characters in $_POST global variable array.
+| Backslash (\) is blacklisted by default.
 |--------------------------------------------------------------------------
 */
 
-$regex_blacklist = "\<\>\{\}\[\]\_\;\*\=\+\"\&\#\%\\$";
+if (! empty(POST_BLACKLISTED)) {
 
-$regex_array = explode('\\', $regex_blacklist);
+	$regex_array = explode('\\', POST_BLACKLISTED);
 
-if (isset($_POST) && preg_match('/[' . $regex_blacklist . '\\\]/i', implode('/', $_POST)) ) {
+	if (isset($_POST) && preg_match('/[' . POST_BLACKLISTED . '\\\]/i', implode('/', $_POST)) ) {
 
-	header($_SERVER["SERVER_PROTOCOL"]." 400 Bad Request");
-	exit('<h1>Submitted data should NOT contain the following characters:</h1><h3><ul>' . implode('<li>', $regex_array) . '<li>\</ul></h3>');
-	
+		header($_SERVER["SERVER_PROTOCOL"]." 400 Bad Request");
+		exit('<h1>Submitted data should NOT contain the following characters:</h1><h3><ul>' . implode('<li>', $regex_array) . '<li>\</ul></h3>');
+		
+	}
+
 }
 
 /*
