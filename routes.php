@@ -6,10 +6,7 @@
 |--------------------------------------------------------------------------
 */
 
-if ( ENFORCE_SSL == TRUE && ( ! isset($_SERVER['HTTPS']) || $_SERVER['HTTPS'] !== 'on' ) ) {
-	header('Location: https://' . $_SERVER['SERVER_NAME'] . $_SERVER['REQUEST_URI']);
-	exit();
-}
+force_ssl();
 
 /*
 |--------------------------------------------------------------------------
@@ -35,14 +32,14 @@ if (isset($_SERVER['REQUEST_URI']) && preg_match('/[^' . $regex_whitelist . ']/i
 |--------------------------------------------------------------------------
 */
 
-$regex_blacklist = "\<\>\{\}\[\]\_\;\*\=\+\'\&\#\%\\$";
+$regex_blacklist = "\<\>\{\}\[\]\_\;\*\=\+\"\&\#\%\\$";
 
 $regex_array = explode('\\', $regex_blacklist);
 
-if (isset($_POST) && preg_match('/[' . $regex_blacklist . '\"\\\]/i', implode('/', $_POST)) ) {
+if (isset($_POST) && preg_match('/[' . $regex_blacklist . '\\\]/i', implode('/', $_POST)) ) {
 
 	header($_SERVER["SERVER_PROTOCOL"]." 400 Bad Request");
-	exit('<h1>Submitted data should NOT contain the following characters:</h1><h3><ul>' . implode('<li>', $regex_array) . '<li>"<li>\</ul></h3>');
+	exit('<h1>Submitted data should NOT contain the following characters:</h1><h3><ul>' . implode('<li>', $regex_array) . '<li>\</ul></h3>');
 	
 }
 

@@ -15,8 +15,9 @@
 | 6. pdo_conn() - PHP Data Objects (PDO) database connection
 | 7. api_response() - handles API response
 | 8. api_call() - handles API call
-| 9. esc() - uses htmlspecialchars() to prevent XSS
-| 10. csrf_token() - uses sessions to create per request CSRF token
+| 9. force_ssl() - force application to use SSL
+| 10. esc() - uses htmlspecialchars() to prevent XSS
+| 11. csrf_token() - uses sessions to create per request CSRF token
 |
 */
 
@@ -244,6 +245,20 @@ function api_call($http_method, $url, $data=NULL, $username=NULL, $password=NULL
 	$data_output = json_decode($result, TRUE);
 
 	return $data_output;
+
+}
+
+/**
+ * Force application to use SSL
+ */
+
+function force_ssl()
+{
+
+	if ( ENFORCE_SSL == TRUE && ( ! isset($_SERVER['HTTPS']) || $_SERVER['HTTPS'] !== 'on' ) ) {
+		header('Location: https://' . $_SERVER['SERVER_NAME'] . $_SERVER['REQUEST_URI']);
+		exit();
+	}
 
 }
 
