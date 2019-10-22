@@ -109,7 +109,7 @@ define('BASE_URL', $http_protocol . $_SERVER['SERVER_NAME'] . $subfolder . '/');
 |
 */
 
-define('URL_PARSE', 'REDIRECT_URL');
+define('URL_PARSE', 'REQUEST_URI');
 
 if (URL_PARSE == 'PATH_INFO') {
     define('SUB_DIR', 0);

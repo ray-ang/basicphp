@@ -31,9 +31,13 @@
 function url_value($order)
 {
 
-    if (isset($_SERVER['REDIRECT_URL'])) { $url = explode('/', $_SERVER['REDIRECT_URL']); }
+    if (isset($_SERVER[URL_PARSE])) { $url = explode('/', $_SERVER[URL_PARSE]); }
 
-    if ( isset($url[$order+SUB_DIR]) || ! empty($url[$order+SUB_DIR]) ) { return $url[$order+SUB_DIR]; } else { return FALSE; }
+    if ( isset($url[$order+SUB_DIR]) || ! empty($url[$order+SUB_DIR]) ) {
+		return $url[$order+SUB_DIR];
+	} else {
+		return FALSE;
+	}
 
 }
 
@@ -119,7 +123,7 @@ function route_class($http_method, $path, $class_method)
 			$sub = explode('/', dirname($_SERVER['SCRIPT_NAME']));
 			if (! empty($sub[1])) { $subfolder = implode('\/', $sub); } else { $subfolder = ''; }
 
-			if (preg_match('/^' . $subfolder . $pattern . '+$/i', $_SERVER['REDIRECT_URL']))  {
+			if ( preg_match('/^' . $subfolder . $pattern . '+$/i', strtok($_SERVER[URL_PARSE], '?')) )  {
 
 				list($class, $method) = explode('@', $class_method);
 
