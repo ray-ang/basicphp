@@ -34,7 +34,7 @@ function url_value($order)
     if (isset($_SERVER[URL_PARSE])) { $url = explode('/', $_SERVER[URL_PARSE]); }
 
     if ( isset($url[$order+SUB_DIR]) || ! empty($url[$order+SUB_DIR]) ) {
-		return $url[$order+SUB_DIR];
+		return strtok($url[$order+SUB_DIR], '?');
 	} else {
 		return FALSE;
 	}
