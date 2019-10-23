@@ -31,10 +31,13 @@
 function url_value($order)
 {
 
-    if (isset($_SERVER[URL_PARSE])) { $url = explode('/', $_SERVER[URL_PARSE]); }
+	if (isset($_SERVER['REQUEST_URI'])) {
+		$url_path = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
+		$url = explode('/', $url_path);
+	}
 
     if ( isset($url[$order+SUB_DIR]) || ! empty($url[$order+SUB_DIR]) ) {
-		return strtok($url[$order+SUB_DIR], '?');
+		return $url[$order+SUB_DIR];
 	} else {
 		return FALSE;
 	}
@@ -116,31 +119,20 @@ function route_class($http_method, $path, $class_method)
 		$pattern = str_ireplace( '/', '\/', $path );
 		$pattern = str_ireplace( '(:num)', '[0-9]+', $pattern );
 		$pattern = str_ireplace( '(:any)', '[^\/]+', $pattern );
-
-		if (URL_PARSE == 'REQUEST_URI' || 'REDIRECT_URL') {
 				
-			// Check for subfolders from DocumentRoot and include in endpoint
-			$sub = explode('/', dirname($_SERVER['SCRIPT_NAME']));
-			if (! empty($sub[1])) { $subfolder = implode('\/', $sub); } else { $subfolder = ''; }
+		// Check for subfolders from DocumentRoot and include in endpoint
+		$sub = explode('/', dirname($_SERVER['SCRIPT_NAME']));
+		if (! empty($sub[1])) { $subfolder = implode('\/', $sub); } else { $subfolder = ''; }
 
-			if ( preg_match('/^' . $subfolder . $pattern . '+$/i', strtok($_SERVER[URL_PARSE], '?')) )  {
+		$url_path = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
+		if ( preg_match('/^' . $subfolder . $pattern . '+$/i', $url_path) )  {
 
-				list($class, $method) = explode('@', $class_method);
+			list($class, $method) = explode('@', $class_method);
 
-				$object = new $class();
-				$object->$method();
+			$object = new $class();
+			$object->$method();
 
 			}
-
-		} elseif (URL_PARSE == 'PATH_INFO') {
-
-			if (preg_match('/^' . $pattern . '+$/i', $_SERVER[URL_PARSE]))  {
-				list($class, $method) = explode('@', $class_method);
-				$object = new $class();
-				$object->$method();
-			}
-
-		}
 
 	}
 

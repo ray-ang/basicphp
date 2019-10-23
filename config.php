@@ -100,22 +100,11 @@ define('BASE_URL', $http_protocol . $_SERVER['SERVER_NAME'] . $subfolder . '/');
 
 /*
 |--------------------------------------------------------------------------
-| Set URL_PARSE Method as 'REQUEST_URI', 'REDIRECT_URL' or 'PATH_INFO'.
-| When using Nginx server, 'REQUEST_URI' is recommended.
-| SUB_DIR as the number of subfolders index.php is located from domain.
+| Number of subdirectories from hostname to index.php
 |--------------------------------------------------------------------------
-|
-| Sets the $_SERVER[''] global variable to parse the URL.
-|
 */
 
-define('URL_PARSE', 'REQUEST_URI');
-
-if (URL_PARSE == 'PATH_INFO') {
-    define('SUB_DIR', 0);
-} elseif (URL_PARSE == 'REQUEST_URI' || 'REDIRECT_URL') {
-    define('SUB_DIR', substr_count($_SERVER['SCRIPT_NAME'], '/')-1);
-}
+define('SUB_DIR', substr_count($_SERVER['SCRIPT_NAME'], '/')-1);
 
 /*
 |--------------------------------------------------------------------------
