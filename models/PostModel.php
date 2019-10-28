@@ -20,8 +20,9 @@ class PostModel
 		$conn = $this->conn();
 		$stmt = $conn->prepare("SELECT post_id FROM posts");
 		$stmt->execute();
+		$result = $stmt->rowCount();
 
-		return $stmt;
+		return $result;
 
 	}
 
@@ -31,8 +32,9 @@ class PostModel
 		$conn = $this->conn();
 		$stmt = $conn->prepare("SELECT post_id, post_title, post_content FROM posts ORDER BY post_id DESC LIMIT $per_page OFFSET " . $order);
 		$stmt->execute();
+		$result = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-		return $stmt;
+		return $result;
 
 	}
 
@@ -43,8 +45,9 @@ class PostModel
 		$stmt = $conn->prepare("SELECT post_id, post_title, post_content FROM posts WHERE post_id = :post_id");
 		$stmt->bindParam(':post_id', $post_id);
 		$stmt->execute();
+		$result = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-		return $stmt;
+		return $result;
 
 	}
 
@@ -71,8 +74,6 @@ class PostModel
 		$stmt->bindParam(':post_id', $post_id);
 		$stmt->execute();
 
-		return $stmt;
-
 	}
 
 	public function delete($post_id)
@@ -82,8 +83,6 @@ class PostModel
 		$stmt = $conn->prepare("DELETE FROM posts WHERE post_id = :post_id");
 		$stmt->bindParam(':post_id', $post_id);
 		$stmt->execute();
-
-		return $stmt;
 
 	}
 

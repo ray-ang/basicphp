@@ -34,7 +34,7 @@ class PostController
 		$stmt = $post->list( $per_page, $order );
 		$total = $post->total();
 
-		if (isset($_GET['order']) && $_GET['order'] > $total->rowCount()) $_GET['order'] = $total->rowCount();
+		if (isset($_GET['order']) && $_GET['order'] > $total) $_GET['order'] = $total;
 
 		$page_title = 'List of Posts';
 
@@ -62,7 +62,7 @@ class PostController
 		$post = new PostModel;
 		$stmt = $post->view( url_path(3) );
 
-		if ( $stmt->rowCount() == 1 ) {
+		if ( count($stmt) == 1 ) {
 
 			$page_title = 'View Post';
 
@@ -115,7 +115,7 @@ class PostController
 
 		$sql = $post->view( url_path(3) );
 
-		if ( $sql->rowCount() == 1 ) {
+		if ( count($sql) == 1 ) {
 
 			$page_title = 'Edit Post';
 
