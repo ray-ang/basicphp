@@ -13,19 +13,19 @@ class SampleController
 	{
 
 		// Set data to pass as variables
-		$param1 = url_value(3);
-		$param2 = url_value(4);
-		$param3 = url_value(5);
+		$param1 = url_path(3);
+		$param2 = url_path(4);
+		$param3 = url_path(5);
 		$person = ['James'=>"23", 'Joseph'=>"23", 'Chris'=>"35"];
 		$page_title = 'Sample Route Page';
 
 		// Display page
-		if ( is_numeric(url_value(3)) && is_numeric(url_value(4)) && url_value(5) == FALSE ) {
+		if ( is_numeric(url_path(3)) && is_numeric(url_path(4)) && url_path(5) == FALSE ) {
 
 			$data = compact('param1', 'param2', 'param3', 'person', 'page_title');
 			view('sample_route', $data);
 
-		} elseif ( ! is_numeric(url_value(3)) || ! is_numeric(url_value(4)) || url_value(5) !== FALSE ) {
+		} elseif ( ! is_numeric(url_path(3)) || ! is_numeric(url_path(4)) || url_path(5) !== FALSE ) {
 
 			$error_message = 'You can place only 2 numbers as parameters after the /route string, such as /route/1/2 .';
 			$data = compact('error_message', 'page_title');

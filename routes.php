@@ -30,7 +30,7 @@ route_rpc();
 |--------------------------------------------------------------------------
 */
 
-if ( empty(url_value(1)) && ! isset($json_rpc['method']) ) {
+if ( empty(url_path(1)) && ! isset($json_rpc['method']) ) {
 
 	list($class, $method) = explode('@', HOME_PAGE);
 	$object = new $class();
@@ -40,7 +40,7 @@ if ( empty(url_value(1)) && ! isset($json_rpc['method']) ) {
 
 /*
 |--------------------------------------------------------------------------
-| Automatic Routing of url_value(1) and (2) as '/class/method' path
+| Automatic Routing of url_path(1) and (2) as '/class/method' path
 |--------------------------------------------------------------------------
 */
 

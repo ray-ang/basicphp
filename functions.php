@@ -7,7 +7,7 @@
 | 
 | These are core functions necessary to run the nano-framework:
 |
-| 1. url_value() - retrieves the URL path substring separated by '/'
+| 1. url_path() - retrieves the URL path substring separated by '/'
 | 2. route_rpc() - JSON-RPC v2.0 compatibility layer
 | 3. route_auto() - automatic routing of URL path to Class and method
 | 4. route_class() - routes URL path request to Controllers
@@ -26,10 +26,10 @@
  * Get URL path string value after the BASE_URL.
  *
  * @param integer $order - URL substring position from the BASE_URL
- *                       - url_value(1) as first string after BASE_URL
+ *                       - url_path(1) as first string after BASE_URL
  */
 
-function url_value($order)
+function url_path($order)
 {
 
 	if (isset($_SERVER['REQUEST_URI'])) {
@@ -80,14 +80,14 @@ function route_rpc()
 }
 
 /**
- * Automatic routing of url_value(1) and (2) as Class and method
+ * Automatic routing of url_path(1) and (2) as Class and method
  */
 
 function route_auto()
 {
 
-	if (url_value(1) !== FALSE) { $class = ucfirst(url_value(1)) . CONTROLLER_SUFFIX; }
-	if (url_value(2) !== FALSE) { $method = lcfirst(url_value(2)); } else { $method = METHOD_DEFAULT; }
+	if (url_path(1) !== FALSE) { $class = ucfirst(url_path(1)) . CONTROLLER_SUFFIX; }
+	if (url_path(2) !== FALSE) { $method = lcfirst(url_path(2)); } else { $method = METHOD_DEFAULT; }
 
 	if (class_exists($class)) {
 		$object = new $class();

@@ -30,11 +30,11 @@ class PersonController
 
 		if ( $_SERVER['REQUEST_METHOD'] == 'GET' ) {
 
-			if ( url_value(3) !== FALSE && is_numeric(url_value(3)) ) {
+			if ( url_path(3) !== FALSE && is_numeric(url_path(3)) ) {
 
 				foreach ($this->person as $person) {
 
-					if ( $person['id'] == url_value(3) ) {
+					if ( $person['id'] == url_path(3) ) {
 						$person_find[] = $person;
 					}
 
@@ -73,11 +73,11 @@ class PersonController
 
 		if ( $_SERVER['REQUEST_METHOD'] == 'POST' ) {
 
-			if ( url_value(3) !== FALSE && is_numeric(url_value(3)) ) {
+			if ( url_path(3) !== FALSE && is_numeric(url_path(3)) ) {
 
 				foreach ($this->person as $person) {
 
-					if ( $person['id'] == url_value(3) ) {
+					if ( $person['id'] == url_path(3) ) {
 						$person_find[] = $person;
 					}
 
@@ -102,11 +102,11 @@ class PersonController
 
 		if ( $_SERVER['REQUEST_METHOD'] == 'POST' ) {
 
-			if ( url_value(3) !== FALSE && is_numeric(url_value(3)) ) {
+			if ( url_path(3) !== FALSE && is_numeric(url_path(3)) ) {
 
 				foreach ($this->person as $person) {
 
-					if ( $person['id'] == url_value(3) ) {
+					if ( $person['id'] == url_path(3) ) {
 						$person_find[] = $person;
 					}
 

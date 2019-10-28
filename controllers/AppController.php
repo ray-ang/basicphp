@@ -48,13 +48,13 @@ class AppController
 
 		if (isset($_POST['goto-edit'])) {
 
-			header('Location: ' . BASE_URL . 'posts/' . url_value(2) . '/edit');
+			header('Location: ' . BASE_URL . 'posts/' . url_path(2) . '/edit');
 			exit();
 
 		}
 
 		$post = new PostModel;
-		$stmt = $post->view( url_value(2) );
+		$stmt = $post->view( url_path(2) );
 
 		if ( $stmt->rowCount() == 1 ) {
 
@@ -82,14 +82,14 @@ class AppController
 
 		if (isset($_POST['edit-post']) && isset($_POST['csrf-token']) && isset($_SESSION['csrf-token']) && $_POST['csrf-token'] == $_SESSION['csrf-token']) {
 
-			$post->edit( url_value(2) );
+			$post->edit( url_path(2) );
 
-			header('Location: ' . BASE_URL . 'posts/' . url_value(2));
+			header('Location: ' . BASE_URL . 'posts/' . url_path(2));
 			exit();
 
 		}
 
-		$sql = $post->view( url_value(2) );
+		$sql = $post->view( url_path(2) );
 
 		if ( $sql->rowCount() == 1 ) {
 
@@ -114,7 +114,7 @@ class AppController
 	{
 
 		$post = new PostModel;
-		$post->delete( url_value(2) );
+		$post->delete( url_path(2) );
 
 	}
 
