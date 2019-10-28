@@ -2,51 +2,19 @@
 
 /*
 |--------------------------------------------------------------------------
-| Enforce SSL/HTTPS
+| Firewall
+|--------------------------------------------------------------------------
+*/
+
+firewall();
+
+/*
+|--------------------------------------------------------------------------
+| SSL/HTTPS
 |--------------------------------------------------------------------------
 */
 
 force_ssl();
-
-/*
-|--------------------------------------------------------------------------
-| Allow only URI_WHITELISTED characters on the Request URI.
-|--------------------------------------------------------------------------
-*/
-
-if (! empty(URI_WHITELISTED)) {
-
-	$regex_array = str_replace('w', 'alphanumeric', URI_WHITELISTED);
-	$regex_array = explode('\\', $regex_array);
-
-	if (isset($_SERVER['REQUEST_URI']) && preg_match('/[^' . URI_WHITELISTED . ']/i', $_SERVER['REQUEST_URI'])) {
-
-		header($_SERVER["SERVER_PROTOCOL"]." 400 Bad Request");
-		exit('<h1>The URI should only contain alphanumeric and GET request characters:</h1><h3><ul>' . implode('<li>', $regex_array) . '</ul></h3>');
-		
-	}
-
-}
-
-/*
-|--------------------------------------------------------------------------
-| Deny POST_BLACKLISTED characters in $_POST global variable array.
-| Backslash (\) is blacklisted by default.
-|--------------------------------------------------------------------------
-*/
-
-if (! empty(POST_BLACKLISTED)) {
-
-	$regex_array = explode('\\', POST_BLACKLISTED);
-
-	if (isset($_POST) && preg_match('/[' . POST_BLACKLISTED . '\\\]/i', implode('/', $_POST)) ) {
-
-		header($_SERVER["SERVER_PROTOCOL"]." 400 Bad Request");
-		exit('<h1>Submitted data should NOT contain the following characters:</h1><h3><ul>' . implode('<li>', $regex_array) . '<li>\</ul></h3>');
-		
-	}
-
-}
 
 /*
 |--------------------------------------------------------------------------

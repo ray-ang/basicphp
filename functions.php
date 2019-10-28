@@ -15,9 +15,10 @@
 | 6. pdo_conn() - PHP Data Objects (PDO) database connection
 | 7. api_response() - handles API response
 | 8. api_call() - handles API call
-| 9. force_ssl() - force application to use SSL
-| 10. esc() - uses htmlspecialchars() to prevent XSS
-| 11. csrf_token() - uses sessions to create per request CSRF token
+| 9. firewall() - web application firewall
+| 10. force_ssl() - force application to use SSL
+| 11. esc() - uses htmlspecialchars() to prevent XSS
+| 12. csrf_token() - uses sessions to create per request CSRF token
 |
 */
 
@@ -241,6 +242,48 @@ function api_call($http_method, $url, $data=NULL, $username=NULL, $password=NULL
 	$data_output = json_decode($result, TRUE);
 
 	return $data_output;
+
+}
+
+/**
+ * Web Application Firewall
+ */
+
+function firewall()
+{
+
+	if (FIREWALL_ON == TRUE) {
+
+		// Allow only URI_WHITELISTED characters on the Request URI.
+		if (! empty(URI_WHITELISTED)) {
+
+			$regex_array = str_replace('w', 'alphanumeric', URI_WHITELISTED);
+			$regex_array = explode('\\', $regex_array);
+
+			if (isset($_SERVER['REQUEST_URI']) && preg_match('/[^' . URI_WHITELISTED . ']/i', $_SERVER['REQUEST_URI'])) {
+
+				header($_SERVER["SERVER_PROTOCOL"]." 400 Bad Request");
+				exit('<h1>The URI should only contain alphanumeric and GET request characters:</h1><h3><ul>' . implode('<li>', $regex_array) . '</ul></h3>');
+				
+			}
+
+		}
+
+		// Deny POST_BLACKLISTED characters in $_POST global variable array. Backslash (\) is blacklisted by default.
+		if (! empty(POST_BLACKLISTED)) {
+
+			$regex_array = explode('\\', POST_BLACKLISTED);
+
+			if (isset($_POST) && preg_match('/[' . POST_BLACKLISTED . '\\\]/i', implode('/', $_POST)) ) {
+
+				header($_SERVER["SERVER_PROTOCOL"]." 400 Bad Request");
+				exit('<h1>Submitted data should NOT contain the following characters:</h1><h3><ul>' . implode('<li>', $regex_array) . '<li>\</ul></h3>');
+				
+			}
+
+		}
+
+	}
 
 }
 
