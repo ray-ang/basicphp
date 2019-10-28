@@ -6,7 +6,7 @@ A PHP Nano-Framework for Decoupled Application and Business Logic, and Presentat
 
 To embed the application to any framework, copy BasicPHP's configuration file (config.php), functions library (functions.php), and the 'classes', 'models', 'views' and 'controllers' folders one (1) folder above the front controller file of the chosen framework. In the controller file, at the start of the script, include/require config.php and functions.php.
 
-Features include class autoloading, routing, functions library, security (XSS and CSRF protection, and PDO abstraction layer for SQL injection prevention), and handling 404 error - page not found. It also includes a compatibility layer for JSON-RPC, automatic routing of /class/method endpoints to Class::method functions for REST-RPC use, and custom endpoints with use of HTTP methods for REST API use.
+Features include class autoloading, routing, functions library, security (web application firewall, XSS and CSRF protection, and PDO abstraction layer for SQL injection prevention), and handling 404 error - page not found. It also includes a compatibility layer for JSON-RPC, automatic routing of /class/method endpoints to Class::method functions for REST-RPC use, and custom endpoints with use of HTTP methods for REST API use.
 
 <br />
 
@@ -17,6 +17,7 @@ Features include class autoloading, routing, functions library, security (XSS an
 3. Classes and functions for extensibility
 4. Multitier Architecture for API (JSON-RPC, REST-RPC, and REST)
 5. Fast, unopinionated and minimalist
+6. Security-first
 
 <br />
 
