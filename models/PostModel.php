@@ -45,7 +45,7 @@ class PostModel
 		$stmt = $conn->prepare("SELECT post_id, post_title, post_content FROM posts WHERE post_id = :post_id");
 		$stmt->bindParam(':post_id', $post_id);
 		$stmt->execute();
-		$result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+		$result = $stmt->fetch(PDO::FETCH_ASSOC);
 
 		return $result;
 

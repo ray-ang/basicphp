@@ -9,10 +9,8 @@ require_once 'template/menu.php';
         <div class="col-lg-12">
           <h1 class="mt-5 text-center">Edit Post</h1>
             <?php
-            foreach($sql as $row) {
             $post_title = $row['post_title'];
             $post_content = $row['post_content'];
-            }
 
             $form = new Basic_Form();
             $form->open('form-horizontal');

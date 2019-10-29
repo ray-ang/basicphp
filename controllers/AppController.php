@@ -54,13 +54,13 @@ class AppController
 		}
 
 		$post = new PostModel;
-		$stmt = $post->view( url_path(2) );
+		$row = $post->view( url_path(2) );
 
-		if ( count($stmt) == 1 ) {
+		if ($row) {
 
 			$page_title = 'View Post';
 
-			$data = compact('stmt', 'page_title');
+			$data = compact('row', 'page_title');
 			view('post_view', $data);
 
 		} else {
@@ -89,13 +89,13 @@ class AppController
 
 		}
 
-		$sql = $post->view( url_path(2) );
+		$row = $post->view( url_path(2) );
 
-		if ( count($sql) == 1 ) {
+		if ($row) {
 
 			$page_title = 'Edit Post';
 
-			$data = compact('sql', 'page_title');
+			$data = compact('row', 'page_title');
 			view('post_edit', $data);
 
 		} else {
