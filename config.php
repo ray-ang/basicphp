@@ -70,10 +70,12 @@ switch (ENVIRONMENT) {
 
 // Turn firewall ON or OFF as TRUE or FALSE.
 define('FIREWALL_ON', TRUE);
+// List of allowed IP addresses in an array
+define('ALLOWED_IP_ADDR', ['::1']);
 // Set URI Whitelisted Characters
 define('URI_WHITELISTED', '\w\/\-\?\=\&');
-// Set $_POST Blacklisted Characters. Backslash (\) is blacklisted by default.
-define('POST_BLACKLISTED', '\<\>\{\}\[\]\_\;\*\=\+\"\&\#\%\\$');
+// Blacklisted $_POST and post body characters. '\' blacklisted by default.
+define('POST_BLACKLISTED', '\<\>\;\#\\$');
 
 /*
 |--------------------------------------------------------------------------

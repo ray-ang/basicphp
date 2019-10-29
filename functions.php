@@ -254,6 +254,14 @@ function firewall()
 
 	if (FIREWALL_ON == TRUE) {
 
+		// Allow only access from whitelisted IP addresses
+		if (! in_array($_SERVER['REMOTE_ADDR'], ALLOWED_IP_ADDR)) {
+
+			header($_SERVER["SERVER_PROTOCOL"]." 403 Forbidden");
+			exit('<p>You are not allowed to access the application using your IP address.</p>');
+
+		}
+
 		// Allow only URI_WHITELISTED characters on the Request URI.
 		if (! empty(URI_WHITELISTED)) {
 
@@ -263,13 +271,13 @@ function firewall()
 			if (isset($_SERVER['REQUEST_URI']) && preg_match('/[^' . URI_WHITELISTED . ']/i', $_SERVER['REQUEST_URI'])) {
 
 				header($_SERVER["SERVER_PROTOCOL"]." 400 Bad Request");
-				exit('<h1>The URI should only contain alphanumeric and GET request characters:</h1><h3><ul>' . implode('<li>', $regex_array) . '</ul></h3>');
+				exit('<p>The URI should only contain alphanumeric and GET request characters:</p><p><ul>' . implode('<li>', $regex_array) . '</ul></p>');
 				
 			}
 
 		}
 
-		// Deny POST_BLACKLISTED characters in $_POST global variable array. Backslash (\) is blacklisted by default.
+		// Deny POST_BLACKLISTED characters in $_POST and post body. '\' is blacklisted by default.
 		if (! empty(POST_BLACKLISTED)) {
 
 			$regex_array = explode('\\', POST_BLACKLISTED);
@@ -277,7 +285,16 @@ function firewall()
 			if (isset($_POST) && preg_match('/[' . POST_BLACKLISTED . '\\\]/i', implode('/', $_POST)) ) {
 
 				header($_SERVER["SERVER_PROTOCOL"]." 400 Bad Request");
-				exit('<h1>Submitted data should NOT contain the following characters:</h1><h3><ul>' . implode('<li>', $regex_array) . '<li>\</ul></h3>');
+				exit('<p>Submitted data should NOT contain the following characters:</p><p><ul>' . implode('<li>', $regex_array) . '<li>\</ul></p>');
+				
+			}
+
+			$post_data = file_get_contents('php://input');
+
+			if (isset($post_data) && preg_match('/[' . POST_BLACKLISTED . '\\\]/i', $post_data) ) {
+
+				header($_SERVER["SERVER_PROTOCOL"]." 400 Bad Request");
+				exit('<p>Submitted data should NOT contain the following characters:</p><p><ul>' . implode('<li>', $regex_array) . '<li>\</ul></p>');
 				
 			}
 
