@@ -69,7 +69,7 @@ function route_rpc()
 			if (class_exists($class)) {
 				$object = new $class();
 				if ( method_exists($object, $method) ) {
-					$object->$method();
+					return $object->$method();
 					exit();
 				} else { exit(json_encode(['jsonrpc' => '2.0', 'error' => ['code' => 32601, 'message' => "Method not found."], 'id' => $json_rpc['id']])); }
 			} else { exit(json_encode(['jsonrpc' => '2.0', 'error' => ['code' => 32601, 'message' => "Class not found."], 'id' => $json_rpc['id']])); }
@@ -92,7 +92,7 @@ function route_auto()
 	if (class_exists($class)) {
 		$object = new $class();
 		if ( method_exists($object, $method) ) {
-			$object->$method();
+			return $object->$method();
 		} else {
 			header($_SERVER["SERVER_PROTOCOL"]." 404 Not Found");
 			exit();
@@ -131,7 +131,7 @@ function route_class($http_method, $path, $class_method)
 			list($class, $method) = explode('@', $class_method);
 
 			$object = new $class();
-			$object->$method();
+			return $object->$method();
 
 			}
 
@@ -153,7 +153,7 @@ function view($view, $data=NULL)
 	if (isset($data)) { extract($data); }
 
 	// Render Page View
-	require_once '../views/' . $view . '.php';
+	return require_once '../views/' . $view . '.php';
 
 }
 
