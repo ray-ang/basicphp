@@ -8,8 +8,8 @@
             <li class="nav-item <?php if (url_path(1) == '') echo 'active'; ?>">
               <a class="nav-link" href="<?php echo BASE_URL; ?>">Home</a>
             </li>
-            <li class="nav-item <?php if (url_path(1) == 'welcome') echo 'active'; ?>">
-              <a class="nav-link" href="<?php echo BASE_URL; ?>welcome">Welcome</a>
+            <li class="nav-item <?php if (url_path(1) == 'encryption') echo 'active'; ?>">
+              <a class="nav-link" href="<?php echo BASE_URL; ?>encryption">Encryption</a>
             </li>
             <li class="nav-item <?php if (url_path(1) == 'request') echo 'active'; ?>">
               <a class="nav-link" href="<?php echo BASE_URL; ?>request">Request</a>
