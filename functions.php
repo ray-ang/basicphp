@@ -368,42 +368,62 @@ function csrf_token()
 function encrypt($plaintext)
 {
 
+	// Cipher method to CBC with 256-bit key
 	$cipher = CIPHER_METHOD;
-	$key = hash('sha256', PASS_PHRASE . md5(PASS_PHRASE));
-	$key_hmac = hash('sha256', md5(PASS_PHRASE));
-	$iv_len = openssl_cipher_iv_length($cipher);
-	$iv = random_bytes($iv_len);
+	// Salt for encryption key
+	$salt_key = random_bytes(16);
+	// Derive encryption key
+	$key = hash_pbkdf2('sha256', PASS_PHRASE, $salt_key, 1000, 20);
+	// Salt for HMAC key
+	$salt_hmac = random_bytes(16);
+	// Derive HMAC key
+	$key_hmac = hash_pbkdf2('sha256', PASS_PHRASE, $salt_hmac, 1000, 20);
+	// Initialization vector
+	$iv = random_bytes(16);
 
 	$ciphertext = openssl_encrypt($plaintext, $cipher, $key, 0, $iv);
 	$hash = hash_hmac('sha256', $ciphertext, $key_hmac);
 
-	return base64_encode($ciphertext . '::' . $hash . '::' . $iv);
+	return base64_encode($ciphertext) . '::' . base64_encode($hash) . '::' . base64_encode($iv) . '::' . base64_encode($salt_key) . '::' . base64_encode($salt_hmac);
 
 }
 
 /**
  * Decrypt data using AES-CBC-HMAC
  *
- * @param string $encypted - base64_encoded ciphertext, hash and iv
+ * @param string $encypted - base64_encoded ciphertext, hash,
+ *                         - iv, salt_key, and salt_hmac
  */
 
 function decrypt($encrypted)
 {
 
+	// Return empty if $encrypted is not set or empty.
 	if ( ! isset($encrypted) || empty($encrypted) ) { return ''; }
-	
-	$cipher = CIPHER_METHOD;
-	$key = hash('sha256', PASS_PHRASE . md5(PASS_PHRASE));
-	$key_hmac = hash('sha256', md5(PASS_PHRASE));
 
-	list($ciphertext, $hash, $iv) = explode('::', base64_decode($encrypted));
+	// Cipher method to CBC with 256-bit key
+	$cipher = CIPHER_METHOD;
+
+	list($ciphertext, $hash, $iv, $salt_key, $salt_hmac) = explode('::', $encrypted);
+	$ciphertext = base64_decode($ciphertext);
+	$hash = base64_decode($hash);
+	$iv = base64_decode($iv);
+	$salt_key = base64_decode($salt_key);
+	$salt_hmac = base64_decode($salt_hmac);
+
+	// Derive encryption key
+	$key = hash_pbkdf2('sha256', PASS_PHRASE, $salt_key, 1000, 20);
+	// Derive HMAC key
+	$key_hmac = hash_pbkdf2('sha256', PASS_PHRASE, $salt_hmac, 1000, 20);
+
 	$digest = hash_hmac('sha256', $ciphertext, $key_hmac);
 
-	if (hash_equals($hash, $digest)) {
+	// HMAC authentication
+	if  ( hash_equals($hash, $digest) ) {
 		return openssl_decrypt($ciphertext, $cipher, $key, 0, $iv);
 		}
 	else {
-		return 'Please verify authenticity of ciphertext.';
+		exit ('<strong>Warning: </strong>Please verify authenticity of ciphertext.');
 	}
 
 }
