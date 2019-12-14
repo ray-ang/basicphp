@@ -7,20 +7,20 @@
 | 
 | These are core functions necessary to run the nano-framework:
 |
-| 1. url_path()			- retrieves the URL path substring separated by '/'
-| 2. route_rpc()		- JSON-RPC v2.0 compatibility layer
-| 3. route_auto()		- automatic routing of URL path to Class and method
-| 4. route_class()		- routes URL path request to Controllers
-| 5. view()				- passes data and renders the View
-| 6. pdo_conn()			- PHP Data Objects (PDO) database connection
-| 7. api_response()		- handles API response
-| 8. api_call()			- handles API call
-| 9. firewall()			- web application firewall
-| 10. force_ssl()		- force application to use SSL
-| 11. esc()				- uses htmlspecialchars() to prevent XSS
-| 12. csrf_token()		- uses sessions to create per request CSRF token
-| 13. encrypt()			- encrypt data using AES-CBC-HMAC
-| 14. decrypt()			- decrypt data using AES-CBC-HMAC
+| 1. url_path()         - retrieves the URL path substring separated by '/'
+| 2. route_rpc()        - JSON-RPC v2.0 compatibility layer
+| 3. route_auto()       - automatic routing of URL path to Class and method
+| 4. route_class()      - routes URL path request to Controllers
+| 5. view()             - passes data and renders the View
+| 6. pdo_conn()         - PHP Data Objects (PDO) database connection
+| 7. api_response()     - handles API response
+| 8. api_call()         - handles API call
+| 9. firewall()         - web application firewall
+| 10. force_ssl()       - force application to use SSL
+| 11. esc()             - uses htmlspecialchars() to prevent XSS
+| 12. csrf_token()      - uses sessions to create per request CSRF token
+| 13. encrypt()         - encrypt data using AES-CBC-HMAC
+| 14. decrypt()         - decrypt data using AES-CBC-HMAC
 |
 */
 
