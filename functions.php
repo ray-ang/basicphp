@@ -394,6 +394,7 @@ function encrypt($plaintext)
 	}
 
 	/** Version-based Encryption */
+	// Default encryption function
 	return encrypt_v1($plaintext);
 
 }
