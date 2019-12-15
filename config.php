@@ -92,7 +92,7 @@ define('ENFORCE_SSL', FALSE);
 */
 
 define('PASS_PHRASE', '12345');
-define('CIPHER_METHOD', 'aes-256-cbc');
+define('CIPHER_METHOD', 'aes-256-gcm');
 
 /*
 |--------------------------------------------------------------------------

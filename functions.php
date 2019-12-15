@@ -386,10 +386,10 @@ function encrypt($plaintext)
 		// Initialization vector
 		$iv = random_bytes(16);
 
-		$ciphertext = openssl_encrypt($plaintext, $cipher, $key, 0, $iv);
+		$ciphertext = openssl_encrypt($plaintext, $cipher, $key, $options=0, $iv, $tag);
 		$hash = hash_hmac('sha256', $ciphertext, $key_hmac);
 
-		return $version . '::' . base64_encode($ciphertext) . '::' . base64_encode($hash) . '::' . base64_encode($iv) . '::' . base64_encode($salt_key) . '::' . base64_encode($salt_hmac);
+		return $version . '::' . base64_encode($ciphertext) . '::' . base64_encode($hash) . '::' . base64_encode($iv) . '::' . base64_encode($tag) . '::' . base64_encode($salt_key) . '::' . base64_encode($salt_hmac);
 
 	}
 
@@ -417,11 +417,12 @@ function decrypt($encrypted)
 		// Cipher method to CBC with 256-bit key
 		$cipher = CIPHER_METHOD;
 
-		list($version, $ciphertext, $hash, $iv, $salt_key, $salt_hmac) = explode('::', $encrypted);
+		list($version, $ciphertext, $hash, $iv, $tag, $salt_key, $salt_hmac) = explode('::', $encrypted);
 		$version = base64_decode($version);
 		$ciphertext = base64_decode($ciphertext);
 		$hash = base64_decode($hash);
 		$iv = base64_decode($iv);
+		$tag = base64_decode($tag);
 		$salt_key = base64_decode($salt_key);
 		$salt_hmac = base64_decode($salt_hmac);
 
@@ -434,7 +435,7 @@ function decrypt($encrypted)
 
 		// HMAC authentication
 		if  ( hash_equals($hash, $digest) ) {
-			return openssl_decrypt($ciphertext, $cipher, $key, 0, $iv);
+			return openssl_decrypt($ciphertext, $cipher, $key, $options=0, $iv, $tag);
 			}
 		else {
 			exit ('<strong>Warning: </strong>Please verify authenticity of ciphertext.');
