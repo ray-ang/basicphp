@@ -418,7 +418,6 @@ function decrypt($encrypted)
 		$cipher = CIPHER_METHOD;
 
 		list($version, $ciphertext, $hash, $iv, $tag, $salt_key, $salt_hmac) = explode('::', $encrypted);
-		$version = base64_decode($version);
 		$ciphertext = base64_decode($ciphertext);
 		$hash = base64_decode($hash);
 		$iv = base64_decode($iv);
