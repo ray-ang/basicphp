@@ -373,7 +373,7 @@ function encrypt($plaintext)
 		// Version
 		$version = 'enc-v1';
 		
-			// Cipher method to CBC with 256-bit key
+		// Cipher method to CBC with 256-bit key
 		$cipher = CIPHER_METHOD;
 		// Salt for encryption key
 		$salt_key = random_bytes(16);
