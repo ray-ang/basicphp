@@ -373,23 +373,32 @@ function encrypt($plaintext)
 		// Version
 		$version = 'enc-v1';
 		
-		// Cipher method to CBC with 256-bit key
-		$cipher = CIPHER_METHOD;
+		// Cipher method to AES with 256-bit key
+		$cipher = strtolower(CIPHER_METHOD);
 		// Salt for encryption key
 		$salt_key = random_bytes(16);
 		// Derive encryption key
 		$key = hash_pbkdf2('sha256', PASS_PHRASE, $salt_key, 10000);
-		// Salt for HMAC key
-		$salt_hmac = random_bytes(16);
-		// Derive HMAC key
-		$key_hmac = hash_pbkdf2('sha256', PASS_PHRASE, $salt_hmac, 10000);
 		// Initialization vector
 		$iv = random_bytes(16);
 
-		$ciphertext = openssl_encrypt($plaintext, $cipher, $key, $options=0, $iv, $tag);
-		$hash = hash_hmac('sha256', $ciphertext, $key_hmac);
+		if ( $cipher == 'aes-256-gcm' || $cipher == 'AES-256-GCM' ) {
 
-		return $version . '::' . base64_encode($ciphertext) . '::' . base64_encode($hash) . '::' . base64_encode($iv) . '::' . base64_encode($tag) . '::' . base64_encode($salt_key) . '::' . base64_encode($salt_hmac);
+			$ciphertext = openssl_encrypt($plaintext, $cipher, $key, $options=0, $iv, $tag);
+			return $version . '::' . base64_encode($ciphertext) . '::' . base64_encode($iv) . '::' . base64_encode($tag) . '::' . base64_encode($salt_key);
+
+		} else {
+
+			// Salt for HMAC key
+			$salt_hmac = random_bytes(16);
+			// Derive HMAC key
+			$key_hmac = hash_pbkdf2('sha256', PASS_PHRASE, $salt_hmac, 10000);
+
+			$ciphertext = openssl_encrypt($plaintext, $cipher, $key, $options=0, $iv);
+			$hash = hash_hmac('sha256', $ciphertext, $key_hmac);
+			return $version . '::' . base64_encode($ciphertext) . '::' . base64_encode($hash) . '::' . base64_encode($iv) . '::' . base64_encode($salt_key) . '::' . base64_encode($salt_hmac);
+
+		}
 
 	}
 
@@ -414,30 +423,53 @@ function decrypt($encrypted)
 		// Return empty if $encrypted is not set or empty.
 		if ( ! isset($encrypted) || empty($encrypted) ) { return ''; }
 
-		// Cipher method to CBC with 256-bit key
-		$cipher = CIPHER_METHOD;
+		// Cipher method to AES with 256-bit key
+		$cipher = strtolower(CIPHER_METHOD);
 
-		list($version, $ciphertext, $hash, $iv, $tag, $salt_key, $salt_hmac) = explode('::', $encrypted);
-		$ciphertext = base64_decode($ciphertext);
-		$hash = base64_decode($hash);
-		$iv = base64_decode($iv);
-		$tag = base64_decode($tag);
-		$salt_key = base64_decode($salt_key);
-		$salt_hmac = base64_decode($salt_hmac);
+		if ( $cipher == 'aes-256-gcm' || $cipher == 'AES-256-GCM' ) {
 
-		// Derive encryption key
-		$key = hash_pbkdf2('sha256', PASS_PHRASE, $salt_key, 10000);
-		// Derive HMAC key
-		$key_hmac = hash_pbkdf2('sha256', PASS_PHRASE, $salt_hmac, 10000);
+			list($version, $ciphertext, $iv, $tag, $salt_key) = explode('::', $encrypted);
+			$ciphertext = base64_decode($ciphertext);
+			$iv = base64_decode($iv);
+			$tag = base64_decode($tag);
+			$salt_key = base64_decode($salt_key);
 
-		$digest = hash_hmac('sha256', $ciphertext, $key_hmac);
+			// Derive encryption key
+			$key = hash_pbkdf2('sha256', PASS_PHRASE, $salt_key, 10000);
 
-		// HMAC authentication
-		if  ( hash_equals($hash, $digest) ) {
-			return openssl_decrypt($ciphertext, $cipher, $key, $options=0, $iv, $tag);
+			$plaintext = openssl_decrypt($ciphertext, $cipher, $key, $options=0, $iv, $tag);
+
+			// GCM authentication
+			if ($plaintext !== FALSE) {
+				return $plaintext;
+			} else {
+				exit ('<strong>Warning: </strong>Please verify authenticity of ciphertext.');
 			}
-		else {
-			exit ('<strong>Warning: </strong>Please verify authenticity of ciphertext.');
+
+		} else {
+
+			list($version, $ciphertext, $hash, $iv, $salt_key, $salt_hmac) = explode('::', $encrypted);
+			$ciphertext = base64_decode($ciphertext);
+			$hash = base64_decode($hash);
+			$iv = base64_decode($iv);
+			$salt_key = base64_decode($salt_key);
+			$salt_hmac = base64_decode($salt_hmac);
+
+			// Derive encryption key
+			$key = hash_pbkdf2('sha256', PASS_PHRASE, $salt_key, 10000);
+			// Derive HMAC key
+			$key_hmac = hash_pbkdf2('sha256', PASS_PHRASE, $salt_hmac, 10000);
+
+			$digest = hash_hmac('sha256', $ciphertext, $key_hmac);
+
+			// HMAC authentication
+			if  ( hash_equals($hash, $digest) ) {
+				return openssl_decrypt($ciphertext, $cipher, $key, $options=0, $iv);
+				}
+			else {
+				exit ('<strong>Warning: </strong>Please verify authenticity of ciphertext.');
+			}
+
 		}
 
 	}

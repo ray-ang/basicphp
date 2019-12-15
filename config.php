@@ -91,8 +91,15 @@ define('ENFORCE_SSL', FALSE);
 |--------------------------------------------------------------------------
 */
 
+// Passphrase for key derivation
 define('PASS_PHRASE', '12345');
-define('CIPHER_METHOD', 'aes-256-gcm');
+// Cipher method
+define('CIPHER_METHOD', 'aes-256-ctr');
+
+/** Limit to AES mode: CBC, CTR or GCM */
+if ( ! preg_match('/(aes-256-cbc|aes-256-ctr|aes-256-gcm)/i', CIPHER_METHOD) ) {
+    exit ('<strong>Warning: </strong>Only CBC, CTR and GCM modes of AES are supported.');
+}
 
 /*
 |--------------------------------------------------------------------------
