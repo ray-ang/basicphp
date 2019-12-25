@@ -382,7 +382,7 @@ function encrypt($plaintext)
 		// Initialization vector
 		$iv = random_bytes(16);
 
-		if ( $cipher == 'aes-256-gcm' || $cipher == 'AES-256-GCM' ) {
+		if ($cipher == 'aes-256-gcm') {
 
 			$ciphertext = openssl_encrypt($plaintext, $cipher, $key, $options=0, $iv, $tag);
 			return $version . '::' . base64_encode($ciphertext) . '::' . base64_encode($iv) . '::' . base64_encode($tag) . '::' . base64_encode($salt_key);
@@ -426,7 +426,7 @@ function decrypt($encrypted)
 		// Cipher method to AES with 256-bit key
 		$cipher = strtolower(CIPHER_METHOD);
 
-		if ( $cipher == 'aes-256-gcm' || $cipher == 'AES-256-GCM' ) {
+		if ($cipher == 'aes-256-gcm') {
 
 			list($version, $ciphertext, $iv, $tag, $salt_key) = explode('::', $encrypted);
 			$ciphertext = base64_decode($ciphertext);

@@ -107,8 +107,8 @@ if ( ! preg_match('/(aes-256-cbc|aes-256-ctr|aes-256-gcm)/i', CIPHER_METHOD) ) {
 |--------------------------------------------------------------------------
 */
 
-if (ENFORCE_SSL == FALSE) { $http_protocol = 'http://'; } else { $http_protocol = 'https://'; }
-if (! empty(dirname($_SERVER['SCRIPT_NAME']))) { $subfolder = dirname($_SERVER['SCRIPT_NAME']); } else { $subfolder = ''; }
+$http_protocol = (ENFORCE_SSL == FALSE) ? 'http://' : 'https://';
+$subfolder = (! empty(dirname($_SERVER['SCRIPT_NAME']))) ? dirname($_SERVER['SCRIPT_NAME']) : '';
 
 define('BASE_URL', $http_protocol . $_SERVER['SERVER_NAME'] . $subfolder . '/');
 
