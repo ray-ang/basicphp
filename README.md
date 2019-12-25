@@ -2,17 +2,17 @@
 
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=basicphp&metric=alert_status)](https://sonarcloud.io/dashboard?id=basicphp)
 
-A PHP Nano-Framework for Decoupled Application and Business Logic, and Presentation. The aim of the project is for developers to build applications that are framework-independent by decoupling the Model, View and Controller from any framework, making the application portable and compatible with the developer's framework of choice or plain PHP.
+A frameworkless library-based approach for building web applications and application programming interfaces or API's. The aim of the project is for developers to build applications that are framework-independent using raw PHP, and native functions and API's.
 
 To embed the application to any framework, copy BasicPHP's configuration file (config.php), functions library (functions.php), and the 'classes', 'models', 'views' and 'controllers' folders one (1) folder above the front controller file of the chosen framework. In the controller file, at the start of the script, include/require config.php and functions.php.
 
-Features include class autoloading, routing, functions library, security (web application firewall, XSS and CSRF protection, and PDO abstraction layer for SQL injection prevention), and handling 404 error - page not found. It also includes a compatibility layer for JSON-RPC, automatic routing of /class/method endpoints to Class::method functions for REST-RPC use, and custom endpoints with use of HTTP methods for REST API use.
+Features include class autoloading, routing, functions library, security (web application firewall, XSS and CSRF protection, encryption and PDO abstraction layer for SQL injection prevention), and handling 404 error - page not found. It also includes a compatibility layer for JSON-RPC, automatic routing of /class/method endpoints to Class::method functions for REST-RPC use, and custom endpoints with use of HTTP methods for REST API use.
 
 <br />
 
 ## Features
 
-1. Front Controller design pattern
+1. Frameworkless library-based approach
 2. Model-View-Controller (MVC) architectural pattern
 3. Classes and functions for extensibility
 4. Multitier Architecture for API (JSON-RPC, REST-RPC, and REST)
