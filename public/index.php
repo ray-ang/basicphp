@@ -1,11 +1,10 @@
 <?php
 
 /**
- * BasicPHP - A PHP Nano-Framework for Decoupled Application and Business Logic,
- *          - and Presentation. The aim of the project is for developers to build
- *          - applications that are framework-independent by decoupling the Model,
- *          - View and Controller from any framework, making the application portable
- *          - and compatible with the developer's framework of choice or plain PHP.
+ * BasicPHP - A frameworkless library-based approach for building web applications
+ *          - and application programming interfaces or API's.
+ *          - The aim of the project is for developers to build applications that are
+ *          - framework-independent using raw PHP, and native functions and API's.
  *          -
  *          - To embed the application to any framework, copy BasicPHP's configuration
  *          - file (config.php), functions library (functions.php), and the 'classes',
