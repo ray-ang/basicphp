@@ -2,7 +2,7 @@
 
 /**
  * Form Builder Plugin
- * This class plugin builds a submit form.
+ * This class plugin builds a Bootstrap-based form.
  * @package  Form Builder
  * @author   Raymund John Ang <raymund@open-nis.org>
  * @license  MIT License
@@ -11,27 +11,27 @@
 class Basic_Form
 {
 
-	public function open( $class, $method='post' )
+	public function open($class, $method='post')
 	{
 
 		?><form class="<?= $class ?>" action="" method="<?= $method ?>"><?php
 
 	}
 
-	public function text( $name, $label, $value = NULL )
+	public function input($type, $name, $label, $value = NULL)
 	{
 
 		?><div class="form-group">
 			<label class="control-label col-sm-2" for="<?= $name ?>"><?= $label ?>:</label>
 			<div class="col-sm-10">
-				<input type="text" class="form-control" id="<?= $name ?>" placeholder="Enter <?= $label ?>" name="<?= $name ?>" value="<?= esc($value) ?>">
+				<input type="<?= $type ?>" class="form-control" id="<?= $name ?>" placeholder="Enter <?= $label ?>" name="<?= $name ?>" value="<?= esc($value) ?>">
 			</div>
 		</div><?php
 
 	}
 
 
-	public function textArea( $name, $label, $value = NULL )
+	public function textArea($name, $label, $value = NULL)
 	{
 
 		?><div class="form-group">
@@ -43,7 +43,7 @@ class Basic_Form
 
 	}
 
-	public function button( $name, $label, $class )
+	public function button($name, $label, $class)
 	{
 
 		?><div class="form-group">

@@ -11,7 +11,7 @@ require_once 'template/menu.php';
 			<?php
 			$form = new Basic_Form;
 			$form->open('form-horizontal');
-			$form->text('title', 'Title');
+			$form->input('text', 'title', 'Title');
 			$form->textArea('content', 'Content');
 			$form->button('submit-post', 'Submit', 'btn btn-default');
 			$form->csrfToken();

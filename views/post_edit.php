@@ -14,8 +14,8 @@ require_once 'template/menu.php';
 
             $form = new Basic_Form();
             $form->open('form-horizontal');
-            $form->text( 'title', 'Title', $post_title );
-            $form->textArea( 'content', 'Content', $post_content );
+            $form->input('text', 'title', 'Title', $post_title);
+            $form->textArea('content', 'Content', $post_content);
             $form->button('edit-post', 'Edit', 'btn btn-default');
             $form->csrfToken();
             $form->close();
