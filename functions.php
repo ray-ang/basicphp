@@ -4,23 +4,23 @@
 |--------------------------------------------------------------------------
 | BasicPHP Functions Library
 |--------------------------------------------------------------------------
-| 
-| These are core functions necessary to run the nano-framework:
 |
-| 1. url_path()         - retrieves the URL path substring separated by '/'
-| 2. route_rpc()        - JSON-RPC v2.0 compatibility layer
-| 3. route_auto()       - automatic routing of URL path to Class and method
-| 4. route_class()      - routes URL path request to Controllers
-| 5. view()             - passes data and renders the View
-| 6. pdo_conn()         - PHP Data Objects (PDO) database connection
-| 7. api_response()     - handles API response
-| 8. api_call()         - handles API call
-| 9. firewall()         - web application firewall
-| 10. force_ssl()       - force application to use SSL
-| 11. esc()             - uses htmlspecialchars() to prevent XSS
-| 12. csrf_token()      - uses sessions to create per request CSRF token
-| 13. encrypt()         - encrypt data using AES-CBC-HMAC
-| 14. decrypt()         - decrypt data using AES-CBC-HMAC
+| url_path()         - retrieves the URL path substring separated by '/'
+| homepage()         - render hompage
+| error404()         - Handle Error 404 - Page Not Found - Invalid URI
+| route_rpc()        - JSON-RPC v2.0 compatibility layer
+| route_auto()       - automatic routing of URL path to Class and method
+| route_class()      - routes URL path request to Controllers
+| view()             - passes data and renders the View
+| pdo_conn()         - PHP Data Objects (PDO) database connection
+| api_response()     - handles API response
+| api_call()         - handles API call
+| firewall()         - web application firewall
+| force_ssl()       - force application to use SSL
+| esc()             - uses htmlspecialchars() to prevent XSS
+| csrf_token()      - uses sessions to create per request CSRF token
+| encrypt()         - encrypt data using AES-CBC-HMAC
+| decrypt()         - decrypt data using AES-CBC-HMAC
 |
 */
 
@@ -48,11 +48,43 @@ function url_path($order)
 }
 
 /**
+ * Render Homepage
+ */
+
+function homepage()
+{
+
+	if ( empty(url_path(1)) ) {
+		list($class, $method) = explode('@', HOME_PAGE);
+		$object = new $class();
+		return $object->$method();
+	}
+
+}
+
+/**
+ * Handle Error 404 - Page Not Found - Invalid URI
+ * A valid page has $valid_page set to TRUE.
+ */
+
+function error404()
+{
+
+	if ( ! isset($valid_page) || $valid_page !== TRUE ) {
+		header($_SERVER["SERVER_PROTOCOL"]." 404 Not Found");
+		exit();
+	}
+
+}
+
+/**
  * JSON-RPC v2.0 Compatibility Layer with 'method' member as 'class.method'
  */
 
 function route_rpc()
 {
+
+	$valid_page = TRUE; // Set page as valid
 
 	// Check if HTTP request method is 'POST', if there is POSTed data, and the POSTed data is in JSON format.
 	if ($_SERVER['REQUEST_METHOD'] == 'POST' && file_get_contents('php://input') !== FALSE && json_decode( file_get_contents('php://input'), TRUE ) !== NULL) {
@@ -88,6 +120,8 @@ function route_rpc()
 function route_auto()
 {
 
+	$valid_page = TRUE; // Set page as valid
+
 	if (url_path(1) !== FALSE) { $class = ucfirst(url_path(1)) . CONTROLLER_SUFFIX; }
 	if (url_path(2) !== FALSE) { $method = lcfirst(url_path(2)); } else { $method = METHOD_DEFAULT; }
 
@@ -115,6 +149,8 @@ function route_auto()
 
 function route_class($http_method, $path, $class_method)
 {
+
+	$valid_page = TRUE; // Set page as valid
 
 	if ($_SERVER['REQUEST_METHOD'] == $http_method) {
 
