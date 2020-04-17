@@ -78,10 +78,11 @@ function error404()
 }
 
 /**
- * JSON-RPC v2.0 Compatibility Layer with 'method' member as 'class.method'
+ * Configure application for JSON-RPC v2.0 protocol.
+ * JSON-RPC v2.0 compatibility layer with 'method' member as 'class.method'
  */
 
-function route_rpc()
+function json_rpc()
 {
 
 	$valid_page = TRUE; // Set page as valid

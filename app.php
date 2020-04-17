@@ -24,7 +24,7 @@ force_ssl(); // SSL/HTTPS
 |--------------------------------------------------------------------------
 */
 
-route_rpc(); // JSON-RPC v2.0
+json_rpc(); // Enable application for JSON-RPC v2.0 protocol
 route_auto(); // Automatic '/class/method' routing
 homepage(); // Render homepage
 
