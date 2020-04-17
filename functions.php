@@ -85,17 +85,22 @@ function error404()
 function json_rpc()
 {
 
-	$valid_page = TRUE; // Set page as valid
-
-	// Check if HTTP request method is 'POST', if there is POSTed data, and the POSTed data is in JSON format.
-	if ($_SERVER['REQUEST_METHOD'] == 'POST' && file_get_contents('php://input') !== FALSE && json_decode( file_get_contents('php://input'), TRUE ) !== NULL) {
+	// Check if there is POSTed data, and the POSTed data is in JSON format.
+	if ( file_get_contents('php://input') !== FALSE && json_decode(file_get_contents('php://input'), TRUE) !== NULL ) {
 
 		$json_rpc = json_decode( file_get_contents('php://input'), TRUE );
-	
-		// Requires the 'jsonrpc', 'method' and 'id' members of the request object
+
+		// Send error message if server request method is not 'POST'.
+		if (isset($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] !== 'POST') { exit(json_encode(['jsonrpc' => '2.0', 'error' => ['code' => 32600, 'message' => "Server request method should be 'POST'."], 'id' => $json_rpc['id']])); }
+
+		// Send error message if JSON-RPC version is not '2.0'.
+		if (isset($json_rpc['jsonrpc']) && $json_rpc['jsonrpc'] !== '2.0') { exit(json_encode(['jsonrpc' => '2.0', 'error' => ['code' => 32600, 'message' => "JSON-RPC version should be set to '2.0'."], 'id' => $json_rpc['id']])); }
+
+		// Send error message if 'method' member is not in the format 'class.method'.
+		if (isset($json_rpc['method']) && strstr($json_rpc['method'], '.') == FALSE) { exit(json_encode(['jsonrpc' => '2.0', 'error' => ['code' => 32600, 'message' => "The JSON-RPC 'method' member should have the format 'class.method'."], 'id' => $json_rpc['id']])); }
+
+		// Require the 'jsonrpc', 'method' and 'id' members of the request object, except notifications.
 		if (isset($json_rpc['jsonrpc']) && isset($json_rpc['method']) && isset($json_rpc['id'])) {
-	
-			if (strstr($json_rpc['method'], '.') == FALSE) exit(json_encode(['jsonrpc' => '2.0', 'error' => ['code' => 32600, 'message' => "The JSON-RPC 'method' member should have the format 'class.method'."], 'id' => $json_rpc['id']]));
 	
 			list($class, $method) = explode('.', $json_rpc['method']);
 			$class = ucfirst($class) . CONTROLLER_SUFFIX;
@@ -104,7 +109,7 @@ function json_rpc()
 			if (class_exists($class)) {
 				$object = new $class();
 				if ( method_exists($object, $method) ) {
-					return $object->$method();
+					$object->$method();
 					exit();
 				} else { exit(json_encode(['jsonrpc' => '2.0', 'error' => ['code' => 32601, 'message' => "Method not found."], 'id' => $json_rpc['id']])); }
 			} else { exit(json_encode(['jsonrpc' => '2.0', 'error' => ['code' => 32601, 'message' => "Class not found."], 'id' => $json_rpc['id']])); }
