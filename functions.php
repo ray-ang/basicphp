@@ -412,7 +412,7 @@ function csrf_token()
 }
 
 /**
- * Encrypt data using AES-CBC-HMAC
+ * Encrypt data using AES CBC-HMAC, CTR-HMAC or GCM
  *
  * @param string $plaintext - Plaintext to be encrypted
  */
@@ -461,7 +461,7 @@ function encrypt($plaintext)
 }
 
 /**
- * Decrypt data using AES-CBC-HMAC
+ * Decrypt data using AES CBC-HMAC, CTR-HMAC or GCM
  *
  * @param string $encypted - base64_encoded ciphertext, hash,
  *                         - iv, salt_key, and salt_hmac
