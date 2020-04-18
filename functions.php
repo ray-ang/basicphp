@@ -8,7 +8,7 @@
 | url_path()         - retrieves the URL path substring separated by '/'
 | homepage()         - render hompage
 | error404()         - Handle Error 404 - Page Not Found - Invalid URI
-| route_rpc()        - JSON-RPC v2.0 compatibility layer
+| json_rpc()         - Configure application for JSON-RPC v2.0 protocol.
 | route_auto()       - automatic routing of URL path to Class and method
 | route_class()      - routes URL path request to Controllers
 | view()             - passes data and renders the View
@@ -16,11 +16,11 @@
 | api_response()     - handles API response
 | api_call()         - handles API call
 | firewall()         - web application firewall
-| force_ssl()       - force application to use SSL
-| esc()             - uses htmlspecialchars() to prevent XSS
-| csrf_token()      - uses sessions to create per request CSRF token
-| encrypt()         - encrypt data using AES-CBC-HMAC
-| decrypt()         - decrypt data using AES-CBC-HMAC
+| force_ssl()        - force application to use SSL
+| esc()              - uses htmlspecialchars() to prevent XSS
+| csrf_token()       - uses sessions to create per request CSRF token
+| encrypt()          - encrypt data using AES-CBC-HMAC
+| decrypt()          - decrypt data using AES-CBC-HMAC
 |
 */
 
@@ -85,34 +85,44 @@ function error404()
 function json_rpc()
 {
 
-	// Check if there is POSTed data, and the POSTed data is in JSON format.
-	if ( file_get_contents('php://input') !== FALSE && json_decode(file_get_contents('php://input'), TRUE) !== NULL ) {
+	// Check if there is POSTed data.
+	if (file_get_contents('php://input') !== FALSE) {
 
-		$json_rpc = json_decode( file_get_contents('php://input'), TRUE );
+		// If POSTed data is in JSON format.
+		if (json_decode(file_get_contents('php://input'), TRUE) !== NULL) {
 
-		// Send error message if server request method is not 'POST'.
-		if (isset($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] !== 'POST') { exit(json_encode(['jsonrpc' => '2.0', 'error' => ['code' => 32600, 'message' => "Server request method should be 'POST'."], 'id' => $json_rpc['id']])); }
+			$json_rpc = json_decode(file_get_contents('php://input'), TRUE);
 
-		// Send error message if JSON-RPC version is not '2.0'.
-		if (isset($json_rpc['jsonrpc']) && $json_rpc['jsonrpc'] !== '2.0') { exit(json_encode(['jsonrpc' => '2.0', 'error' => ['code' => 32600, 'message' => "JSON-RPC version should be set to '2.0'."], 'id' => $json_rpc['id']])); }
+			// Send error message if server request method is not 'POST'.
+			if (isset($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] !== 'POST') { exit(json_encode(['jsonrpc' => '2.0', 'error' => ['code' => -32600, 'message' => "Server request method should be 'POST'."]])); }
+			// Send error message if 'jsonrpc' and 'method' members are not set.
+			if (! isset($json_rpc['jsonrpc']) || ! isset($json_rpc['method']) ) { exit(json_encode(['jsonrpc' => '2.0', 'error' => ['code' => -32600, 'message' => "JSON-RPC 'version' and 'method' members should be set."]])); }
+			// Send error message if JSON-RPC version is not '2.0'.
+			if (isset($json_rpc['jsonrpc']) && $json_rpc['jsonrpc'] !== '2.0') { exit(json_encode(['jsonrpc' => '2.0', 'error' => ['code' => -32600, 'message' => "JSON-RPC version should be a string set to '2.0'."]])); }
+			// Send error message if 'method' member is not in the format 'class.method'.
+			if (isset($json_rpc['method']) && substr_count($json_rpc['method'], '.') !== 1) { exit(json_encode(['jsonrpc' => '2.0', 'error' => ['code' => -32602, 'message' => "The JSON-RPC 'method' member should have the format 'class.method'."]])); }
 
-		// Send error message if 'method' member is not in the format 'class.method'.
-		if (isset($json_rpc['method']) && strstr($json_rpc['method'], '.') == FALSE) { exit(json_encode(['jsonrpc' => '2.0', 'error' => ['code' => 32600, 'message' => "The JSON-RPC 'method' member should have the format 'class.method'."], 'id' => $json_rpc['id']])); }
+			// Require 'jsonrpc' and 'method' members as minimum for the request object.
+			if (isset($json_rpc['jsonrpc']) && isset($json_rpc['method'])) {
 
-		// Require the 'jsonrpc', 'method' and 'id' members of the request object, except notifications.
-		if (isset($json_rpc['jsonrpc']) && isset($json_rpc['method']) && isset($json_rpc['id'])) {
-	
-			list($class, $method) = explode('.', $json_rpc['method']);
-			$class = ucfirst($class) . CONTROLLER_SUFFIX;
-			$method = lcfirst($method);
-	
-			if (class_exists($class)) {
-				$object = new $class();
-				if ( method_exists($object, $method) ) {
-					$object->$method();
-					exit();
-				} else { exit(json_encode(['jsonrpc' => '2.0', 'error' => ['code' => 32601, 'message' => "Method not found."], 'id' => $json_rpc['id']])); }
-			} else { exit(json_encode(['jsonrpc' => '2.0', 'error' => ['code' => 32601, 'message' => "Class not found."], 'id' => $json_rpc['id']])); }
+				list($class, $method) = explode('.', $json_rpc['method']);
+				$class = $class . CONTROLLER_SUFFIX;
+
+				// Respond if class exists and 'id' member is set.
+				if (class_exists($class) && isset($json_rpc['id'])) {
+					$object = new $class();
+					if (method_exists($object, $method)) {
+						$object->$method();
+						exit();
+					} else { exit(json_encode(['jsonrpc' => '2.0', 'error' => ['code' => -32601, 'message' => "Method not found."], 'id' => $json_rpc['id']])); }
+				} else { exit(json_encode(['jsonrpc' => '2.0', 'error' => ['code' => -32601, 'message' => "Class not found."], 'id' => $json_rpc['id']])); }
+			}
+
+		} else {
+			
+			// If POSTed data is not in JSON format.
+			exit(json_encode(['jsonrpc' => '2.0', 'error' => ['code' => -32700, 'message' => "Please provide data in valid JSON format."]]));
+		
 		}
 	
 	}
@@ -128,12 +138,12 @@ function route_auto()
 
 	$valid_page = TRUE; // Set page as valid
 
-	if (url_path(1) !== FALSE) { $class = ucfirst(url_path(1)) . CONTROLLER_SUFFIX; }
-	if (url_path(2) !== FALSE) { $method = lcfirst(url_path(2)); } else { $method = METHOD_DEFAULT; }
+	if (url_path(1) !== FALSE) { $class = url_path(1) . CONTROLLER_SUFFIX; }
+	if (url_path(2) !== FALSE) { $method = url_path(2); } else { $method = METHOD_DEFAULT; }
 
 	if (class_exists($class)) {
 		$object = new $class();
-		if ( method_exists($object, $method) ) {
+		if (method_exists($object, $method)) {
 			return $object->$method();
 		} else {
 			header($_SERVER["SERVER_PROTOCOL"]." 404 Not Found");
