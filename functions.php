@@ -39,8 +39,11 @@ function url_path($order)
 		$url = explode('/', $url_path);
 	}
 
-    if ( isset($url[$order+SUB_DIR]) || ! empty($url[$order+SUB_DIR]) ) {
-		return $url[$order+SUB_DIR];
+	// Number of subdirectories from hostname to index.php
+	$sub_dir = substr_count($_SERVER['SCRIPT_NAME'], '/') - 1;
+
+    if ( isset($url[$order+$sub_dir]) || ! empty($url[$order+$sub_dir]) ) {
+		return $url[$order+$sub_dir];
 	} else {
 		return FALSE;
 	}
@@ -365,7 +368,7 @@ function firewall()
 function force_ssl()
 {
 
-	if ( ENFORCE_SSL == TRUE && ( ! isset($_SERVER['HTTPS']) || $_SERVER['HTTPS'] !== 'on' ) ) {
+	if ( ENFORCE_SSL == TRUE && (! isset($_SERVER['HTTPS']) || $_SERVER['HTTPS'] !== 'on') ) {
 		header('Location: https://' . $_SERVER['SERVER_NAME'] . $_SERVER['REQUEST_URI']);
 		exit();
 	}
@@ -473,7 +476,7 @@ function decrypt($encrypted)
 	function decrypt_v1($encrypted) {
 
 		// Return empty if $encrypted is not set or empty.
-		if ( ! isset($encrypted) || empty($encrypted) ) { return ''; }
+		if (! isset($encrypted) || empty($encrypted)) { return ''; }
 
 		// Cipher method to AES with 256-bit key
 		$cipher = strtolower(CIPHER_METHOD);
