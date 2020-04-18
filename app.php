@@ -33,6 +33,7 @@ homepage(); // Render homepage
 |--------------------------------------------------------------------------
 */
 
+route_class('POST', '/jsonrpc', 'JsonRpcController@index');
 route_class('GET', '/posts', 'AppController@listUsers');
 route_class('GET' || 'POST', '/posts/(:num)', 'AppController@viewUser');
 route_class('GET' || 'POST', '/posts/(:num)/edit', 'AppController@editUser');
