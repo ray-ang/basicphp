@@ -4,7 +4,7 @@
 
 A frameworkless library-based approach for building web applications and application programming interfaces or API's. The aim of the project is for developers to build applications that are framework-independent using raw PHP, and native functions and API's.
 
-To embed the application to any framework, copy BasicPHP's configuration file (config.php), functions library (functions.php), and the 'classes', 'models', 'views' and 'controllers' folders one (1) folder above the front controller file of the chosen framework. In the controller file, at the start of the script, include/require config.php and functions.php.
+To embed the application to any framework, copy BasicPHP's configuration file (config.php), functions library (Basicphp.php), and the 'classes', 'models', 'views' and 'controllers' folders one (1) folder above the front controller file of the chosen framework. In the controller file (index.php), at the start of the script, include/require config.php and Basicphp.php.
 
 Features include class autoloading, routing, functions library, security (web application firewall, XSS and CSRF protection, encryption and PDO abstraction layer for SQL injection prevention), and handling 404 error - page not found. It also includes a compatibility layer for JSON-RPC, automatic routing of /class/method endpoints to Class::method functions for REST-RPC use, and custom endpoints with use of HTTP methods for REST API use.
 
@@ -38,15 +38,15 @@ http://domain-name.com/
 
 ## Model-View-Controller (MVC) Architecture
 
-BasicPHP initially used a modified MVC approach where there is still separation between the Controller and View, but the Model is embedded in the Controller. Business logic and database layer (Model) is embedded in the Controller using the PDO abstraction layer. The Controller handles user input, passes data to and renders the View. The main function of the Controller is to prepare if-elseif statements, define variables and functions, and pass these variables to the View using 'require' or 'include' statements. An abstraction layer using the templating view() helper function is added to pass data, and render the 'require' or 'include' statements in the View for code efficiency. The View gets its data from the Controller, with the Controller passing the $data variable containing the necessary variable names and their values using compact() function, or placing the variable names and values in an array using the shorthand [ ] or array(), and converting array keys to variables through the extract() function in the view() helper function. Native PHP templating can then be used in rendering the layout while escaping output, such as:
+BasicPHP initially used a modified MVC approach where there is still separation between the Controller and View, but the Model is embedded in the Controller. Business logic and database layer (Model) is embedded in the Controller using the PDO abstraction layer. The Controller handles user input, passes data to and renders the View. The main function of the Controller is to prepare if-elseif statements, define variables and functions, and pass these variables to the View using 'require' or 'include' statements. An abstraction layer using the templating Basicphp::view() helper function is added to pass data, and render the 'require' or 'include' statements in the View for code efficiency. The View gets its data from the Controller, with the Controller passing the $data variable containing the necessary variable names and their values using compact() function, or placing the variable names and values in an array using the shorthand [ ] or array(), and converting array keys to variables through the extract() function in the Basicphp::view() helper function. Native PHP templating can then be used in rendering the layout while escaping output, such as:
 
 ```
-<p><?= esc($variable) ?></p>
+<p><?= Basicphp::esc($variable) ?></p>
 ```
 
 ### Controller & Model
 
-Use the view() helper function to render the View for templating and data handling purposes.
+Use the Basicphp::view() helper function to render the View for templating and data handling purposes.
 
 ```
 // Prepare data as data payload
@@ -55,23 +55,23 @@ $variable2 = 'value2';
 $variable3 = 'value3';
 
 $data = compact('variable1', 'variable2', 'variable3');
-view('page_view', $data);
+Basicphp::view('page_view', $data);
 ```
 
 OR
 
 ```
 $data = ['variable1' => $variable1, 'variable2' => $variable2, 'variable3' => $variable3];
-view('page_view', $data);
+Basicphp::view('page_view', $data);
 ```
 
 ### View
 
-When using view() helper function to render the View
+When using Basicphp::view() helper function to render the View
 
 ```
 <?php foreach( $variable1 as $row ): ?>
-<p>The patient's name is <?= esc($row['name']) ?>, and his age is <?= esc($row['age']) ?>.</p>
+<p>The patient's name is <?= Basicphp::esc($row['name']) ?>, and his age is <?= Basicphp::esc($row['age']) ?>.</p>
 <?php endforeach ?>
 ```
 
