@@ -10,7 +10,7 @@ class PostModel
 	private function conn()
 	{
 
-		return pdo_conn('mysql', 'localhost', 'basicphp', 'root', '');
+		return Basicphp::pdo_conn('mysql', 'localhost', 'basicphp', 'root', '');
 
 	}
 

@@ -4,8 +4,8 @@ require_once 'template/header.php';
 require_once 'template/menu.php';
 
 $plaintext = 'ABC123';
-$encrypted = encrypt($plaintext);
-$decrypted = decrypt($encrypted);
+$encrypted = Basicphp::encrypt($plaintext);
+$decrypted = Basicphp::decrypt($encrypted);
 ?>
 	<!-- Page Content -->
     <div class="container">

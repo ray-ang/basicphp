@@ -2,11 +2,11 @@
 
 /*
 |--------------------------------------------------------------------------
-| Load BasicPHP Functions Library and Configuration File
+| Load BasicPHP Class Library and Configuration File
 |--------------------------------------------------------------------------
 */
 
-require_once 'functions.php';
+require_once 'Basicphp.php';
 require_once 'config.php';
 
 /*
@@ -15,8 +15,8 @@ require_once 'config.php';
 |--------------------------------------------------------------------------
 */
 
-firewall(); // Firewall
-force_ssl(); // SSL/HTTPS
+Basicphp::firewall(); // Firewall
+Basicphp::force_ssl(); // SSL/HTTPS
 
 /*
 |--------------------------------------------------------------------------
@@ -24,8 +24,8 @@ force_ssl(); // SSL/HTTPS
 |--------------------------------------------------------------------------
 */
 
-route_auto(); // Automatic '/class/method' routing
-homepage(); // Render homepage
+Basicphp::route_auto(); // Automatic '/class/method' routing
+Basicphp::homepage(); // Render homepage
 
 /*
 |--------------------------------------------------------------------------
@@ -33,10 +33,10 @@ homepage(); // Render homepage
 |--------------------------------------------------------------------------
 */
 
-route_class('POST', '/jsonrpc', 'JsonRpcController@index');
-route_class('GET', '/posts', 'AppController@listUsers');
-route_class('GET' || 'POST', '/posts/(:num)', 'AppController@viewUser');
-route_class('GET' || 'POST', '/posts/(:num)/edit', 'AppController@editUser');
+Basicphp::route_class('POST', '/jsonrpc', 'JsonRpcController@index');
+Basicphp::route_class('GET', '/posts', 'AppController@listUsers');
+Basicphp::route_class('GET' || 'POST', '/posts/(:num)', 'AppController@viewUser');
+Basicphp::route_class('GET' || 'POST', '/posts/(:num)/edit', 'AppController@editUser');
 
 /*
 |--------------------------------------------------------------------------
@@ -44,4 +44,4 @@ route_class('GET' || 'POST', '/posts/(:num)/edit', 'AppController@editUser');
 |--------------------------------------------------------------------------
 */
 
-error404(); // Handle Error 404
+Basicphp::error404(); // Handle Error 404

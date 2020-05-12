@@ -25,16 +25,16 @@ class RequestController
 			// $data_input as an array containing $_POST keys and values
 			$data_input = ['search' => $_POST['patient-name']];
 
-			$data_output = api_call('POST', 'http://localhost/basicphp/public/api', $data_input, 'Peter', 12345);
+			$data_output = Basicphp::api_call('POST', 'http://localhost/basicphp/public/api', $data_input, 'Peter', 12345);
 			$page_title = 'API Response';
 
 			$data = compact('data_output', 'page_title');
-			view('request', $data);
+			Basicphp::view('request', $data);
 
 		} else {
 
 			$data = ['page_title' => 'API Request'];
-			view('request', $data);
+			Basicphp::view('request', $data);
 
 		}
 
