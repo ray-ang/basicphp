@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Prepare Models using PDO abstraction layer
+ * Structure Models using PHP Data Objects (PDO)
  */
 
 class PostModel
@@ -10,7 +10,13 @@ class PostModel
 	private function conn()
 	{
 
-		return Basicphp::pdo_conn('mysql', 'localhost', 'basicphp', 'root', '');
+		try {
+			$conn = new PDO('mysql:host=localhost;dbname=basicphp', 'roots', '');
+			$conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+			return $conn;
+		} catch(PDOException $e) {
+			echo "Connection failed: " . $e->getMessage();
+		}
 
 	}
 

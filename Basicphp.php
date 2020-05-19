@@ -15,7 +15,6 @@ class Basicphp
 	| route_auto()       - automatic routing of URL path to Class and method
 	| route_class()      - routes URL path request to Controllers
 	| view()             - passes data and renders the View
-	| pdo_conn()         - PHP Data Objects (PDO) database connection
 	| api_response()     - handles API response
 	| api_call()         - handles API call
 	| firewall()         - web application firewall
@@ -214,28 +213,6 @@ class Basicphp
 
 		// Render Page View
 		return require_once '../views/' . $view . '.php';
-
-	}
-
-	/**
-	 * PHP Data Objects (PDO) database connection
-	 *
-	 * @param string $database - Database (e.g. mysql)
-	 * @param string $servername - Server Name (e.g localhost)
-	 * @param string $dbname - Database Name
-	 * @param string $username - Username
-	 * @param string $password - Password
-	 */
-
-	public static function pdo_conn($database, $servername, $dbname, $username, $password)
-	{
-
-		$conn = new PDO("$database:host=$servername;dbname=$dbname", $username, $password, array(
-			PDO::ATTR_PERSISTENT => TRUE
-		));
-		$conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-
-		return $conn;
 
 	}
 
