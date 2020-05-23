@@ -8,7 +8,7 @@ class Basicphp
 	| BasicPHP Functions Library
 	|--------------------------------------------------------------------------
 	|
-	| url_path()         - retrieves the URL path substring separated by '/'
+	| segment()         - retrieves the URL path substring separated by '/'
 	| homepage()         - render hompage
 	| error404()         - Handle Error 404 - Page Not Found - Invalid URI
 	| json_rpc()         - Configure application for JSON-RPC v2.0 protocol.
@@ -30,10 +30,10 @@ class Basicphp
 	 * Get URL path string value after the BASE_URL.
 	 *
 	 * @param integer $order - URL substring position from the BASE_URL
-	 *                       - url_path(1) as first string after BASE_URL
+	 *                       - segment(1) as first string after BASE_URL
 	 */
 
-	public static function url_path($order)
+	public static function segment($order)
 	{
 
 		if (isset($_SERVER['REQUEST_URI'])) {
@@ -59,7 +59,7 @@ class Basicphp
 	public static function homepage()
 	{
 
-		if ( empty(self::url_path(1)) ) {
+		if ( empty(self::segment(1)) ) {
 			list($class, $method) = explode('@', HOME_PAGE);
 			$object = new $class();
 			return $object->$method();
@@ -135,7 +135,7 @@ class Basicphp
 	}
 
 	/**
-	 * Automatic routing of url_path(1) and (2) as Class and method
+	 * Automatic routing of segment(1) and (2) as Class and method
 	 */
 
 	public static function route_auto()
@@ -143,8 +143,8 @@ class Basicphp
 
 		$valid_page = TRUE; // Set page as valid
 
-		if (self::url_path(1) !== FALSE) { $class = self::url_path(1) . CONTROLLER_SUFFIX; }
-		if (self::url_path(2) !== FALSE) { $method = self::url_path(2); } else { $method = METHOD_DEFAULT; }
+		if (self::segment(1) !== FALSE) { $class = self::segment(1) . CONTROLLER_SUFFIX; }
+		if (self::segment(2) !== FALSE) { $method = self::segment(2); } else { $method = METHOD_DEFAULT; }
 
 		if (class_exists($class)) {
 			$object = new $class();

@@ -2,12 +2,12 @@
 
 /*
 |--------------------------------------------------------------------------
-| Load BasicPHP Class Library and Configuration File
+| Load Configuration File and BasicPHP Class Library
 |--------------------------------------------------------------------------
 */
 
-require_once 'Basicphp.php';
 require_once 'config.php';
+require_once 'Basicphp.php';
 
 /*
 |--------------------------------------------------------------------------

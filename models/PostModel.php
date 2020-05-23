@@ -11,7 +11,7 @@ class PostModel
 	{
 
 		try {
-			$conn = new PDO('mysql:host=localhost;dbname=basicphp', 'roots', '');
+			$conn = new PDO('mysql:host=localhost;dbname=basicphp', 'root', '');
 			$conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 			return $conn;
 		} catch(PDOException $e) {

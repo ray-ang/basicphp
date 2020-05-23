@@ -23,8 +23,8 @@ class ApiController
 
 	public function response()
 	{
-		if ( Basicphp::url_path(3) == FALSE ) $this->default_response();
-		if ( Basicphp::url_path(3) == 'rest-rpc' && Basicphp::url_path(4) == 'sample-api' ) $this->default_response();
+		if ( Basicphp::segment(3) == FALSE ) $this->default_response();
+		if ( Basicphp::segment(3) == 'rest-rpc' && Basicphp::segment(4) == 'sample-api' ) $this->default_response();
 	}
 	
 	protected function default_response()

@@ -54,13 +54,13 @@ class PostController
 
 		if (isset($_POST['goto-edit'])) {
 
-			header('Location: ' . BASE_URL . 'post/edit/' . Basicphp::url_path(3));
+			header('Location: ' . BASE_URL . 'post/edit/' . Basicphp::segment(3));
 			exit();
 
 		}
 
 		$post = new PostModel;
-		$row = $post->view( Basicphp::url_path(3) );
+		$row = $post->view( Basicphp::segment(3) );
 
 		if ($row) {
 
@@ -106,14 +106,14 @@ class PostController
 
 		if ($this->isPostEdit()) {
 
-			$post->edit( Basicphp::url_path(3) );
+			$post->edit( Basicphp::segment(3) );
 
-			header('Location: ' . BASE_URL . 'post/view/' . Basicphp::url_path(3));
+			header('Location: ' . BASE_URL . 'post/view/' . Basicphp::segment(3));
 			exit();
 
 		}
 
-		$row = $post->view( Basicphp::url_path(3) );
+		$row = $post->view( Basicphp::segment(3) );
 
 		if ($row) {
 
@@ -138,7 +138,7 @@ class PostController
 	{
 
 		$post = new PostModel;
-		$post->delete( Basicphp::url_path(3) );
+		$post->delete( Basicphp::segment(3) );
 
 	}
 
