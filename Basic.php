@@ -1,6 +1,6 @@
 <?php
 
-class Basicphp
+class Basic
 {
 
 	/*
