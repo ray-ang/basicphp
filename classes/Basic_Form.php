@@ -24,7 +24,7 @@ class Basic_Form
 		?><div class="form-group">
 			<label class="control-label col-sm-2" for="<?= $name ?>"><?= $label ?>:</label>
 			<div class="col-sm-10">
-				<input type="<?= $type ?>" class="form-control" id="<?= $name ?>" placeholder="Enter <?= $label ?>" name="<?= $name ?>" value="<?= Basicphp::esc($value) ?>">
+				<input type="<?= $type ?>" class="form-control" id="<?= $name ?>" placeholder="Enter <?= $label ?>" name="<?= $name ?>" value="<?= Basic::esc($value) ?>">
 			</div>
 		</div><?php
 
@@ -37,7 +37,7 @@ class Basic_Form
 		?><div class="form-group">
 			<label class="control-label col-sm-2" for="<?= $name ?>"><?= $label ?>:</label>
 			<div class="col-sm-10"> 
-				<textarea class="form-control" rows="5" id="<?= $name ?>" placeholder="Enter <?= $label ?>" name="<?= $name ?>"><?= Basicphp::esc($value) ?></textarea>
+				<textarea class="form-control" rows="5" id="<?= $name ?>" placeholder="Enter <?= $label ?>" name="<?= $name ?>"><?= Basic::esc($value) ?></textarea>
 			</div>
 		</div><?php
 
@@ -57,7 +57,7 @@ class Basic_Form
 	public function csrfToken()
 	{
 
-		?><input type="hidden" name="csrf-token" value="<?= Basicphp::csrf_token() ?>"><?php
+		?><input type="hidden" name="csrf-token" value="<?= Basic::csrf_token() ?>"><?php
 
 	}
 

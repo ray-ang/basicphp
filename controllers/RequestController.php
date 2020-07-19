@@ -22,19 +22,18 @@ class RequestController
 		// Execute if "Search" button is clicked
 		if ( isset($_POST['search-patient']) ) {
 
-			// $data_input as an array containing $_POST keys and values
-			$data_input = ['search' => $_POST['patient-name']];
-
-			$data_output = Basicphp::api_call('POST', 'http://localhost/basicphp/public/api', $data_input, 'Peter', 12345);
 			$page_title = 'API Response';
+			
+			$data_input = ['search' => $_POST['patient-name']]; // $data_input as an array
+			$data_output = Basic::api_call('POST', BASE_URL . 'api', $data_input, 'Peter', 12345);
 
-			$data = compact('data_output', 'page_title');
-			Basicphp::view('request', $data);
+			$data = compact('page_title', 'data_output');
+			Basic::view('request', $data);
 
 		} else {
 
 			$data = ['page_title' => 'API Request'];
-			Basicphp::view('request', $data);
+			Basic::view('request', $data);
 
 		}
 

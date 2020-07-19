@@ -23,8 +23,8 @@ class ApiController
 
 	public function response()
 	{
-		if ( Basicphp::segment(3) == FALSE ) $this->default_response();
-		if ( Basicphp::segment(3) == 'rest-rpc' && Basicphp::segment(4) == 'sample-api' ) $this->default_response();
+		if ( Basic::segment(3) == FALSE ) $this->default_response();
+		if ( Basic::segment(3) == 'rest-rpc' && Basic::segment(4) == 'sample-api' ) $this->default_response();
 	}
 	
 	protected function default_response()
@@ -73,11 +73,11 @@ class ApiController
 
 			if (! empty($data_output)) {
 
-				Basicphp::api_response($data_output, 'Your search has some results.');
+				Basic::api_response($data_output, 'Your search has some results.');
 
 			} else {
 
-				Basicphp::api_response($data=NULL, 'No Patient name found on search.');
+				Basic::api_response($data=NULL, 'No Patient name found on search.');
 
 			}
 
@@ -85,7 +85,7 @@ class ApiController
 
 			$message = 'You do not have the right credentials or HTTP method.';
 
-			Basicphp::api_response($data=NULL, $message);
+			Basic::api_response($data=NULL, $message);
 
 		}
 

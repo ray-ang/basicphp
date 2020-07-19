@@ -13,7 +13,7 @@ class HomeController
 	{
 
 		$data = ['page_title' => 'Starter Application'];
-		Basicphp::view('home', $data);
+		Basic::view('home', $data);
 
 	}
 

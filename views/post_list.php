@@ -10,8 +10,8 @@ require_once 'template/menu.php';
           <h1 class="mt-5 text-center">List of Posts</h1>
          	<?php foreach($stmt as $row): ?>
   				<div class="panel panel-default">
-  					<div class="panel-heading">Title: <a href="<?php echo BASE_URL . 'post/view/' . $row['post_id']; ?>"><?= Basicphp::esc($row['post_title']) ?></a></div>
-  					<div class="panel-body">Content:<br/><?= nl2br(Basicphp::esc($row['post_content'])) ?></div>
+  					<div class="panel-heading">Title: <a href="<?php echo BASE_URL . 'post/view/' . $row['post_id']; ?>"><?= Basic::esc($row['post_title']) ?></a></div>
+  					<div class="panel-body">Content:<br/><?= nl2br(Basic::esc($row['post_content'])) ?></div>
   				</div>
       	 	<?php endforeach ?>
           <?php if ($_GET['order'] > 0): ?>

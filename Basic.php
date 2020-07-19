@@ -5,7 +5,7 @@ class Basic
 
 	/*
 	|--------------------------------------------------------------------------
-	| BasicPHP Functions Library
+	| BasicPHP Library
 	|--------------------------------------------------------------------------
 	|
 	| segment()          - retrieves the URL path substring separated by '/'
@@ -13,7 +13,7 @@ class Basic
 	| error404()         - Handle Error 404 - Page Not Found - Invalid URI
 	| json_rpc()         - Configure application for JSON-RPC v2.0 protocol.
 	| route_auto()       - automatic routing of URL path to Class and method
-	| route_class()      - routes URL path request to Controllers
+	| route()            - routes URL path request to closure or Controller
 	| view()             - passes data and renders the View
 	| api_response()     - handles API response
 	| api_call()         - handles API call
@@ -59,6 +59,8 @@ class Basic
 	public static function homepage()
 	{
 
+		$valid_page = TRUE; // Set page as valid
+		
 		if ( empty(self::segment(1)) ) {
 			list($class, $method) = explode('@', HOME_PAGE);
 			$object = new $class();
@@ -168,7 +170,7 @@ class Basic
 	 * @param string $class_method - ClassController@method format
 	 */
 
-	public static function route_class($http_method, $path, $class_method)
+	public static function route($http_method, $path, $class_method)
 	{
 
 		$valid_page = TRUE; // Set page as valid
@@ -187,12 +189,20 @@ class Basic
 			$url_path = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 			if ( preg_match('/^' . $subfolder . $pattern . '+$/i', $url_path) )  {
 
-				list($class, $method) = explode('@', $class_method);
+				if (is_string($class_method)) {
+					if (strstr($class_method, '@')) {
+						list($class, $method) = explode('@', $class_method);
 
-				$object = new $class();
-				return $object->$method();
-
+						$object = new $class();
+						$object->$method();
+						exit();
+					}
+				} else {
+					$class_method();
+					exit();
 				}
+
+			}
 
 		}
 

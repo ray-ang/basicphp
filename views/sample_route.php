@@ -13,15 +13,15 @@ require_once 'template/menu.php';
 			<p>Templating is done using vanilla or native PHP templating.</p>
 			<h4>Passing Data from Controller</h4>
 			<?php foreach($person as $name => $age): ?>
-			The name is <?= Basicphp::esc($name) ?> and the age is <?= Basicphp::esc($age) ?>.
+			The name is <?= Basic::esc($name) ?> and the age is <?= Basic::esc($age) ?>.
 			<br>
 			<?php endforeach ?>
 			<h4>Using URL substring as parameter</h4>
 			<?php if (! empty($param1) ): ?>
-			<p>The first paramter is <?= Basicphp::esc($param1) ?>.</p>
+			<p>The first paramter is <?= Basic::esc($param1) ?>.</p>
 			<?php endif ?>
 			<?php if (! empty($param2) ): ?>
-			<p>The second paramter is <?= Basicphp::esc($param2) ?>.</p>
+			<p>The second paramter is <?= Basic::esc($param2) ?>.</p>
 			<?php endif ?>
         </div>
       </div>

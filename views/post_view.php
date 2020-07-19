@@ -8,9 +8,9 @@ require_once 'template/menu.php';
       <div class="row">
         <div class="col-lg-12">
           <h1 class="mt-5 text-center">View Post</h1>
-         	<h4>Title: <?= Basicphp::esc($row['post_title']) ?></h4>
+         	<h4>Title: <?= Basic::esc($row['post_title']) ?></h4>
        		<h4>Content:</h4>
-          <p><?= nl2br(Basicphp::esc($row['post_content'])) ?></p>
+          <p><?= nl2br(Basic::esc($row['post_content'])) ?></p>
           <br/>
           <?php
             $form = new Basic_Form;

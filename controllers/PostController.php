@@ -23,7 +23,7 @@ class PostController
 			$page_title = 'Error in order parameter';
 
 			$data = compact('error_message', 'page_title');
-			Basicphp::view('error', $data);
+			Basic::view('error', $data);
 		}
 		if (isset($_GET['order']) && $_GET['order'] < 0) $_GET['order'] = 0;
 
@@ -39,7 +39,7 @@ class PostController
 		$page_title = 'List of Posts';
 
 		$data = compact('stmt', 'total', 'per_page', 'page_title');
-		Basicphp::view('post_list', $data);
+		Basic::view('post_list', $data);
 
 	}
 
@@ -54,20 +54,20 @@ class PostController
 
 		if (isset($_POST['goto-edit'])) {
 
-			header('Location: ' . BASE_URL . 'post/edit/' . Basicphp::segment(3));
+			header('Location: ' . BASE_URL . 'post/edit/' . Basic::segment(3));
 			exit();
 
 		}
 
 		$post = new PostModel;
-		$row = $post->view( Basicphp::segment(3) );
+		$row = $post->view( Basic::segment(3) );
 
 		if ($row) {
 
 			$page_title = 'View Post';
 
 			$data = compact('row', 'page_title');
-			Basicphp::view('post_view', $data);
+			Basic::view('post_view', $data);
 
 		} else {
 
@@ -75,7 +75,7 @@ class PostController
 			$page_title = 'Error in Post ID';
 
 			$data = compact('error_message', 'page_title');
-			Basicphp::view('error', $data);
+			Basic::view('error', $data);
 
 		}
 
@@ -95,7 +95,7 @@ class PostController
 		}
 
 		$data = ['page_title' => 'Add a Post'];
-		Basicphp::view('post_add', $data);
+		Basic::view('post_add', $data);
 
 	}
 
@@ -106,21 +106,21 @@ class PostController
 
 		if ($this->isPostEdit()) {
 
-			$post->edit( Basicphp::segment(3) );
+			$post->edit( Basic::segment(3) );
 
-			header('Location: ' . BASE_URL . 'post/view/' . Basicphp::segment(3));
+			header('Location: ' . BASE_URL . 'post/view/' . Basic::segment(3));
 			exit();
 
 		}
 
-		$row = $post->view( Basicphp::segment(3) );
+		$row = $post->view( Basic::segment(3) );
 
 		if ($row) {
 
 			$page_title = 'Edit Post';
 
 			$data = compact('row', 'page_title');
-			Basicphp::view('post_edit', $data);
+			Basic::view('post_edit', $data);
 
 		} else {
 
@@ -128,7 +128,7 @@ class PostController
 			$page_title = 'Error in Post ID';
 
 			$data = compact('error_message', 'page_title');
-			Basicphp::view('error', $data);
+			Basic::view('error', $data);
 
 		}
 
@@ -138,7 +138,7 @@ class PostController
 	{
 
 		$post = new PostModel;
-		$post->delete( Basicphp::segment(3) );
+		$post->delete( Basic::segment(3) );
 
 	}
 

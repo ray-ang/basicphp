@@ -15,7 +15,7 @@ class EncryptionController
 		$page_title = 'Data Encryption';
 
 		$data = compact('page_title');
-		Basicphp::view('encryption', $data);
+		Basic::view('encryption', $data);
 
 	}
 
