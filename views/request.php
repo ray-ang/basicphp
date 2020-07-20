@@ -6,11 +6,8 @@ require_once 'template/menu.php';
 <?php
 
 if ( isset($data_output) ) {
-
-// Set array keys as variables
-$data = $data_output['data'];
-$message = $data_output['message'];
-
+    $data = $data_output->data;
+    $message = $data_output->message;
 }
 
 ?>
@@ -36,7 +33,7 @@ $message = $data_output['message'];
 
                 foreach ( $data as $row ) {
 
-                    echo "<li>The patient's name is " . Basic::esc($row['name']) . ', and his age is ' . Basic::esc($row['age']) . '.<br/></li>';
+                    echo "<li>The patient's name is " . Basic::esc($row->name) . ', and his age is ' . Basic::esc($row->age) . '.<br/></li>';
 
                 }
 

@@ -286,7 +286,7 @@ class Basic
 		curl_close ($ch);
 
 		// Convert JSON response from external server to an array
-		$data_output = json_decode($result, TRUE);
+		$data_output = json_decode($result);
 
 		return $data_output;
 

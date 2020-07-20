@@ -38,7 +38,7 @@ class PostModel
 		$conn = $this->conn();
 		$stmt = $conn->prepare("SELECT post_id, post_title, post_content FROM posts ORDER BY post_id DESC LIMIT $per_page OFFSET " . $order);
 		$stmt->execute();
-		$result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+		$result = $stmt->fetchAll();
 
 		return $result;
 
@@ -51,7 +51,7 @@ class PostModel
 		$stmt = $conn->prepare("SELECT post_id, post_title, post_content FROM posts WHERE post_id = :post_id");
 		$stmt->bindParam(':post_id', $post_id);
 		$stmt->execute();
-		$result = $stmt->fetch(PDO::FETCH_ASSOC);
+		$result = $stmt->fetch();
 
 		return $result;
 
