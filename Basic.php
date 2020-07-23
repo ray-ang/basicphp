@@ -408,6 +408,7 @@ class Basic
 	 * Encrypt data using AES CBC-HMAC, CTR-HMAC or GCM
 	 *
 	 * @param string $plaintext - Plaintext to be encrypted
+	 * @return string - contains based64-encoded ciphertext
 	 */
 
 	public static function encrypt($plaintext)
@@ -418,33 +419,26 @@ class Basic
 
 			function encrypt_v1($plaintext) {
 
-				// Version
-				$version = 'enc-v1';
-				
-				// Cipher method to AES with 256-bit key
-				$cipher = strtolower(CIPHER_METHOD);
-				// Salt for encryption key
-				$salt_key = random_bytes(16);
-				// Derive encryption key
-				$key = hash_pbkdf2('sha256', PASS_PHRASE, $salt_key, 10000);
-				// Initialization vector
-				$iv = random_bytes(16);
+				$version = 'enc-v1'; // Version
+				$cipher = strtolower(CIPHER_METHOD); // Cipher Method
+				$salt = random_bytes(16); // Salt
+				$iv = $salt; // Initialization Vector
+
+				// Derive Keys
+				$masterKey = hash_pbkdf2('sha256', PASS_PHRASE, $salt, 10000); // Master Key
+				$encKey = hash_hkdf('sha256', $masterKey, 32, 'aes-256-encryption', $salt); // Encryption Key
+				$hmacKey = hash_hkdf('sha256', $masterKey, 32, 'sha-256-authentication', $salt); // HMAC Key
 
 				if ($cipher == 'aes-256-gcm') {
 
-					$ciphertext = openssl_encrypt($plaintext, $cipher, $key, $options=0, $iv, $tag);
-					return $version . '::' . base64_encode($ciphertext) . '::' . base64_encode($iv) . '::' . base64_encode($tag) . '::' . base64_encode($salt_key);
+					$ciphertext = openssl_encrypt($plaintext, $cipher, $encKey, $options=0, $iv, $tag);
+					return $version . '::' . base64_encode($ciphertext) . '::' . base64_encode($tag) . '::' . base64_encode($salt);
 
 				} else {
 
-					// Salt for HMAC key
-					$salt_hmac = random_bytes(16);
-					// Derive HMAC key
-					$key_hmac = hash_pbkdf2('sha256', PASS_PHRASE, $salt_hmac, 10000);
-
-					$ciphertext = openssl_encrypt($plaintext, $cipher, $key, $options=0, $iv);
-					$hash = hash_hmac('sha256', $ciphertext, $key_hmac);
-					return $version . '::' . base64_encode($ciphertext) . '::' . base64_encode($hash) . '::' . base64_encode($iv) . '::' . base64_encode($salt_key) . '::' . base64_encode($salt_hmac);
+					$ciphertext = openssl_encrypt($plaintext, $cipher, $encKey, $options=0, $iv);
+					$hash = hash_hmac('sha256', $ciphertext, $hmacKey);
+					return $version . '::' . base64_encode($ciphertext) . '::' . base64_encode($hash) . '::' . base64_encode($salt);
 
 				}
 
@@ -461,8 +455,9 @@ class Basic
 	/**
 	 * Decrypt data using AES CBC-HMAC, CTR-HMAC or GCM
 	 *
-	 * @param string $encypted - base64_encoded ciphertext, hash,
-	 *                         - iv, salt_key, and salt_hmac
+	 * @param string $encypted - base64-encoded ciphertext, hash,
+	 *                         - and salt (and tag for GCM)
+	 * @return string          - decrypted data
 	 */
 
 	public static function decrypt($encrypted)
@@ -476,51 +471,53 @@ class Basic
 				// Return empty if $encrypted is not set or empty.
 				if (! isset($encrypted) || empty($encrypted)) { return ''; }
 
-				// Cipher method to AES with 256-bit key
-				$cipher = strtolower(CIPHER_METHOD);
+				$cipher = strtolower(CIPHER_METHOD); // Cipher Method
 
 				if ($cipher == 'aes-256-gcm') {
 
-					list($version, $ciphertext, $iv, $tag, $salt_key) = explode('::', $encrypted);
+					list($version, $ciphertext, $tag, $salt) = explode('::', $encrypted);
 					$ciphertext = base64_decode($ciphertext);
-					$iv = base64_decode($iv);
 					$tag = base64_decode($tag);
-					$salt_key = base64_decode($salt_key);
+					$salt = base64_decode($salt);
 
-					// Derive encryption key
-					$key = hash_pbkdf2('sha256', PASS_PHRASE, $salt_key, 10000);
+					$iv = $salt; // Initialization Vector
 
-					$plaintext = openssl_decrypt($ciphertext, $cipher, $key, $options=0, $iv, $tag);
+					// Derive Keys
+					$masterKey = hash_pbkdf2('sha256', PASS_PHRASE, $salt, 10000); // Master Key
+					$encKey = hash_hkdf('sha256', $masterKey, 32, 'aes-256-encryption', $salt); // Encryption Key
+					$hmacKey = hash_hkdf('sha256', $masterKey, 32, 'sha-256-authentication', $salt); // HMAC Key
+
+					$plaintext = openssl_decrypt($ciphertext, $cipher, $encKey, $options=0, $iv, $tag);
 
 					// GCM authentication
 					if ($plaintext !== FALSE) {
 						return $plaintext;
 					} else {
-						exit ('<strong>Warning: </strong>Please verify authenticity of ciphertext.');
+						exit ('Please verify authenticity of ciphertext.');
 					}
 
 				} else {
 
-					list($version, $ciphertext, $hash, $iv, $salt_key, $salt_hmac) = explode('::', $encrypted);
+					list($version, $ciphertext, $hash, $salt) = explode('::', $encrypted);
 					$ciphertext = base64_decode($ciphertext);
 					$hash = base64_decode($hash);
-					$iv = base64_decode($iv);
-					$salt_key = base64_decode($salt_key);
-					$salt_hmac = base64_decode($salt_hmac);
+					$salt = base64_decode($salt);
 
-					// Derive encryption key
-					$key = hash_pbkdf2('sha256', PASS_PHRASE, $salt_key, 10000);
-					// Derive HMAC key
-					$key_hmac = hash_pbkdf2('sha256', PASS_PHRASE, $salt_hmac, 10000);
+					$iv = $salt; // Initialization Vector
 
-					$digest = hash_hmac('sha256', $ciphertext, $key_hmac);
+					// Derive keys
+					$masterKey = hash_pbkdf2('sha256', PASS_PHRASE, $salt, 10000); // Master Key
+					$encKey = hash_hkdf('sha256', $masterKey, 32, 'aes-256-encryption', $salt); // Encryption Key
+					$hmacKey = hash_hkdf('sha256', $masterKey, 32, 'sha-256-authentication', $salt); // HMAC Key
+
+					$digest = hash_hmac('sha256', $ciphertext, $hmacKey);
 
 					// HMAC authentication
 					if  ( hash_equals($hash, $digest) ) {
-						return openssl_decrypt($ciphertext, $cipher, $key, $options=0, $iv);
+						return openssl_decrypt($ciphertext, $cipher, $encKey, $options=0, $iv);
 						}
 					else {
-						exit ('<strong>Warning: </strong>Please verify authenticity of ciphertext.');
+						exit ('Please verify authenticity of ciphertext.');
 					}
 
 				}
@@ -532,13 +529,12 @@ class Basic
 		$version = explode('::', $encrypted)[0];
 
 		/** Version-based Decryption */
-		// Return $encrypted if no encryption detected.
 		switch ($version) {
 			case 'enc-v1':
 				return decrypt_v1($encrypted);
 				break;
 			default:
-				return $encrypted;
+				return $encrypted; // Return $encrypted if no encryption detected.
 		}
 
 	}
