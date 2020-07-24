@@ -35,7 +35,6 @@ class Basic
 
 	public static function segment($order)
 	{
-
 		if (isset($_SERVER['REQUEST_URI'])) {
 			$url_path = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 			$url = explode('/', $url_path);
@@ -49,7 +48,6 @@ class Basic
 		} else {
 			return FALSE;
 		}
-
 	}
 
 	/**
@@ -58,15 +56,13 @@ class Basic
 
 	public static function homepage()
 	{
-
-		$valid_page = TRUE; // Set page as valid
-		
 		if ( empty(self::segment(1)) ) {
 			list($class, $method) = explode('@', HOME_PAGE);
 			$object = new $class();
-			return $object->$method();
-		}
 
+			$object->$method();
+			exit();
+		}
 	}
 
 	/**
@@ -76,12 +72,8 @@ class Basic
 
 	public static function error404()
 	{
-
-		if ( ! isset($valid_page) || $valid_page !== TRUE ) {
-			header($_SERVER["SERVER_PROTOCOL"]." 404 Not Found");
-			exit();
-		}
-
+		header($_SERVER["SERVER_PROTOCOL"] . " 404 Not Found");
+		exit();
 	}
 
 	/**
@@ -91,7 +83,6 @@ class Basic
 
 	public static function json_rpc()
 	{
-
 		// Check if there is POSTed data.
 		if (file_get_contents('php://input') !== FALSE) {
 
@@ -133,7 +124,6 @@ class Basic
 			}
 		
 		}
-
 	}
 
 	/**
@@ -142,22 +132,19 @@ class Basic
 
 	public static function route_auto()
 	{
-
-		$valid_page = TRUE; // Set page as valid
-
 		if (self::segment(1) !== FALSE) { $class = self::segment(1) . CONTROLLER_SUFFIX; }
 		if (self::segment(2) !== FALSE) { $method = self::segment(2); } else { $method = METHOD_DEFAULT; }
 
 		if (class_exists($class)) {
 			$object = new $class();
 			if (method_exists($object, $method)) {
-				return $object->$method();
+				$object->$method();
+				exit();
 			} else {
 				header($_SERVER["SERVER_PROTOCOL"]." 404 Not Found");
 				exit();
 			}
 		}
-
 	}
 
 	/**
@@ -172,9 +159,6 @@ class Basic
 
 	public static function route($http_method, $path, $class_method)
 	{
-
-		$valid_page = TRUE; // Set page as valid
-
 		if ($_SERVER['REQUEST_METHOD'] == $http_method) {
 
 			// Convert '/' and wilcards (:num) and (:any) to RegEx
@@ -205,7 +189,6 @@ class Basic
 			}
 
 		}
-
 	}
 
 	/**
@@ -217,79 +200,57 @@ class Basic
 
 	public static function view($view, $data=NULL)
 	{
-
 		// Convert array keys to variables
 		if (isset($data)) { extract($data); }
 
 		// Render Page View
 		return require_once '../views/' . $view . '.php';
-
 	}
 
 	/**
-	 * Handles the HTTP REST API Response
+	 * Handles the HTTP API Response
 	 *
-	 * @param array $data - Array to be encoded to JSON
-	 * @param string $message - Message to send with response
+	 * @param integer $code     - HTTP response code
+	 * @param string $data      - Data to transmit
 	 */
 
-	public static function api_response($data, $message=NULL)
+	public static function api_response($code=200, $data='OK')
 	{
-
-		// Define content type as JSON data through the header
-		header("Content-Type: application/json; charset=utf-8");
-
-		// Data and message as arrays to send with response
-		$response['data'] = $data;
-		$response['message'] = $message;
-
-		// Encode $response array to JSON
-		echo json_encode($response);
-
+		http_response_code($code); // Set HTTP response code and message
+		echo $data; // Data in string format
 	}
 
 	/**
-	 * Handles the HTTP REST API Calls
+	 * Handles the HTTP API Call
 	 *
 	 * @param string $http_method - HTTP request method (e.g. 'GET', 'POST')
-	 * @param string $url - URL of external server API
-	 * @param string $data - POST fields in array
-	 * @param string $username - Username
-	 * @param string $password - Password
+	 * @param string $url         - URL of external server API
+	 * @param array $data         - Request body in array
+	 * @param string $username    - Username
+	 * @param string $password    - Password
 	 */
 
 	public static function api_call($http_method, $url, $data=NULL, $username=NULL, $password=NULL)
 	{
-
-		// Initialize cURL
-		$ch = curl_init();
-
-		// Convert $data array parameter to JSON
-		$data_json = json_encode($data);
+		$ch = curl_init(); // Initialize cURL
+		$data_input = json_encode($data); // Convert data to JSON
 
 		// Set cURL options
 		curl_setopt($ch, CURLOPT_URL, $url);
-		curl_setopt($ch, CURLOPT_CUSTOMREQUEST, $http_method);
-		// curl_setopt($ch, CURLOPT_POST, 1);
-		curl_setopt($ch, CURLOPT_POSTFIELDS, $data_json);
+		curl_setopt($ch, CURLOPT_CUSTOMREQUEST, strtoupper($http_method));
+		curl_setopt($ch, CURLOPT_POSTFIELDS, $data_input);
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
 		curl_setopt($ch, CURLOPT_USERPWD, "$username:$password");
-		curl_setopt($ch, CURLOPT_HTTPHEADER, array(                                                                          
-			'Content-Type: application/json',                                                                                
-			'Content-Length: ' . strlen($data_json))                                                                       
-		);
+		// curl_setopt($ch, CURLOPT_HTTPHEADER, array(                                                                          
+		// 	'Content-Type: application/json',                                                                                
+		// 	'Content-Length: ' . strlen($data_input))                                                                       
+		// );
 
-		// Execute cURL
-		$result = curl_exec($ch);
+		$result = curl_exec($ch); // Execute cURL
+		$http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE); // HTTP response code
+		curl_close ($ch); // Close cURL connection
 
-		// Close cURL connection
-		curl_close ($ch);
-
-		// Convert JSON response from external server to an array
-		$data_output = json_decode($result);
-
-		return $data_output;
-
+		return ['code' => $http_code, 'data' => $result];
 	}
 
 	/**
@@ -298,15 +259,12 @@ class Basic
 
 	public static function firewall()
 	{
-
 		if (FIREWALL_ON == TRUE) {
 
 			// Allow only access from whitelisted IP addresses
 			if (isset($_SERVER['REMOTE_ADDR']) && ! in_array($_SERVER['REMOTE_ADDR'], ALLOWED_IP_ADDR)) {
-
 				header($_SERVER["SERVER_PROTOCOL"]." 403 Forbidden");
 				exit('<p>You are not allowed to access the application using your IP address.</p>');
-
 			}
 
 			// Allow only URI_WHITELISTED characters on the Request URI.
@@ -330,25 +288,20 @@ class Basic
 				$regex_array = explode('\\', POST_BLACKLISTED);
 
 				if (isset($_POST) && preg_match('/[' . POST_BLACKLISTED . '\\\]/i', implode('/', $_POST)) ) {
-
 					header($_SERVER["SERVER_PROTOCOL"]." 400 Bad Request");
 					exit('<p>Submitted data should NOT contain the following characters:</p><p><ul>' . implode('<li>', $regex_array) . '<li>\</ul></p>');
-					
 				}
 
 				$post_data = file_get_contents('php://input');
 
 				if (isset($post_data) && preg_match('/[' . POST_BLACKLISTED . '\\\]/i', $post_data) ) {
-
 					header($_SERVER["SERVER_PROTOCOL"]." 400 Bad Request");
-					exit('<p>Submitted data should NOT contain the following characters:</p><p><ul>' . implode('<li>', $regex_array) . '<li>\</ul></p>');
-					
+					exit('<p>Submitted data should NOT contain the following characters:</p><p><ul>' . implode('<li>', $regex_array) . '<li>\</ul></p>');					
 				}
 
 			}
 
 		}
-
 	}
 
 	/**
@@ -357,12 +310,10 @@ class Basic
 
 	public static function force_ssl()
 	{
-
 		if ( ENFORCE_SSL == TRUE && (! isset($_SERVER['HTTPS']) || $_SERVER['HTTPS'] !== 'on') ) {
 			header('Location: https://' . $_SERVER['SERVER_NAME'] . $_SERVER['REQUEST_URI']);
 			exit();
 		}
-
 	}
 
 	/**
@@ -374,9 +325,7 @@ class Basic
 
 	public static function esc($string)
 	{
-
 		return htmlspecialchars($string, ENT_QUOTES, 'UTF-8');
-
 	}
 
 	/**
@@ -386,22 +335,16 @@ class Basic
 
 	public static function csrf_token()
 	{
-
 		if (isset($_SESSION)) {
-
 			$_SESSION['csrf-token'] = bin2hex(random_bytes(32));
 			return $_SESSION['csrf-token'];
-
 		} else {
-
 			$error_message = 'Please initialize Sessions.';
 			$page_title = 'Sessions Error';
 
 			$data = compact('error_message', 'page_title');
-			view('error', $data);
-
+			self::view('error', $data);
 		}
-
 	}
 
 	/**
@@ -413,7 +356,6 @@ class Basic
 
 	public static function encrypt($plaintext)
 	{
-
 		// Encryption - Version 1
 		if (! function_exists('encrypt_v1')) {
 
@@ -449,7 +391,6 @@ class Basic
 		/** Version-based Encryption */
 		// Default encryption function
 		return encrypt_v1($plaintext);
-
 	}
 
 	/**
@@ -462,7 +403,6 @@ class Basic
 
 	public static function decrypt($encrypted)
 	{
-
 		// Decryption - Version 1
 		if (! function_exists('decrypt_v1')) {
 
@@ -536,7 +476,6 @@ class Basic
 			default:
 				return $encrypted; // Return $encrypted if no encryption detected.
 		}
-
 	}
 
 }
