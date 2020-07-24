@@ -159,7 +159,7 @@ class Basic
 
 	public static function route($http_method, $path, $class_method)
 	{
-		if ($_SERVER['REQUEST_METHOD'] == strtoupper($http_method)) {
+		if ($_SERVER['REQUEST_METHOD'] == $http_method) {
 
 			// Convert '/' and wilcards (:num) and (:any) to RegEx
 			$pattern = str_ireplace( '/', '\/', $path );
@@ -237,7 +237,7 @@ class Basic
 
 		// Set cURL options
 		curl_setopt($ch, CURLOPT_URL, $url);
-		curl_setopt($ch, CURLOPT_CUSTOMREQUEST, strtoupper($http_method));
+		curl_setopt($ch, CURLOPT_CUSTOMREQUEST, $http_method);
 		curl_setopt($ch, CURLOPT_POSTFIELDS, $data_input);
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
 		curl_setopt($ch, CURLOPT_USERPWD, "$username:$password");
