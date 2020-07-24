@@ -16,7 +16,7 @@ class RequestController
 
 			$page_title = 'API Response';
 			$input = ['search' => $_POST['patient-name']]; // $data_input as an array
-			$output = Basic::api_call('POST', BASE_URL . 'api', $input, 'Peter', 12345);
+			$output = Basic::api_call('POST', BASE_URL . 'api/request', $input, 'Peter', 12345);
 
 			$data = compact('page_title', 'output');
 			Basic::view('request', $data);

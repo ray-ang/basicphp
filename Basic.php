@@ -159,7 +159,7 @@ class Basic
 
 	public static function route($http_method, $path, $class_method)
 	{
-		if ($_SERVER['REQUEST_METHOD'] == $http_method) {
+		if ($_SERVER['REQUEST_METHOD'] == strtoupper($http_method)) {
 
 			// Convert '/' and wilcards (:num) and (:any) to RegEx
 			$pattern = str_ireplace( '/', '\/', $path );
