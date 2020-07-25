@@ -1,11 +1,5 @@
 <?php
 
-/**
- * In the controller file, you can handle and process variables,
- * classes and functions; use if-elseif statements; load models, and
- * include files. The variables can then be used in the view file.
- */
-
 class PostController
 {
 
@@ -19,11 +13,11 @@ class PostController
 
 		if (! isset($_GET['order'])) $_GET['order'] = 0;
 		if (! is_numeric($_GET['order'])) {
-			$error_message = 'Post order value should be numeric.';
 			$page_title = 'Error in order parameter';
+			$error_message = 'Post order value should be numeric.';
 
-			$data = compact('error_message', 'page_title');
-			Basic::view('error', $data);
+
+			Basic::view('error', compact('page_title', 'error_message'));
 		}
 		if (isset($_GET['order']) && $_GET['order'] < 0) $_GET['order'] = 0;
 
@@ -38,8 +32,7 @@ class PostController
 
 		$page_title = 'List of Posts';
 
-		$data = compact('stmt', 'total', 'per_page', 'page_title');
-		Basic::view('post_list', $data);
+		Basic::view('post_list', compact('page_title', 'per_page', 'stmt', 'total'));
 
 	}
 
@@ -53,114 +46,85 @@ class PostController
 		}
 
 		if (isset($_POST['goto-edit'])) {
-
 			header('Location: ' . BASE_URL . 'post/edit/' . Basic::segment(3));
 			exit();
-
 		}
 
 		$post = new PostModel;
 		$row = $post->view( Basic::segment(3) );
 
 		if ($row) {
-
 			$page_title = 'View Post';
 
-			$data = compact('row', 'page_title');
-			Basic::view('post_view', $data);
-
+			Basic::view('post_view', compact('page_title', 'row'));
 		} else {
-
 			$error_message = 'The Post ID does not exist.';
 			$page_title = 'Error in Post ID';
 
-			$data = compact('error_message', 'page_title');
-			Basic::view('error', $data);
-
+			Basic::view('error', compact('page_title', 'error_message'));
 		}
 
 	}
 
 	public function add()
 	{
-
 		if ($this->isPostAdd()) {
-
 			$post = new PostModel;
 			$new_id = $post->add();
 
 			header('Location: ' . BASE_URL . 'post/view/' . $new_id);
 			exit();
-
 		}
 
-		$data = ['page_title' => 'Add a Post'];
-		Basic::view('post_add', $data);
+		$page_title = 'Add a Post';
 
+		Basic::view('post_add', compact('page_title'));
 	}
 
 	public function edit()
 	{
-
 		$post = new PostModel;
 
 		if ($this->isPostEdit()) {
-
 			$post->edit( Basic::segment(3) );
 
 			header('Location: ' . BASE_URL . 'post/view/' . Basic::segment(3));
 			exit();
-
 		}
 
 		$row = $post->view( Basic::segment(3) );
 
 		if ($row) {
-
 			$page_title = 'Edit Post';
 
-			$data = compact('row', 'page_title');
-			Basic::view('post_edit', $data);
-
+			Basic::view('post_edit', compact('page_title', 'row'));
 		} else {
-
 			$error_message = "The Post ID does not exist.";
 			$page_title = 'Error in Post ID';
 
-			$data = compact('error_message', 'page_title');
-			Basic::view('error', $data);
-
+			Basic::view('error', compact('page_title', 'error_message'));
 		}
-
 	}
 
 	public function delete()
 	{
-
 		$post = new PostModel;
 		$post->delete( Basic::segment(3) );
-
 	}
 
 	private function isPostAdd()
 	{
-
 		if ( isset($_POST['submit-post']) && isset($_POST['csrf-token']) && isset($_SESSION['csrf-token']) && $_POST['csrf-token'] == $_SESSION['csrf-token'] ) return TRUE;
-
 	}
 
 	private function isPostEdit()
 	{
-
 		if ( isset($_POST['edit-post']) && isset($_POST['csrf-token']) && isset($_SESSION['csrf-token']) && $_POST['csrf-token'] == $_SESSION['csrf-token'] ) return TRUE;
-
 	}
 
 	private function isPostDelete()
 	{
-
 		if ( isset($_POST['delete-post']) && isset($_POST['csrf-token']) && isset($_SESSION['csrf-token']) && $_POST['csrf-token'] == $_SESSION['csrf-token'] ) return TRUE;
-
 	}
 
 }

@@ -11,61 +11,61 @@
 class Basic_Form
 {
 
-	public function open($class, $method='post')
+	public function open($class='form-horizontal', $method='post')
 	{
-
-		?><form class="<?= $class ?>" action="" method="<?= $method ?>"><?php
-
+		?>
+		<form class="<?= $class ?>" action="" method="<?= $method ?>">
+		<?php
 	}
 
-	public function input($type, $name, $label, $value = NULL)
+	public function input($type, $name, $label, $value=NULL)
 	{
-
-		?><div class="form-group">
+		?>
+		<div class="form-group">
 			<label class="control-label col-sm-2" for="<?= $name ?>"><?= $label ?>:</label>
 			<div class="col-sm-10">
 				<input type="<?= $type ?>" class="form-control" id="<?= $name ?>" placeholder="Enter <?= $label ?>" name="<?= $name ?>" value="<?= Basic::esc($value) ?>">
 			</div>
-		</div><?php
-
+		</div>
+		<?php
 	}
 
 
-	public function textArea($name, $label, $value = NULL)
+	public function textArea($name, $label, $value=NULL)
 	{
-
-		?><div class="form-group">
+		?>
+		<div class="form-group">
 			<label class="control-label col-sm-2" for="<?= $name ?>"><?= $label ?>:</label>
 			<div class="col-sm-10"> 
 				<textarea class="form-control" rows="5" id="<?= $name ?>" placeholder="Enter <?= $label ?>" name="<?= $name ?>"><?= Basic::esc($value) ?></textarea>
 			</div>
-		</div><?php
-
+		</div>
+		<?php
 	}
 
-	public function button($name, $label, $class)
+	public function button($name, $label, $class='btn btn-default')
 	{
-
-		?><div class="form-group">
+		?>
+		<div class="form-group">
 			<div class="col-sm-offset-2 col-sm-10">
 				<button type="submit" class="<?= $class ?>" name="<?= $name ?>"><?= $label ?></button>
 			</div>
-		</div><?php
-
+		</div>
+		<?php
 	}
 
 	public function csrfToken()
 	{
-
-		?><input type="hidden" name="csrf-token" value="<?= Basic::csrf_token() ?>"><?php
-
+		?>
+		<input type="hidden" name="csrf-token" value="<?= Basic::csrf_token() ?>">
+		<?php
 	}
 
 	public function close()
 	{
-
-		?></form><?php
-
+		?>
+		</form>
+		<?php
 	}
 
 }

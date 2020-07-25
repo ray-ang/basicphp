@@ -2,10 +2,6 @@
 // Show Header and Menu
 require_once 'template/header.php';
 require_once 'template/menu.php';
-
-$plaintext = 'ABC123';
-$encrypted = Basic::encrypt($plaintext);
-$decrypted = Basic::decrypt($encrypted);
 ?>
 	<!-- Page Content -->
     <div class="container">

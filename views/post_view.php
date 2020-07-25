@@ -15,7 +15,7 @@ require_once 'template/menu.php';
           <?php
             $form = new Basic_Form;
             $form->open('form-inline');
-            $form->button('goto-edit', 'Edit', 'btn btn-default');
+            $form->button('goto-edit', 'Edit');
             $form->button('delete-post', 'Delete', 'btn btn-warning');
             $form->csrfToken();
             $form->close();

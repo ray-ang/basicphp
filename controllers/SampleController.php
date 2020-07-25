@@ -1,11 +1,5 @@
 <?php
 
-/**
- * In the controller file, you can handle and process variables,
- * classes and functions; use if-elseif statements; load models, and
- * include files. The variables can then be used in the view file.
- */
-
 class SampleController
 {
 
@@ -22,15 +16,12 @@ class SampleController
 		// Display page
 		if ( is_numeric(Basic::segment(3)) && is_numeric(Basic::segment(4)) && Basic::segment(5) == FALSE ) {
 
-			$data = compact('page_title', 'param1', 'param2', 'param3', 'person');
-			Basic::view('sample_route', $data);
+			Basic::view('sample_route', compact('page_title', 'param1', 'param2', 'param3', 'person'));
 
 		} elseif ( ! is_numeric(Basic::segment(3)) || ! is_numeric(Basic::segment(4)) || Basic::segment(5) !== FALSE ) {
-
 			$error_message = 'You can place only 2 numbers as parameters after the /route string, such as /route/1/2 .';
-			$data = compact('page_title', 'error_message');
-			Basic::view('error', $data);
 
+			Basic::view('error', compact('page_title', 'error_message'));
 		}
 
 	}
