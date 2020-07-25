@@ -21,8 +21,8 @@ class Basic
 	| force_ssl()        - force application to use SSL
 	| esc()              - uses htmlspecialchars() to prevent XSS
 	| csrf_token()       - uses sessions to create per request CSRF token
-	| encrypt()          - encrypt data using AES-CBC-HMAC
-	| decrypt()          - decrypt data using AES-CBC-HMAC
+	| encrypt()          - encrypt data using AES-256 and HMAC
+	| decrypt()          - decrypt data using AES-256 and HMAC
 	|
 	*/
 
