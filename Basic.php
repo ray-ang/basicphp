@@ -539,7 +539,7 @@ class Basic
 	 * @param string $cipher_method - AES-256 CBC, CTR or GCM
 	 */
 
-	public static function encryption($cipher_method, $pass_phrase)
+	public static function encryption($pass_phrase, $cipher_method='aes-256-gcm')
 	{
 		if (! defined('PASS_PHRASE')) {
 			define('PASS_PHRASE', $pass_phrase);
@@ -550,17 +550,17 @@ class Basic
 		}
 
 		switch ($cipher_method) {
-			case 'aes-256-cbc':
-				return 'aes-256-cbc';
+			case 'aes-256-gcm':
+				return 'aes-256-gcm';
 				break;
 			case 'aes-256-ctr':
 				return 'aes-256-ctr';
 				break;
-			case 'aes-256-gcm':
-				return 'aes-256-gcm';
+			case 'aes-256-cbc':
+				return 'aes-256-cbc';
 				break;
 			default:
-				exit("Encryption cipher method should either be 'aes-256-cbc', 'aes-256-ctr' or 'aes-256-gcm'.");
+				exit("Encryption cipher method should either be 'aes-256-gcm', 'aes-256-ctr' or 'aes-256-cbc'.");
 		}
 	}
 
