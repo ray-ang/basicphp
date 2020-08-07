@@ -19,7 +19,7 @@ Basic::firewall($ip_allowed=['::1'], $uri_whitelist='\w\/\.\-\_\?\=\&', $post_bl
 // Basic::https(); // Require TLS/HTTPS
 Basic::autoloadClass(['classes', 'models', 'views', 'controllers']); // Autoload folders
 Basic::verifyCsrfToken(); // Verify CSRF token
-Basic::encryption('aes-256-gcm', 'SecretPassPhrase123'); // Encryption cipher method and pass phrase
+Basic::encryption('SecretPassPhrase123'); // Encryption cipher method and pass phrase
 Basic::baseUrl('BASE_URL'); // Base URL - templating
 Basic::routeAuto(); // Automatic '/class/method' routing
 Basic::homePage('HomeController@index'); // Homepage
