@@ -57,7 +57,7 @@ class Basic_Form
 	public function csrfToken()
 	{
 		?>
-		<input type="hidden" name="csrf-token" value="<?= Basic::csrf_token() ?>">
+		<input type="hidden" name="csrf-token" value="<?= Basic::csrfToken() ?>">
 		<?php
 	}
 

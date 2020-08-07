@@ -2,39 +2,36 @@
 
 /*
 |--------------------------------------------------------------------------
-| Load Configuration File and BasicPHP Class Library
+| Load BasicPHP Class Library
 |--------------------------------------------------------------------------
 */
 
-require_once 'config.php';
 require_once 'Basic.php';
 
 /*
 |--------------------------------------------------------------------------
-| Security
+| Middleware
 |--------------------------------------------------------------------------
 */
 
-Basic::firewall(); // Firewall
-Basic::force_ssl(); // SSL/HTTPS
+Basic::errorReporting(TRUE); // Error reporting
+Basic::firewall($ip_allowed=['::1'], $uri_whitelist='\w\/\.\-\_\?\=\&', $post_blacklist='\<\>\;\#\\$'); // Enable firewall
+// Basic::https(); // Require TLS/HTTPS
+Basic::autoloadClass(['classes', 'models', 'views', 'controllers']); // Autoload folders
+Basic::verifyCsrfToken(); // Verify CSRF token
+Basic::encryption('aes-256-gcm', 'SecretPassPhrase123'); // Encryption cipher method and pass phrase
+Basic::baseUrl('BASE_URL'); // Base URL - templating
+Basic::routeAuto(); // Automatic '/class/method' routing
+Basic::homePage('HomeController@index'); // Homepage
 
 /*
 |--------------------------------------------------------------------------
-| Routing
-|--------------------------------------------------------------------------
-*/
-
-Basic::route_auto(); // Automatic '/class/method' routing
-Basic::homepage(); // Render homepage
-
-/*
-|--------------------------------------------------------------------------
-| Endpoint Routing
+| Endpoint Routes
 |--------------------------------------------------------------------------
 */
 
 Basic::route('POST', '/jsonrpc', function() {
-    Basic::json_rpc(); // JSON-RPC endpoint
+    Basic::jsonRpc(); // JSON-RPC endpoint
 });
 
 Basic::route('GET', '/posts', function() {
@@ -65,7 +62,7 @@ Basic::route('GET', '/posts', function() {
 });
 
 Basic::route('GET' || 'POST', '/posts/(:num)', function() {
-    if (isset($_POST['delete-post']) && isset($_POST['csrf-token']) && isset($_SESSION['csrf-token']) && $_POST['csrf-token'] == $_SESSION['csrf-token']) {
+    if (isset($_POST['delete-post'])) {
         $post = new PostModel;
         $post->delete(Basic::segment(2));
 
@@ -98,7 +95,7 @@ Basic::route('GET' || 'POST', '/posts/(:num)', function() {
 Basic::route('GET' || 'POST', '/posts/(:num)/edit', function() {
     $post = new PostModel;
 
-    if (isset($_POST['edit-post']) && isset($_POST['csrf-token']) && isset($_SESSION['csrf-token']) && $_POST['csrf-token'] == $_SESSION['csrf-token']) {
+    if (isset($_POST['edit-post'])) {
         $post->edit(Basic::segment(2));
 
         header('Location: ' . BASE_URL . 'posts/' . Basic::segment(2));
@@ -158,13 +155,13 @@ Basic::route('POST', '/api/request', function() {
         }
 
         if (! empty($data_output)) {
-            Basic::api_response(200, json_encode($data_output));
+            Basic::apiResponse(200, json_encode($data_output));
         } else {
-            Basic::api_response(400, 'No Patient name found on search.');
+            Basic::apiResponse(400, 'No Patient name found on search.');
         }
 
     } else {
-        Basic::api_response(403, 'You do not have the right credentials.');
+        Basic::apiResponse(403, 'You do not have the right credentials.');
     }
 });
 
@@ -174,4 +171,4 @@ Basic::route('POST', '/api/request', function() {
 |--------------------------------------------------------------------------
 */
 
-Basic::error404(); // Handle Error 404
+Basic::apiResponse(404, 'Page could not be found.'); // Not Found

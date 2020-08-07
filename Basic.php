@@ -1,36 +1,36 @@
 <?php
 
+/**
+ * BasicPHP - A frameworkless library-based approach for building web applications
+ *          - and application programming interfaces or API's.
+ *          - The aim of the project is for developers to build applications that
+ *          - are framework-independent using native PHP functions and API's.
+ *          -
+ *          - To embed the application to any framework, copy BasicPHP class library
+ *          - (Basic.php), and the 'classes', 'models', 'views' and 'controllers'
+ *          - folders one (1) folder above the front controller (index.php) of the
+ *          - chosen framework. In the controller file, at the top of the script,
+ *          - include/require Basic.php.
+ *
+ * @package  BasicPHP
+ * @author   Raymund John Ang <raymund@open-nis.org>
+ * @license  MIT License
+ */
+
 class Basic
 {
 
 	/*
 	|--------------------------------------------------------------------------
-	| BasicPHP Library
+	| FUNCTIONS
 	|--------------------------------------------------------------------------
-	|
-	| segment()          - retrieves the URL path substring separated by '/'
-	| homepage()         - render hompage
-	| error404()         - Handle Error 404 - Page Not Found - Invalid URI
-	| json_rpc()         - Configure application for JSON-RPC v2.0 protocol.
-	| route_auto()       - automatic routing of URL path to Class and method
-	| route()            - routes URL path request to closure or Controller
-	| view()             - passes data and renders the View
-	| api_response()     - handles API response
-	| api_call()         - handles API call
-	| firewall()         - web application firewall
-	| force_ssl()        - force application to use SSL
-	| esc()              - uses htmlspecialchars() to prevent XSS
-	| csrf_token()       - uses sessions to create per request CSRF token
-	| encrypt()          - encrypt data using AES-256 and HMAC
-	| decrypt()          - decrypt data using AES-256 and HMAC
-	|
 	*/
 
 	/**
-	 * Get URL path string value after the BASE_URL.
+	 * Get URL path string value after the domain.
 	 *
-	 * @param integer $order - URL substring position from the BASE_URL
-	 *                       - segment(1) as first string after BASE_URL
+	 * @param integer $order - URL substring position from the domain
+	 *                       - segment(1) as first string after domain
 	 */
 
 	public static function segment($order)
@@ -51,104 +51,7 @@ class Basic
 	}
 
 	/**
-	 * Render Homepage
-	 */
-
-	public static function homepage()
-	{
-		if ( empty(self::segment(1)) ) {
-			list($class, $method) = explode('@', HOME_PAGE);
-			$object = new $class();
-
-			$object->$method();
-			exit();
-		}
-	}
-
-	/**
-	 * Handle Error 404 - Page Not Found - Invalid URI
-	 * A valid page has $valid_page set to TRUE.
-	 */
-
-	public static function error404()
-	{
-		header($_SERVER["SERVER_PROTOCOL"] . " 404 Not Found");
-		exit();
-	}
-
-	/**
-	 * Configure application for JSON-RPC v2.0 protocol.
-	 * JSON-RPC v2.0 compatibility layer with 'method' member as 'class.method'
-	 */
-
-	public static function json_rpc()
-	{
-		// Check if there is POSTed data.
-		if (file_get_contents('php://input') !== FALSE) {
-
-			// If POSTed data is in JSON format.
-			if (json_decode(file_get_contents('php://input'), TRUE) !== NULL) {
-
-				$json_rpc = json_decode(file_get_contents('php://input'), TRUE);
-
-				// Send error message if server request method is not 'POST'.
-				if (isset($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] !== 'POST') { exit(json_encode(['jsonrpc' => '2.0', 'error' => ['code' => -32600, 'message' => "Server request method should be 'POST'."]])); }
-				// Send error message if 'jsonrpc' and 'method' members are not set.
-				if (! isset($json_rpc['jsonrpc']) || ! isset($json_rpc['method']) ) { exit(json_encode(['jsonrpc' => '2.0', 'error' => ['code' => -32600, 'message' => "JSON-RPC 'version' and 'method' members should be set."]])); }
-				// Send error message if JSON-RPC version is not '2.0'.
-				if (isset($json_rpc['jsonrpc']) && $json_rpc['jsonrpc'] !== '2.0') { exit(json_encode(['jsonrpc' => '2.0', 'error' => ['code' => -32600, 'message' => "JSON-RPC version should be a string set to '2.0'."]])); }
-				// Send error message if 'method' member is not in the format 'class.method'.
-				if (isset($json_rpc['method']) && substr_count($json_rpc['method'], '.') !== 1) { exit(json_encode(['jsonrpc' => '2.0', 'error' => ['code' => -32602, 'message' => "The JSON-RPC 'method' member should have the format 'class.method'."]])); }
-
-				// Require 'jsonrpc' and 'method' members as minimum for the request object.
-				if (isset($json_rpc['jsonrpc']) && isset($json_rpc['method'])) {
-
-					list($class, $method) = explode('.', $json_rpc['method']);
-					$class = $class . CONTROLLER_SUFFIX;
-
-					// Respond if class exists and 'id' member is set.
-					if (class_exists($class) && isset($json_rpc['id'])) {
-						$object = new $class();
-						if (method_exists($object, $method)) {
-							$object->$method();
-							exit();
-						} else { exit(json_encode(['jsonrpc' => '2.0', 'error' => ['code' => -32601, 'message' => "Method not found."], 'id' => $json_rpc['id']])); }
-					} else { exit(json_encode(['jsonrpc' => '2.0', 'error' => ['code' => -32601, 'message' => "Class not found."], 'id' => $json_rpc['id']])); }
-				}
-
-			} else {
-				
-				// If POSTed data is not in JSON format.
-				exit(json_encode(['jsonrpc' => '2.0', 'error' => ['code' => -32700, 'message' => "Please provide data in valid JSON format."]]));
-			
-			}
-		
-		}
-	}
-
-	/**
-	 * Automatic routing of segment(1) and (2) as Class and method
-	 */
-
-	public static function route_auto()
-	{
-		if (self::segment(1) !== FALSE) { $class = self::segment(1) . CONTROLLER_SUFFIX; }
-		if (self::segment(2) !== FALSE) { $method = self::segment(2); } else { $method = METHOD_DEFAULT; }
-
-		if (class_exists($class)) {
-			$object = new $class();
-			if (method_exists($object, $method)) {
-				$object->$method();
-				exit();
-			} else {
-				header($_SERVER["SERVER_PROTOCOL"]." 404 Not Found");
-				exit();
-			}
-		}
-	}
-
-	/**
-	 * Load Controller based on URL path string and HTTP method
+	 * Load Controller or Closure based on URL path string and HTTP method
 	 *
 	 * @param string $http_method - HTTP method (e.g. GET, POST, PUT, DELETE)
 	 * @param string $string - URL path in the format '/url/string'
@@ -208,19 +111,6 @@ class Basic
 	}
 
 	/**
-	 * Handles the HTTP API Response
-	 *
-	 * @param integer $code     - HTTP response code
-	 * @param string $data      - Data to transmit
-	 */
-
-	public static function api_response($code=200, $data='OK')
-	{
-		http_response_code($code); // Set HTTP response code and message
-		echo $data; // Data in string format
-	}
-
-	/**
 	 * Handles the HTTP API Call
 	 *
 	 * @param string $http_method - HTTP request method (e.g. 'GET', 'POST')
@@ -230,7 +120,7 @@ class Basic
 	 * @param string $password    - Password
 	 */
 
-	public static function api_call($http_method, $url, $data=NULL, $username=NULL, $password=NULL)
+	public static function apiCall($http_method, $url, $data=NULL, $username=NULL, $password=NULL)
 	{
 		$ch = curl_init(); // Initialize cURL
 		$data_input = json_encode($data); // Convert data to JSON
@@ -254,66 +144,28 @@ class Basic
 	}
 
 	/**
-	 * Web Application Firewall
+	 * Handles the HTTP API Response
+	 *
+	 * @param integer $code     - HTTP response code
+	 * @param string $data      - Data to transmit
+	 * @param string $message   - HTTP response message
 	 */
 
-	public static function firewall()
+	public static function apiResponse($code, $data=NULL, $message=NULL)
 	{
-		if (FIREWALL_ON == TRUE) {
-
-			// Allow only access from whitelisted IP addresses
-			if (isset($_SERVER['REMOTE_ADDR']) && ! in_array($_SERVER['REMOTE_ADDR'], ALLOWED_IP_ADDR)) {
-				header($_SERVER["SERVER_PROTOCOL"]." 403 Forbidden");
-				exit('<p>You are not allowed to access the application using your IP address.</p>');
-			}
-
-			// Allow only URI_WHITELISTED characters on the Request URI.
-			if (! empty(URI_WHITELISTED)) {
-
-				$regex_array = str_replace('w', 'alphanumeric', URI_WHITELISTED);
-				$regex_array = explode('\\', $regex_array);
-
-				if (isset($_SERVER['REQUEST_URI']) && preg_match('/[^' . URI_WHITELISTED . ']/i', $_SERVER['REQUEST_URI'])) {
-
-					header($_SERVER["SERVER_PROTOCOL"]." 400 Bad Request");
-					exit('<p>The URI should only contain alphanumeric and GET request characters:</p><p><ul>' . implode('<li>', $regex_array) . '</ul></p>');
-					
-				}
-
-			}
-
-			// Deny POST_BLACKLISTED characters in $_POST and post body. '\' is blacklisted by default.
-			if (! empty(POST_BLACKLISTED)) {
-
-				$regex_array = explode('\\', POST_BLACKLISTED);
-
-				if (isset($_POST) && preg_match('/[' . POST_BLACKLISTED . '\\\]/i', implode('/', $_POST)) ) {
-					header($_SERVER["SERVER_PROTOCOL"]." 400 Bad Request");
-					exit('<p>Submitted data should NOT contain the following characters:</p><p><ul>' . implode('<li>', $regex_array) . '<li>\</ul></p>');
-				}
-
-				$post_data = file_get_contents('php://input');
-
-				if (isset($post_data) && preg_match('/[' . POST_BLACKLISTED . '\\\]/i', $post_data) ) {
-					header($_SERVER["SERVER_PROTOCOL"]." 400 Bad Request");
-					exit('<p>Submitted data should NOT contain the following characters:</p><p><ul>' . implode('<li>', $regex_array) . '<li>\</ul></p>');					
-				}
-
-			}
-
+		// OK response
+		if ($code > 199 && $code < 300) {
+			$message = 'OK';
+			header($_SERVER['SERVER_PROTOCOL'] . ' ' . $code . ' ' . $message); // Set HTTP response code and message
 		}
-	}
 
-	/**
-	 * Force application to use SSL
-	 */
-
-	public static function force_ssl()
-	{
-		if ( ENFORCE_SSL == TRUE && (! isset($_SERVER['HTTPS']) || $_SERVER['HTTPS'] !== 'on') ) {
-			header('Location: https://' . $_SERVER['SERVER_NAME'] . $_SERVER['REQUEST_URI']);
-			exit();
+		// If no data, $data = $message
+		if (($code < 200 || $code > 299) && $message == NULL) {
+			$message = $data;
+			header($_SERVER['SERVER_PROTOCOL'] . ' ' . $code . ' ' . $message); // Set HTTP response code and message
 		}
+
+		echo $data; // Data in string format
 	}
 
 	/**
@@ -333,17 +185,13 @@ class Basic
 	 * Creates a per request token to handle CSRF using sessions
 	 */
 
-	public static function csrf_token()
+	public static function csrfToken()
 	{
-		if (isset($_SESSION)) {
-			$_SESSION['csrf-token'] = bin2hex(random_bytes(32));
-			return $_SESSION['csrf-token'];
-		} else {
-			$error_message = 'Please initialize Sessions.';
-			$page_title = 'Sessions Error';
+		$token = bin2hex(random_bytes(32));
 
-			$data = compact('error_message', 'page_title');
-			self::view('error', $data);
+		if (session_status() == PHP_SESSION_ACTIVE) {
+			$_SESSION['csrf-token'] = $token;
+			return $_SESSION['csrf-token'];
 		}
 	}
 
@@ -362,7 +210,7 @@ class Basic
 			function encrypt_v1($plaintext) {
 
 				$version = 'enc-v1'; // Version
-				$cipher = strtolower(CIPHER_METHOD); // Cipher Method
+				$cipher = CIPHER_METHOD; // Cipher Method - CBC, CTR or GCM
 				$salt = random_bytes(16); // Salt
 				$iv = $salt; // Initialization Vector
 
@@ -411,7 +259,7 @@ class Basic
 				// Return empty if $encrypted is not set or empty.
 				if (! isset($encrypted) || empty($encrypted)) { return ''; }
 
-				$cipher = strtolower(CIPHER_METHOD); // Cipher Method
+				$cipher = CIPHER_METHOD; // Cipher Method - CBC, CTR or GCM
 
 				if ($cipher == 'aes-256-gcm') {
 
@@ -478,4 +326,255 @@ class Basic
 		}
 	}
 
+	/*
+	|--------------------------------------------------------------------------
+	| MIDDLEWARE
+	|--------------------------------------------------------------------------
+	*/ 
+
+	/**
+	 * Error Reporting
+	 * 
+	 * @param boolean $boolean - TRUE or FALSE
+	 */
+
+	public static function errorReporting($boolean)
+	{
+		switch ($boolean) {
+			case TRUE:
+				error_reporting(E_ALL);
+				break;
+			case FALSE:
+				error_reporting(0);
+				break;
+			}
+	}
+
+	/**
+	 * Render Homepage
+	 * 
+	 * @param string $page - 'HomeController@index' format
+	 */
+
+	public static function homePage($page)
+	{
+		if ( empty(self::segment(1)) ) {
+			list($class, $method) = explode('@', $page);
+			$object = new $class();
+
+			$object->$method();
+			exit();
+		}
+	}
+
+	/**
+	 * Autoload Classes
+	 * 
+	 * @param array $classes - Array of folders to autoload classes
+	 */
+
+	public static function autoloadClass($classes)
+	{
+		define('AUTOLOADED_FOLDERS', $classes);
+		spl_autoload_register(function ($class_name) {
+			foreach (AUTOLOADED_FOLDERS as $folder) {
+				if (file_exists('../' . $folder . '/' . $class_name . '.php') && is_readable('../' . $folder . '/' . $class_name . '.php')) {
+					require_once '../' . $folder . '/' . $class_name . '.php';
+				}
+			}
+		});
+	}
+
+	/**
+	 * Configure application for JSON-RPC v2.0 protocol.
+	 * JSON-RPC v2.0 compatibility layer with 'method' member as 'class.method'
+	 * 'Controller' as default controller suffix
+	 */
+
+	public static function jsonRpc()
+	{
+		// Check if there is POSTed data.
+		if (file_get_contents('php://input') !== FALSE) {
+
+			// If POSTed data is in JSON format.
+			if (json_decode(file_get_contents('php://input'), TRUE) !== NULL) {
+
+				$json_rpc = json_decode(file_get_contents('php://input'), TRUE);
+
+				// Send error message if server request method is not 'POST'.
+				if (isset($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] !== 'POST') { exit(json_encode(['jsonrpc' => '2.0', 'error' => ['code' => -32600, 'message' => "Server request method should be 'POST'."]])); }
+				// Send error message if 'jsonrpc' and 'method' members are not set.
+				if (! isset($json_rpc['jsonrpc']) || ! isset($json_rpc['method']) ) { exit(json_encode(['jsonrpc' => '2.0', 'error' => ['code' => -32600, 'message' => "JSON-RPC 'version' and 'method' members should be set."]])); }
+				// Send error message if JSON-RPC version is not '2.0'.
+				if (isset($json_rpc['jsonrpc']) && $json_rpc['jsonrpc'] !== '2.0') { exit(json_encode(['jsonrpc' => '2.0', 'error' => ['code' => -32600, 'message' => "JSON-RPC version should be a string set to '2.0'."]])); }
+				// Send error message if 'method' member is not in the format 'class.method'.
+				if (isset($json_rpc['method']) && substr_count($json_rpc['method'], '.') !== 1) { exit(json_encode(['jsonrpc' => '2.0', 'error' => ['code' => -32602, 'message' => "The JSON-RPC 'method' member should have the format 'class.method'."]])); }
+
+				// Require 'jsonrpc' and 'method' members as minimum for the request object.
+				if (isset($json_rpc['jsonrpc']) && isset($json_rpc['method'])) {
+
+					list($class, $method) = explode('.', $json_rpc['method']);
+					$class = $class . 'Controller';
+
+					// Respond if class exists and 'id' member is set.
+					if (class_exists($class) && isset($json_rpc['id'])) {
+						$object = new $class();
+						if (method_exists($object, $method)) {
+							$object->$method();
+							exit();
+						} else { exit(json_encode(['jsonrpc' => '2.0', 'error' => ['code' => -32601, 'message' => "Method not found."], 'id' => $json_rpc['id']])); }
+					} else { exit(json_encode(['jsonrpc' => '2.0', 'error' => ['code' => -32601, 'message' => "Class not found."], 'id' => $json_rpc['id']])); }
+				}
+
+			} else {
+				
+				// If POSTed data is not in JSON format.
+				exit(json_encode(['jsonrpc' => '2.0', 'error' => ['code' => -32700, 'message' => "Please provide data in valid JSON format."]]));
+			
+			}
+		
+		}
+	}
+
+	/**
+	 * Automatic routing of segment(1) and (2) as Class and method
+	 * 'Controller' as default controller suffix
+	 * 'index' as default method name
+	 */
+
+	public static function routeAuto()
+	{
+		if (self::segment(1) !== FALSE) { $class = self::segment(1) . 'Controller'; }
+		if (self::segment(2) !== FALSE) { $method = self::segment(2); } else { $method = 'index'; }
+
+		if (class_exists($class)) {
+			$object = new $class();
+			if (method_exists($object, $method)) {
+				$object->$method();
+				exit();
+			} else {
+				self::apiResponse(404, 'The page you requested could not be found.');
+				exit();
+			}
+		}
+	}
+
+	/**
+	 * Web Application Firewall
+	 * 
+	 * @param array $ip_allowed      - Allowed IP addresses
+	 * @param string $uri_whitelist  - Whitelisted URI RegEx characters
+	 * @param string $post_blacklist - Blacklisted Post RegEx characters
+	 */
+
+	public static function firewall($ip_allowed, $uri_whitelist, $post_blacklist)
+	{
+		// Allow only access from whitelisted IP addresses
+		if (isset($_SERVER['REMOTE_ADDR']) && ! in_array($_SERVER['REMOTE_ADDR'], $ip_allowed)) {
+			header($_SERVER["SERVER_PROTOCOL"]." 403 Forbidden");
+			exit('<p>You are not allowed to access the application using your IP address.</p>');
+		}
+
+		// Allow only URI WHITELISTED characters on the Request URI.
+		if (! empty($uri_whitelist)) {
+
+			$regex_array = str_replace('w', 'alphanumeric', $uri_whitelist);
+			$regex_array = explode('\\', $regex_array);
+
+			if (isset($_SERVER['REQUEST_URI']) && preg_match('/[^' . $uri_whitelist . ']/i', $_SERVER['REQUEST_URI'])) {
+
+				header($_SERVER["SERVER_PROTOCOL"]." 400 Bad Request");
+				exit('<p>The URI should only contain alphanumeric and GET request characters:</p><p><ul>' . implode('<li>', $regex_array) . '</ul></p>');
+				
+			}
+
+		}
+
+		// Deny POST BLACKLISTED characters in $_POST and post body. '\' is blacklisted by default.
+		if (! empty($post_blacklist)) {
+
+			$regex_array = explode('\\', $post_blacklist);
+
+			if (isset($_POST) && preg_match('/[' . $post_blacklist . '\\\]/i', implode('/', $_POST)) ) {
+				header($_SERVER["SERVER_PROTOCOL"]." 400 Bad Request");
+				exit('<p>Submitted data should NOT contain the following characters:</p><p><ul>' . implode('<li>', $regex_array) . '<li>\</ul></p>');
+			}
+
+			$post_data = file_get_contents('php://input');
+
+			if (isset($post_data) && preg_match('/[' . $post_blacklist . '\\\]/i', $post_data) ) {
+				header($_SERVER["SERVER_PROTOCOL"]." 400 Bad Request");
+				exit('<p>Submitted data should NOT contain the following characters:</p><p><ul>' . implode('<li>', $regex_array) . '<li>\</ul></p>');					
+			}
+
+		}
+	}
+
+	/**
+	 * Force application to use TLS/HTTPS
+	 */
+
+	public static function https()
+	{
+		header('Location: https://' . $_SERVER['SERVER_NAME'] . $_SERVER['REQUEST_URI']);
+		exit();
+	}
+
+	/**
+	 * Verify CSRF Token
+	 */
+
+	public static function verifyCsrfToken()
+	{
+		session_start();
+		if (isset($_POST['csrf-token']) && isset($_SESSION['csrf-token']) && ! hash_equals($_POST['csrf-token'], $_SESSION['csrf-token'])) {
+			exit('Please check authenticity of CSRF token.');
+		}
+	}
+
+	/**
+	 * Enable encryption
+	 * 
+	 * @param string $pass_phrase - Pass phrase used for encryption
+	 * @param string $cipher_method - AES-256 CBC, CTR or GCM
+	 */
+
+	public static function encryption($cipher_method, $pass_phrase)
+	{
+		if (! defined('PASS_PHRASE')) {
+			define('PASS_PHRASE', $pass_phrase);
+		}
+
+		if (! defined('CIPHER_METHOD')) {
+			define('CIPHER_METHOD', $cipher_method);
+		}
+
+		switch ($cipher_method) {
+			case 'aes-256-cbc':
+				return 'aes-256-cbc';
+				break;
+			case 'aes-256-ctr':
+				return 'aes-256-ctr';
+				break;
+			case 'aes-256-gcm':
+				return 'aes-256-gcm';
+				break;
+			default:
+				exit("Encryption cipher method should either be 'aes-256-cbc', 'aes-256-ctr' or 'aes-256-gcm'.");
+		}
+	}
+
+	/**
+	 * Base URL - Templating
+	 * 
+	 * @param string $const_name - Base URL constant
+	 */
+
+	public static function baseUrl($const_name)
+	{
+		$http_protocol = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on') ? 'https://' : 'http://';
+		$subfolder = (! empty(dirname($_SERVER['SCRIPT_NAME']))) ? dirname($_SERVER['SCRIPT_NAME']) : '';
+
+		define($const_name, $http_protocol . $_SERVER['SERVER_NAME'] . $subfolder . '/');
+	}
 }
