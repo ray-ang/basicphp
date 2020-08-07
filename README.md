@@ -2,11 +2,11 @@
 
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=basicphp&metric=alert_status)](https://sonarcloud.io/dashboard?id=basicphp)
 
-A frameworkless library-based approach for building web applications and application programming interfaces or API's. The aim of the project is for developers to build applications that are framework-independent using raw PHP, and native functions and API's.
+A frameworkless library-based approach for building web applications and application programming interfaces or API's. The aim of the project is for developers to build applications that are framework-independent using native PHP functions and API's.
 
-To embed the application to any framework, copy BasicPHP's configuration file (config.php), functions library (Basic.php), and the 'classes', 'models', 'views' and 'controllers' folders one (1) folder above the front controller file of the chosen framework. In the controller file (index.php), at the top of the script, include/require config.php and Basic.php.
+To embed the application to any framework, copy BasicPHP class library (Basic.php), and the 'classes', 'models', 'views' and 'controllers' folders one (1) folder above the front controller (index.php) of the chosen framework. In the controller file, at the top of the script, include/require Basic.php.
 
-Features include class autoloading, routing, functions library, security (web application firewall, XSS and CSRF protection, encryption and PDO abstraction layer for SQL injection prevention), and handling 404 error - page not found. It also includes a compatibility layer for JSON-RPC, automatic routing of /class/method endpoints to Class::method functions for REST-RPC use, and custom endpoints with use of HTTP methods for REST API use.
+Features include class autoloading, endpoint routing, library/middleware, and security (web application firewall, XSS and CSRF protection, encryption and PDO for SQL injection prevention).
 
 <br />
 
@@ -14,7 +14,7 @@ Features include class autoloading, routing, functions library, security (web ap
 
 1. Frameworkless library-based approach
 2. Model-View-Controller (MVC) architectural pattern
-3. Classes and functions for extensibility
+3. Library functions and middleware
 4. Multitier Architecture for API (JSON-RPC, REST-RPC, and REST)
 5. Fast, unopinionated and minimalist
 6. Security-first
