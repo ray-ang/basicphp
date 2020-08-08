@@ -526,8 +526,10 @@ class Basic
 
 	public static function https()
 	{
-		header('Location: https://' . $_SERVER['SERVER_NAME'] . $_SERVER['REQUEST_URI']);
-		exit();
+		if ( ENFORCE_SSL == TRUE && (! isset($_SERVER['HTTPS']) || $_SERVER['HTTPS'] !== 'on') ) {
+			header('Location: https://' . $_SERVER['SERVER_NAME'] . $_SERVER['REQUEST_URI']);
+			exit();
+		}
 	}
 
 	/**
@@ -536,7 +538,7 @@ class Basic
 
 	public static function verifyCsrfToken()
 	{
-		session_start();
+		session_start(); // Requires sessions
 		if (isset($_POST['csrf-token']) && isset($_SESSION['csrf-token']) && ! hash_equals($_POST['csrf-token'], $_SESSION['csrf-token'])) {
 			exit('Please check authenticity of CSRF token.');
 		}
