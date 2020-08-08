@@ -204,6 +204,11 @@ class Basic
 
 	public static function encrypt($plaintext)
 	{
+		// Require Encryption middleware
+		if (! defined('PASS_PHRASE') || ! defined('CIPHER_METHOD')) {
+			exit('Please activate Basic::encryption() middleware.');
+		}
+
 		// Encryption - Version 1
 		if (! function_exists('encrypt_v1')) {
 
@@ -251,6 +256,11 @@ class Basic
 
 	public static function decrypt($encrypted)
 	{
+		// Require Encryption middleware
+		if (! defined('PASS_PHRASE') || ! defined('CIPHER_METHOD')) {
+			exit('Please activate Basic::encryption() middleware.');
+		}
+
 		// Decryption - Version 1
 		if (! function_exists('decrypt_v1')) {
 
