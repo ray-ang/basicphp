@@ -62,7 +62,7 @@ class Basic
 
 	public static function route($http_method, $path, $class_method)
 	{
-		if ($_SERVER['REQUEST_METHOD'] == $http_method) {
+		if ($_SERVER['REQUEST_METHOD'] === $http_method) {
 
 			// Convert '/' and wilcards (:num) and (:any) to RegEx
 			$pattern = str_ireplace( '/', '\/', $path );
@@ -160,7 +160,7 @@ class Basic
 		}
 
 		// If no data, $data = $message
-		if (($code < 200 || $code > 299) && $message == NULL) {
+		if (($code < 200 || $code > 299) && $message === NULL) {
 			$message = $data;
 			header($_SERVER['SERVER_PROTOCOL'] . ' ' . $code . ' ' . $message); // Set HTTP response code and message
 		}
@@ -189,7 +189,7 @@ class Basic
 	{
 		$token = bin2hex(random_bytes(32));
 
-		if (session_status() == PHP_SESSION_ACTIVE) {
+		if (session_status() === PHP_SESSION_ACTIVE) {
 			$_SESSION['csrf-token'] = $token;
 			return $_SESSION['csrf-token'];
 		}
@@ -224,7 +224,7 @@ class Basic
 				$encKey = hash_hkdf('sha256', $masterKey, 32, 'aes-256-encryption', $salt); // Encryption Key
 				$hmacKey = hash_hkdf('sha256', $masterKey, 32, 'sha-256-authentication', $salt); // HMAC Key
 
-				if ($cipher == 'aes-256-gcm') {
+				if ($cipher === 'aes-256-gcm') {
 
 					$ciphertext = openssl_encrypt($plaintext, $cipher, $encKey, $options=0, $iv, $tag);
 					return $version . '::' . base64_encode($ciphertext) . '::' . base64_encode($tag) . '::' . base64_encode($salt);
@@ -271,7 +271,7 @@ class Basic
 
 				$cipher = CIPHER_METHOD; // Cipher Method - CBC, CTR or GCM
 
-				if ($cipher == 'aes-256-gcm') {
+				if ($cipher === 'aes-256-gcm') {
 
 					list($version, $ciphertext, $tag, $salt) = explode('::', $encrypted);
 					$ciphertext = base64_decode($ciphertext);
@@ -350,14 +350,13 @@ class Basic
 
 	public static function errorReporting($boolean)
 	{
-		switch ($boolean) {
-			case TRUE:
-				error_reporting(E_ALL);
-				break;
-			case FALSE:
-				error_reporting(0);
-				break;
-			}
+		if ($boolean === TRUE) {
+			error_reporting(E_ALL);
+		} elseif ($boolean === FALSE) {
+			error_reporting(0);
+		} else {
+			exit('Boolean parameter for errorReporting() can only be TRUE or FALSE.');
+		}
 	}
 
 	/**
@@ -474,7 +473,7 @@ class Basic
 	 * 
 	 * @param array $ip_allowed      - Allowed IP addresses
 	 * @param string $uri_whitelist  - Whitelisted URI RegEx characters
-	 * @param string $post_blacklist - Blacklisted Post RegEx characters
+	 * @param string $post_blacklist - Blacklisted $_POST RegEx characters
 	 */
 
 	public static function firewall($ip_allowed, $uri_whitelist, $post_blacklist)
@@ -500,23 +499,14 @@ class Basic
 
 		}
 
-		// Deny POST BLACKLISTED characters in $_POST and post body. '\' is blacklisted by default.
+		// Deny $_POST BLACKLISTED characters. '\' is blacklisted by default.
 		if (! empty($post_blacklist)) {
-
 			$regex_array = explode('\\', $post_blacklist);
 
 			if (isset($_POST) && preg_match('/[' . $post_blacklist . '\\\]/i', implode('/', $_POST)) ) {
-				header($_SERVER["SERVER_PROTOCOL"]." 400 Bad Request");
+				header($_SERVER["SERVER_PROTOCOL"] . ' 400 Bad Request');
 				exit('<p>Submitted data should NOT contain the following characters:</p><p><ul>' . implode('<li>', $regex_array) . '<li>\</ul></p>');
 			}
-
-			$post_data = file_get_contents('php://input');
-
-			if (isset($post_data) && preg_match('/[' . $post_blacklist . '\\\]/i', $post_data) ) {
-				header($_SERVER["SERVER_PROTOCOL"]." 400 Bad Request");
-				exit('<p>Submitted data should NOT contain the following characters:</p><p><ul>' . implode('<li>', $regex_array) . '<li>\</ul></p>');					
-			}
-
 		}
 	}
 
@@ -526,7 +516,7 @@ class Basic
 
 	public static function https()
 	{
-		if ( ENFORCE_SSL == TRUE && (! isset($_SERVER['HTTPS']) || $_SERVER['HTTPS'] !== 'on') ) {
+		if ( ENFORCE_SSL === TRUE && (! isset($_SERVER['HTTPS']) || $_SERVER['HTTPS'] !== 'on') ) {
 			header('Location: https://' . $_SERVER['SERVER_NAME'] . $_SERVER['REQUEST_URI']);
 			exit();
 		}
@@ -563,14 +553,11 @@ class Basic
 
 		switch ($cipher_method) {
 			case 'aes-256-gcm':
-				return 'aes-256-gcm';
-				break;
+				return;
 			case 'aes-256-ctr':
-				return 'aes-256-ctr';
-				break;
+				return;
 			case 'aes-256-cbc':
-				return 'aes-256-cbc';
-				break;
+				return;
 			default:
 				exit("Encryption cipher method should either be 'aes-256-gcm', 'aes-256-ctr' or 'aes-256-cbc'.");
 		}
@@ -584,7 +571,7 @@ class Basic
 
 	public static function baseUrl($const_name)
 	{
-		$http_protocol = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on') ? 'https://' : 'http://';
+		$http_protocol = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on') ? 'https://' : 'http://';
 		$subfolder = (! empty(dirname($_SERVER['SCRIPT_NAME']))) ? dirname($_SERVER['SCRIPT_NAME']) : '';
 
 		define($const_name, $http_protocol . $_SERVER['SERVER_NAME'] . $subfolder . '/');
