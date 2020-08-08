@@ -169,18 +169,6 @@ class Basic
 	}
 
 	/**
-	 * Helper function to prevent Cross-Site Scripting (XSS)
-	 * Uses htmlspecialchars() to prevent XSS
-	 *
-	 * @param string $string - String to escape
-	 */
-
-	public static function esc($string)
-	{
-		return htmlspecialchars($string, ENT_QUOTES, 'UTF-8');
-	}
-
-	/**
 	 * Helper function to prevent Cross-Site Request Forgery (CSRF)
 	 * Creates a per request token to handle CSRF using sessions
 	 */
@@ -451,7 +439,7 @@ class Basic
 	 * 'index' as default method name
 	 */
 
-	public static function routeAuto()
+	public static function autoRoute()
 	{
 		if (self::segment(1) !== FALSE) { $class = self::segment(1) . 'Controller'; }
 		if (self::segment(2) !== FALSE) { $method = self::segment(2); } else { $method = 'index'; }
@@ -471,17 +459,24 @@ class Basic
 	/**
 	 * Web Application Firewall
 	 * 
-	 * @param array $ip_allowed      - Allowed IP addresses
-	 * @param string $uri_whitelist  - Whitelisted URI RegEx characters
-	 * @param string $post_blacklist - Blacklisted $_POST RegEx characters
+	 * @param array $ip_allowed         - Allowed IP addresses
+	 * @param boolean $post_auto_escape - Automatically escape $_POST
+	 * @param string $uri_whitelist     - Whitelisted URI RegEx characters
 	 */
 
-	public static function firewall($ip_allowed, $uri_whitelist, $post_blacklist)
+	public static function firewall($ip_allowed, $post_auto_escape, $uri_whitelist='\w\/\.\-\_\?\=\&')
 	{
 		// Allow only access from whitelisted IP addresses
 		if (isset($_SERVER['REMOTE_ADDR']) && ! in_array($_SERVER['REMOTE_ADDR'], $ip_allowed)) {
 			header($_SERVER["SERVER_PROTOCOL"]." 403 Forbidden");
 			exit('<p>You are not allowed to access the application using your IP address.</p>');
+		}
+
+		// Automatically escape characters "<", ">", "'" and '"' in $_POST
+		if ($post_auto_escape === TRUE && isset($_POST)) {
+			foreach ($_POST as $key => $value) {
+				$_POST[$key] = htmlspecialchars($value, ENT_QUOTES, 'UTF-8');
+			}
 		}
 
 		// Allow only URI WHITELISTED characters on the Request URI.
@@ -499,15 +494,15 @@ class Basic
 
 		}
 
-		// Deny $_POST BLACKLISTED characters. '\' is blacklisted by default.
-		if (! empty($post_blacklist)) {
-			$regex_array = explode('\\', $post_blacklist);
+		// // Deny $_POST BLACKLISTED characters. '\' is blacklisted by default.
+		// if (! empty($post_blacklist)) {
+		// 	$regex_array = explode('\\', $post_blacklist);
 
-			if (isset($_POST) && preg_match('/[' . $post_blacklist . '\\\]/i', implode('/', $_POST)) ) {
-				header($_SERVER["SERVER_PROTOCOL"] . ' 400 Bad Request');
-				exit('<p>Submitted data should NOT contain the following characters:</p><p><ul>' . implode('<li>', $regex_array) . '<li>\</ul></p>');
-			}
-		}
+		// 	if (isset($_POST) && preg_match('/[' . $post_blacklist . '\\\]/i', implode('/', $_POST)) ) {
+		// 		header($_SERVER["SERVER_PROTOCOL"] . ' 400 Bad Request');
+		// 		exit('<p>Submitted data should NOT contain the following characters:</p><p><ul>' . implode('<li>', $regex_array) . '<li>\</ul></p>');
+		// 	}
+		// }
 	}
 
 	/**
