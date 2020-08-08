@@ -22,7 +22,7 @@ require_once 'template/menu.php';
 
                 $data = json_decode($output['data'], TRUE);
                 foreach ($data as $row) {
-                    echo "<li>The patient's name is " . Basic::esc($row['name']) . ', and his age is ' . Basic::esc($row['age']) . '.<br/></li>';
+                    echo "<li>The patient's name is " . $row['name'] . ', and his age is ' . $row['age'] . '.<br/></li>';
                 }
 
                 echo '</ol>';
