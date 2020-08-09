@@ -176,11 +176,10 @@ class Basic
 	public static function csrfToken()
 	{
 		$token = bin2hex(random_bytes(32));
-
 		if (session_status() === PHP_SESSION_ACTIVE) {
 			$_SESSION['csrf-token'] = $token;
-			return $_SESSION['csrf-token'];
 		}
+		return $token;
 	}
 
 	/**
@@ -459,12 +458,13 @@ class Basic
 	/**
 	 * Web Application Firewall
 	 * 
-	 * @param array $ip_allowed         - Allowed IP addresses
-	 * @param boolean $post_auto_escape - Automatically escape $_POST
-	 * @param string $uri_whitelist     - Whitelisted URI RegEx characters
+	 * @param array $ip_allowed          - Allowed IP addresses
+	 * @param boolean $verify_csrf_token - Verify CSRF token
+	 * @param boolean $post_auto_escape  - Automatically escape $_POST
+	 * @param string $uri_whitelist      - Whitelisted URI RegEx characters
 	 */
 
-	public static function firewall($ip_allowed, $post_auto_escape, $uri_whitelist='\w\/\.\-\_\?\=\&')
+	public static function firewall($ip_allowed, $verify_csrf_token=TRUE, $post_auto_escape=TRUE, $uri_whitelist='\w\/\.\-\_\?\=\&')
 	{
 		// Allow only access from whitelisted IP addresses
 		if (isset($_SERVER['REMOTE_ADDR']) && ! in_array($_SERVER['REMOTE_ADDR'], $ip_allowed)) {
@@ -472,7 +472,15 @@ class Basic
 			exit('<p>You are not allowed to access the application using your IP address.</p>');
 		}
 
-		// Automatically escape characters "<", ">", "'" and '"' in $_POST
+		// Verify CSRF token
+		if ($verify_csrf_token === TRUE) {
+			session_start(); // Requires sessions
+			if (isset($_POST['csrf-token']) && isset($_SESSION['csrf-token']) && ! hash_equals($_POST['csrf-token'], $_SESSION['csrf-token'])) {
+				exit('Please check authenticity of CSRF token.');
+			}
+		}
+
+		// Automatically escape $_POST values using htmlspecialchars()
 		if ($post_auto_escape === TRUE && isset($_POST)) {
 			foreach ($_POST as $key => $value) {
 				$_POST[$key] = htmlspecialchars($value, ENT_QUOTES, 'UTF-8');
@@ -511,21 +519,9 @@ class Basic
 
 	public static function https()
 	{
-		if ( ENFORCE_SSL === TRUE && (! isset($_SERVER['HTTPS']) || $_SERVER['HTTPS'] !== 'on') ) {
+		if (! isset($_SERVER['HTTPS']) || $_SERVER['HTTPS'] !== 'on') {
 			header('Location: https://' . $_SERVER['SERVER_NAME'] . $_SERVER['REQUEST_URI']);
 			exit();
-		}
-	}
-
-	/**
-	 * Verify CSRF Token
-	 */
-
-	public static function verifyCsrfToken()
-	{
-		session_start(); // Requires sessions
-		if (isset($_POST['csrf-token']) && isset($_SESSION['csrf-token']) && ! hash_equals($_POST['csrf-token'], $_SESSION['csrf-token'])) {
-			exit('Please check authenticity of CSRF token.');
 		}
 	}
 

@@ -15,10 +15,9 @@ require_once 'Basic.php';
 */
 
 Basic::errorReporting(TRUE); // Error reporting
-Basic::firewall(['::1'], TRUE); // Enable firewall
+Basic::firewall(['::1']); // Enable firewall
 // Basic::https(); // Require TLS/HTTPS
 Basic::autoloadClass(['classes', 'models', 'views', 'controllers']); // Autoload folders
-Basic::verifyCsrfToken(); // Verify CSRF token
 Basic::encryption('SecretPassPhrase123'); // Encryption cipher method and pass phrase
 Basic::baseUrl('BASE_URL'); // Base URL - templating
 Basic::autoRoute(); // Automatic '/class/method' routing
