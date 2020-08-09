@@ -176,10 +176,18 @@ class Basic
 	public static function csrfToken()
 	{
 		$token = bin2hex(random_bytes(32));
-		if (session_status() === PHP_SESSION_ACTIVE) {
+
+		if (VERIFY_CSRF_TOKEN === TRUE) {
 			$_SESSION['csrf-token'] = $token;
+			return $_SESSION['csrf-token'];
+		} else {
+			?>
+			<script>
+				document.body.textContent = 'Please activate Basic::firewall() middleware. CSRF token verification is set by default.';
+			</script>
+			<?php
+			exit('Please activate Basic::firewall() middleware. CSRF token verification is set by default.');
 		}
-		return $token;
 	}
 
 	/**
@@ -193,7 +201,7 @@ class Basic
 	{
 		// Require Encryption middleware
 		if (! defined('PASS_PHRASE') || ! defined('CIPHER_METHOD')) {
-			exit('Please activate Basic::encryption() middleware.');
+			exit('Please activate Basic::encryption() middleware and set the pass phrase.');
 		}
 
 		// Encryption - Version 1
@@ -474,7 +482,9 @@ class Basic
 
 		// Verify CSRF token
 		if ($verify_csrf_token === TRUE) {
+			define('VERIFY_CSRF_TOKEN', TRUE); // Used for csrfToken()
 			session_start(); // Requires sessions
+
 			if (isset($_POST['csrf-token']) && isset($_SESSION['csrf-token']) && ! hash_equals($_POST['csrf-token'], $_SESSION['csrf-token'])) {
 				exit('Please check authenticity of CSRF token.');
 			}
