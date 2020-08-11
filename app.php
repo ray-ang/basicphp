@@ -17,11 +17,11 @@ require_once 'Basic.php';
 Basic::errorReporting(TRUE); // Error reporting
 Basic::firewall(['::1']); // Enable firewall
 // Basic::https(); // Require TLS/HTTPS
-Basic::autoloadClass(['classes', 'models', 'views', 'controllers']); // Autoload folders
 Basic::encryption('SecretPassPhrase123'); // Encryption cipher method and pass phrase
+Basic::autoloadClass(['classes', 'models', 'views', 'controllers']); // Autoload folders
 Basic::baseUrl('BASE_URL'); // Base URL - templating
-Basic::autoRoute(); // Automatic '/class/method' routing
 Basic::homePage('HomeController@index'); // Homepage
+Basic::autoRoute(); // Automatic '/class/method' routing
 
 /*
 |--------------------------------------------------------------------------

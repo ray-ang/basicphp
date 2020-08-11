@@ -165,28 +165,22 @@ class Basic
 			header($_SERVER['SERVER_PROTOCOL'] . ' ' . $code . ' ' . $message); // Set HTTP response code and message
 		}
 
-		echo $data; // Data in string format
+		exit($data); // Data in string format
 	}
 
 	/**
 	 * Helper function to prevent Cross-Site Request Forgery (CSRF)
 	 * Creates a per request token to handle CSRF using sessions
+	 * Basic::firewall() should be executed. $verify_csrf_token = TRUE (default)
 	 */
 
 	public static function csrfToken()
 	{
 		$token = bin2hex(random_bytes(32));
 
-		if (VERIFY_CSRF_TOKEN === TRUE) {
+		if (defined('VERIFY_CSRF_TOKEN') && VERIFY_CSRF_TOKEN === TRUE) {
 			$_SESSION['csrf-token'] = $token;
 			return $_SESSION['csrf-token'];
-		} else {
-			?>
-			<script>
-				document.body.textContent = 'Please activate Basic::firewall() middleware. CSRF token verification is set by default.';
-			</script>
-			<?php
-			exit('Please activate Basic::firewall() middleware. CSRF token verification is set by default.');
 		}
 	}
 
@@ -355,115 +349,6 @@ class Basic
 	}
 
 	/**
-	 * Render Homepage
-	 * 
-	 * @param string $page - 'HomeController@index' format
-	 */
-
-	public static function homePage($page)
-	{
-		if ( empty(self::segment(1)) ) {
-			list($class, $method) = explode('@', $page);
-			$object = new $class();
-
-			$object->$method();
-			exit();
-		}
-	}
-
-	/**
-	 * Autoload Classes
-	 * 
-	 * @param array $classes - Array of folders to autoload classes
-	 */
-
-	public static function autoloadClass($classes)
-	{
-		define('AUTOLOADED_FOLDERS', $classes);
-		spl_autoload_register(function ($class_name) {
-			foreach (AUTOLOADED_FOLDERS as $folder) {
-				if (file_exists('../' . $folder . '/' . $class_name . '.php') && is_readable('../' . $folder . '/' . $class_name . '.php')) {
-					require_once '../' . $folder . '/' . $class_name . '.php';
-				}
-			}
-		});
-	}
-
-	/**
-	 * Configure application for JSON-RPC v2.0 protocol.
-	 * JSON-RPC v2.0 compatibility layer with 'method' member as 'class.method'
-	 * 'Controller' as default controller suffix
-	 */
-
-	public static function jsonRpc()
-	{
-		// Check if there is POSTed data.
-		if (file_get_contents('php://input') !== FALSE) {
-
-			// If POSTed data is in JSON format.
-			if (json_decode(file_get_contents('php://input'), TRUE) !== NULL) {
-
-				$json_rpc = json_decode(file_get_contents('php://input'), TRUE);
-
-				// Send error message if server request method is not 'POST'.
-				if (isset($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] !== 'POST') { exit(json_encode(['jsonrpc' => '2.0', 'error' => ['code' => -32600, 'message' => "Server request method should be 'POST'."]])); }
-				// Send error message if 'jsonrpc' and 'method' members are not set.
-				if (! isset($json_rpc['jsonrpc']) || ! isset($json_rpc['method']) ) { exit(json_encode(['jsonrpc' => '2.0', 'error' => ['code' => -32600, 'message' => "JSON-RPC 'version' and 'method' members should be set."]])); }
-				// Send error message if JSON-RPC version is not '2.0'.
-				if (isset($json_rpc['jsonrpc']) && $json_rpc['jsonrpc'] !== '2.0') { exit(json_encode(['jsonrpc' => '2.0', 'error' => ['code' => -32600, 'message' => "JSON-RPC version should be a string set to '2.0'."]])); }
-				// Send error message if 'method' member is not in the format 'class.method'.
-				if (isset($json_rpc['method']) && substr_count($json_rpc['method'], '.') !== 1) { exit(json_encode(['jsonrpc' => '2.0', 'error' => ['code' => -32602, 'message' => "The JSON-RPC 'method' member should have the format 'class.method'."]])); }
-
-				// Require 'jsonrpc' and 'method' members as minimum for the request object.
-				if (isset($json_rpc['jsonrpc']) && isset($json_rpc['method'])) {
-
-					list($class, $method) = explode('.', $json_rpc['method']);
-					$class = $class . 'Controller';
-
-					// Respond if class exists and 'id' member is set.
-					if (class_exists($class) && isset($json_rpc['id'])) {
-						$object = new $class();
-						if (method_exists($object, $method)) {
-							$object->$method();
-							exit();
-						} else { exit(json_encode(['jsonrpc' => '2.0', 'error' => ['code' => -32601, 'message' => "Method not found."], 'id' => $json_rpc['id']])); }
-					} else { exit(json_encode(['jsonrpc' => '2.0', 'error' => ['code' => -32601, 'message' => "Class not found."], 'id' => $json_rpc['id']])); }
-				}
-
-			} else {
-				
-				// If POSTed data is not in JSON format.
-				exit(json_encode(['jsonrpc' => '2.0', 'error' => ['code' => -32700, 'message' => "Please provide data in valid JSON format."]]));
-			
-			}
-		
-		}
-	}
-
-	/**
-	 * Automatic routing of segment(1) and (2) as Class and method
-	 * 'Controller' as default controller suffix
-	 * 'index' as default method name
-	 */
-
-	public static function autoRoute()
-	{
-		if (self::segment(1) !== FALSE) { $class = self::segment(1) . 'Controller'; }
-		if (self::segment(2) !== FALSE) { $method = self::segment(2); } else { $method = 'index'; }
-
-		if (class_exists($class)) {
-			$object = new $class();
-			if (method_exists($object, $method)) {
-				$object->$method();
-				exit();
-			} else {
-				self::apiResponse(404, 'The page you requested could not be found.');
-				exit();
-			}
-		}
-	}
-
-	/**
 	 * Web Application Firewall
 	 * 
 	 * @param array $ip_allowed          - Allowed IP addresses
@@ -476,8 +361,7 @@ class Basic
 	{
 		// Allow only access from whitelisted IP addresses
 		if (isset($_SERVER['REMOTE_ADDR']) && ! in_array($_SERVER['REMOTE_ADDR'], $ip_allowed)) {
-			header($_SERVER["SERVER_PROTOCOL"]." 403 Forbidden");
-			exit('<p>You are not allowed to access the application using your IP address.</p>');
+			self::apiResponse(403, 'You are not allowed to access the application using your IP address.');
 		}
 
 		// Verify CSRF token
@@ -486,7 +370,7 @@ class Basic
 			session_start(); // Requires sessions
 
 			if (isset($_POST['csrf-token']) && isset($_SESSION['csrf-token']) && ! hash_equals($_POST['csrf-token'], $_SESSION['csrf-token'])) {
-				exit('Please check authenticity of CSRF token.');
+				self::apiResponse(400, 'Please check authenticity of CSRF token.');
 			}
 		}
 
@@ -565,6 +449,24 @@ class Basic
 	}
 
 	/**
+	 * Autoload Classes
+	 * 
+	 * @param array $classes - Array of folders to autoload classes
+	 */
+
+	public static function autoloadClass($classes)
+	{
+		define('AUTOLOADED_FOLDERS', $classes);
+		spl_autoload_register(function ($class_name) {
+			foreach (AUTOLOADED_FOLDERS as $folder) {
+				if (file_exists('../' . $folder . '/' . $class_name . '.php') && is_readable('../' . $folder . '/' . $class_name . '.php')) {
+					require_once '../' . $folder . '/' . $class_name . '.php';
+				}
+			}
+		});
+	}
+
+	/**
 	 * Base URL - Templating
 	 * 
 	 * @param string $const_name - Base URL constant
@@ -577,4 +479,96 @@ class Basic
 
 		define($const_name, $http_protocol . $_SERVER['SERVER_NAME'] . $subfolder . '/');
 	}
+
+	/**
+	 * Render Homepage
+	 * 
+	 * @param string $page - 'HomeController@index' format
+	 */
+
+	public static function homePage($page)
+	{
+		if ( empty(self::segment(1)) ) {
+			list($class, $method) = explode('@', $page);
+			$object = new $class();
+
+			$object->$method();
+			exit();
+		}
+	}
+
+	/**
+	 * Automatic routing of segment(1) and (2) as Class and method
+	 * 'Controller' as default controller suffix
+	 * 'index' as default method name
+	 */
+
+	public static function autoRoute()
+	{
+		if (self::segment(1) !== FALSE) { $class = self::segment(1) . 'Controller'; }
+		if (self::segment(2) !== FALSE) { $method = self::segment(2); } else { $method = 'index'; }
+
+		if (class_exists($class)) {
+			$object = new $class();
+			if (method_exists($object, $method)) {
+				$object->$method();
+				exit();
+			} else {
+				self::apiResponse(404, 'The page you requested could not be found.');
+				exit();
+			}
+		}
+	}
+
+	/**
+	 * Configure application for JSON-RPC v2.0 protocol.
+	 * JSON-RPC v2.0 compatibility layer with 'method' member as 'class.method'
+	 * 'Controller' as default controller suffix
+	 */
+
+	public static function jsonRpc()
+	{
+		// Check if there is POSTed data.
+		if (file_get_contents('php://input') !== FALSE) {
+
+			// If POSTed data is in JSON format.
+			if (json_decode(file_get_contents('php://input'), TRUE) !== NULL) {
+
+				$json_rpc = json_decode(file_get_contents('php://input'), TRUE);
+
+				// Send error message if server request method is not 'POST'.
+				if (isset($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] !== 'POST') { exit(json_encode(['jsonrpc' => '2.0', 'error' => ['code' => -32600, 'message' => "Server request method should be 'POST'."]])); }
+				// Send error message if 'jsonrpc' and 'method' members are not set.
+				if (! isset($json_rpc['jsonrpc']) || ! isset($json_rpc['method']) ) { exit(json_encode(['jsonrpc' => '2.0', 'error' => ['code' => -32600, 'message' => "JSON-RPC 'version' and 'method' members should be set."]])); }
+				// Send error message if JSON-RPC version is not '2.0'.
+				if (isset($json_rpc['jsonrpc']) && $json_rpc['jsonrpc'] !== '2.0') { exit(json_encode(['jsonrpc' => '2.0', 'error' => ['code' => -32600, 'message' => "JSON-RPC version should be a string set to '2.0'."]])); }
+				// Send error message if 'method' member is not in the format 'class.method'.
+				if (isset($json_rpc['method']) && substr_count($json_rpc['method'], '.') !== 1) { exit(json_encode(['jsonrpc' => '2.0', 'error' => ['code' => -32602, 'message' => "The JSON-RPC 'method' member should have the format 'class.method'."]])); }
+
+				// Require 'jsonrpc' and 'method' members as minimum for the request object.
+				if (isset($json_rpc['jsonrpc']) && isset($json_rpc['method'])) {
+
+					list($class, $method) = explode('.', $json_rpc['method']);
+					$class = $class . 'Controller';
+
+					// Respond if class exists and 'id' member is set.
+					if (class_exists($class) && isset($json_rpc['id'])) {
+						$object = new $class();
+						if (method_exists($object, $method)) {
+							$object->$method();
+							exit();
+						} else { exit(json_encode(['jsonrpc' => '2.0', 'error' => ['code' => -32601, 'message' => "Method not found."], 'id' => $json_rpc['id']])); }
+					} else { exit(json_encode(['jsonrpc' => '2.0', 'error' => ['code' => -32601, 'message' => "Class not found."], 'id' => $json_rpc['id']])); }
+				}
+
+			} else {
+				
+				// If POSTed data is not in JSON format.
+				exit(json_encode(['jsonrpc' => '2.0', 'error' => ['code' => -32700, 'message' => "Please provide data in valid JSON format."]]));
+			
+			}
+		
+		}
+	}
+
 }
