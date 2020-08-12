@@ -27,36 +27,36 @@ class Basic
 	*/
 
 	/**
-	 * Get URL path string value after the domain.
+	 * Get URI segment value
 	 *
-	 * @param integer $order - URL substring position from the domain
-	 *                       - segment(1) as first string after domain
+	 * @param integer $order - URI substring position from base URL
+	 *                       - Basic::segment(1) as first URI segment
 	 */
 
 	public static function segment($order)
 	{
 		if (isset($_SERVER['REQUEST_URI'])) {
-			$url_path = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
-			$url = explode('/', $url_path);
+			$uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
+			$uri = explode('/', $uri);
 		}
 
 		// Number of subdirectories from hostname to index.php
 		$sub_dir = substr_count($_SERVER['SCRIPT_NAME'], '/') - 1;
 
-		if ( isset($url[$order+$sub_dir]) || ! empty($url[$order+$sub_dir]) ) {
-			return $url[$order+$sub_dir];
+		if ( ! empty($uri[$order+$sub_dir]) ) {
+			return $uri[$order+$sub_dir];
 		} else {
 			return FALSE;
 		}
 	}
 
 	/**
-	 * Load Controller or Closure based on URL path string and HTTP method
+	 * Run controller or closure based on HTTP method and URL path string
 	 *
-	 * @param string $http_method - HTTP method (e.g. GET, POST, PUT, DELETE)
-	 * @param string $string - URL path in the format '/url/string'
-	 *                       - Wildcard convention from Codeigniter
-	 *                       - (:num) for number and (:any) for string
+	 * @param string $http_method - HTTP method (e.g. 'GET', 'POST', 'PUT', 'DELETE')
+	 * @param string $path        - URL path in the format '/url/string'
+	 *                            - Wildcard convention from CodeIgniter
+	 *                            - (:num) for number and (:any) for string
 	 * @param string $class_method - ClassController@method format
 	 */
 
@@ -73,8 +73,8 @@ class Basic
 			$sub = explode('/', dirname($_SERVER['SCRIPT_NAME']));
 			if (! empty($sub[1])) { $subfolder = implode('\/', $sub); } else { $subfolder = ''; }
 
-			$url_path = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
-			if ( preg_match('/^' . $subfolder . $pattern . '+$/i', $url_path) )  {
+			$uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
+			if ( preg_match('/^' . $subfolder . $pattern . '+$/i', $uri) )  {
 
 				if (is_string($class_method)) {
 					if (strstr($class_method, '@')) {
@@ -95,10 +95,10 @@ class Basic
 	}
 
 	/**
-	 * Passes data and renders the View
+	 * Render view with data
 	 *
 	 * @param string $view - View file, excluding .php extension
-	 * @param array $data - Data as an array to pass to the View
+	 * @param array $data  - Data in array format
 	 */
 
 	public static function view($view, $data=NULL)
@@ -106,16 +106,16 @@ class Basic
 		// Convert array keys to variables
 		if (isset($data)) { extract($data); }
 
-		// Render Page View
-		return require_once '../views/' . $view . '.php';
+		// Render page view
+		require_once '../views/' . $view . '.php';
 	}
 
 	/**
-	 * Handles the HTTP API Call
+	 * Handle HTTP API request call
 	 *
 	 * @param string $http_method - HTTP request method (e.g. 'GET', 'POST')
-	 * @param string $url         - URL of external server API
-	 * @param array $data         - Request body in array
+	 * @param string $url         - URL of API endpoint
+	 * @param array $data         - Request body in array format
 	 * @param string $username    - Username
 	 * @param string $password    - Password
 	 */
@@ -123,17 +123,17 @@ class Basic
 	public static function apiCall($http_method, $url, $data=NULL, $username=NULL, $password=NULL)
 	{
 		$ch = curl_init(); // Initialize cURL
-		$data_input = json_encode($data); // Convert data to JSON
+		$data_json = json_encode($data); // Convert data to JSON
 
 		// Set cURL options
 		curl_setopt($ch, CURLOPT_URL, $url);
 		curl_setopt($ch, CURLOPT_CUSTOMREQUEST, $http_method);
-		curl_setopt($ch, CURLOPT_POSTFIELDS, $data_input);
+		curl_setopt($ch, CURLOPT_POSTFIELDS, $data_json);
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
 		curl_setopt($ch, CURLOPT_USERPWD, "$username:$password");
 		// curl_setopt($ch, CURLOPT_HTTPHEADER, array(                                                                          
 		// 	'Content-Type: application/json',                                                                                
-		// 	'Content-Length: ' . strlen($data_input))                                                                       
+		// 	'Content-Length: ' . strlen($data_json))                                                                       
 		// );
 
 		$result = curl_exec($ch); // Execute cURL
@@ -144,7 +144,7 @@ class Basic
 	}
 
 	/**
-	 * Handles the HTTP API Response
+	 * Handle HTTP API response
 	 *
 	 * @param integer $code     - HTTP response code
 	 * @param string $data      - Data to transmit
@@ -169,33 +169,31 @@ class Basic
 	}
 
 	/**
-	 * Helper function to prevent Cross-Site Request Forgery (CSRF)
-	 * Creates a per request token to handle CSRF using sessions
+	 * Prevent Cross-Site Request Forgery (CSRF)
+	 * Create a per request token to handle CSRF using sessions
 	 * Basic::firewall() should be executed. $verify_csrf_token = TRUE (default)
 	 */
 
 	public static function csrfToken()
 	{
-		$token = bin2hex(random_bytes(32));
-
 		if (defined('VERIFY_CSRF_TOKEN') && VERIFY_CSRF_TOKEN === TRUE) {
-			$_SESSION['csrf-token'] = $token;
+			$_SESSION['csrf-token'] = bin2hex(random_bytes(32));
 			return $_SESSION['csrf-token'];
 		}
 	}
 
 	/**
-	 * Encrypt data using AES CBC-HMAC, CTR-HMAC or GCM
+	 * Encrypt data using AES GCM, CTR-HMAC or CBC-HMAC
 	 *
 	 * @param string $plaintext - Plaintext to be encrypted
-	 * @return string - contains based64-encoded ciphertext
+	 * @return string           - contains based64-encoded ciphertext
 	 */
 
 	public static function encrypt($plaintext)
 	{
-		// Require Encryption middleware
+		// Require encryption middleware
 		if (! defined('PASS_PHRASE') || ! defined('CIPHER_METHOD')) {
-			exit('Please activate Basic::encryption() middleware and set the pass phrase.');
+			self::apiResponse(501, 'Please activate Basic::encryption() middleware and set the pass phrase.');
 		}
 
 		// Encryption - Version 1
@@ -204,14 +202,14 @@ class Basic
 			function encrypt_v1($plaintext) {
 
 				$version = 'enc-v1'; // Version
-				$cipher = CIPHER_METHOD; // Cipher Method - CBC, CTR or GCM
+				$cipher = CIPHER_METHOD; // Cipher method - GCM, CTR or CBC
 				$salt = random_bytes(16); // Salt
 				$iv = $salt; // Initialization Vector
 
-				// Derive Keys
-				$masterKey = hash_pbkdf2('sha256', PASS_PHRASE, $salt, 10000); // Master Key
-				$encKey = hash_hkdf('sha256', $masterKey, 32, 'aes-256-encryption', $salt); // Encryption Key
-				$hmacKey = hash_hkdf('sha256', $masterKey, 32, 'sha-256-authentication', $salt); // HMAC Key
+				// Derive keys
+				$masterKey = hash_pbkdf2('sha256', PASS_PHRASE, $salt, 10000); // Master key
+				$encKey = hash_hkdf('sha256', $masterKey, 32, 'aes-256-encryption', $salt); // Encryption key
+				$hmacKey = hash_hkdf('sha256', $masterKey, 32, 'sha-256-authentication', $salt); // HMAC key
 
 				if ($cipher === 'aes-256-gcm') {
 
@@ -230,24 +228,22 @@ class Basic
 
 		}
 
-		/** Version-based Encryption */
-		// Default encryption function
-		return encrypt_v1($plaintext);
+		/** Version-based encryption */
+		return encrypt_v1($plaintext); // Default encryption function
 	}
 
 	/**
-	 * Decrypt data using AES CBC-HMAC, CTR-HMAC or GCM
+	 * Decrypt data using AES GCM, CTR-HMAC or CBC-HMAC
 	 *
-	 * @param string $encypted - base64-encoded ciphertext, hash,
-	 *                         - and salt (and tag for GCM)
-	 * @return string          - decrypted data
+	 * @param string $encrypted - contains base64-encoded ciphertext
+	 * @return string           - decrypted data
 	 */
 
 	public static function decrypt($encrypted)
 	{
-		// Require Encryption middleware
+		// Require encryption middleware
 		if (! defined('PASS_PHRASE') || ! defined('CIPHER_METHOD')) {
-			exit('Please activate Basic::encryption() middleware.');
+			self::apiResponse(501, 'Please activate Basic::encryption() middleware and set the pass phrase.');
 		}
 
 		// Decryption - Version 1
@@ -258,7 +254,7 @@ class Basic
 				// Return empty if $encrypted is not set or empty.
 				if (! isset($encrypted) || empty($encrypted)) { return ''; }
 
-				$cipher = CIPHER_METHOD; // Cipher Method - CBC, CTR or GCM
+				$cipher = CIPHER_METHOD; // Cipher method - GCM, CTR or CBC
 
 				if ($cipher === 'aes-256-gcm') {
 
@@ -269,10 +265,10 @@ class Basic
 
 					$iv = $salt; // Initialization Vector
 
-					// Derive Keys
-					$masterKey = hash_pbkdf2('sha256', PASS_PHRASE, $salt, 10000); // Master Key
-					$encKey = hash_hkdf('sha256', $masterKey, 32, 'aes-256-encryption', $salt); // Encryption Key
-					$hmacKey = hash_hkdf('sha256', $masterKey, 32, 'sha-256-authentication', $salt); // HMAC Key
+					// Derive keys
+					$masterKey = hash_pbkdf2('sha256', PASS_PHRASE, $salt, 10000); // Master key
+					$encKey = hash_hkdf('sha256', $masterKey, 32, 'aes-256-encryption', $salt); // Encryption key
+					$hmacKey = hash_hkdf('sha256', $masterKey, 32, 'sha-256-authentication', $salt); // HMAC key
 
 					$plaintext = openssl_decrypt($ciphertext, $cipher, $encKey, $options=0, $iv, $tag);
 
@@ -293,9 +289,9 @@ class Basic
 					$iv = $salt; // Initialization Vector
 
 					// Derive keys
-					$masterKey = hash_pbkdf2('sha256', PASS_PHRASE, $salt, 10000); // Master Key
-					$encKey = hash_hkdf('sha256', $masterKey, 32, 'aes-256-encryption', $salt); // Encryption Key
-					$hmacKey = hash_hkdf('sha256', $masterKey, 32, 'sha-256-authentication', $salt); // HMAC Key
+					$masterKey = hash_pbkdf2('sha256', PASS_PHRASE, $salt, 10000); // Master key
+					$encKey = hash_hkdf('sha256', $masterKey, 32, 'aes-256-encryption', $salt); // Encryption key
+					$hmacKey = hash_hkdf('sha256', $masterKey, 32, 'sha-256-authentication', $salt); // HMAC key
 
 					$digest = hash_hmac('sha256', $ciphertext, $hmacKey);
 
@@ -313,9 +309,9 @@ class Basic
 
 		}
 
-		$version = explode('::', $encrypted)[0];
+		$version = explode('::', $encrypted)[0]; // Retrieve encryption version
 
-		/** Version-based Decryption */
+		/** Version-based decryption */
 		switch ($version) {
 			case 'enc-v1':
 				return decrypt_v1($encrypted);
@@ -344,30 +340,30 @@ class Basic
 		} elseif ($boolean === FALSE) {
 			error_reporting(0);
 		} else {
-			exit('Boolean parameter for errorReporting() can only be TRUE or FALSE.');
+			exit('Boolean parameter for Basic::errorReporting() can only be TRUE or FALSE.');
 		}
 	}
 
 	/**
 	 * Web Application Firewall
 	 * 
-	 * @param array $ip_allowed          - Allowed IP addresses
-	 * @param boolean $verify_csrf_token - Verify CSRF token
-	 * @param boolean $post_auto_escape  - Automatically escape $_POST
-	 * @param string $uri_whitelist      - Whitelisted URI RegEx characters
+	 * @param array $ip_blacklist          - Blacklisted IP addresses
+	 * @param boolean $verify_csrf_token   - Verify CSRF token
+	 * @param boolean $post_auto_escape    - Automatically escape $_POST
+	 * @param string $uri_whitelist        - Whitelisted URI RegEx characters
 	 */
 
-	public static function firewall($ip_allowed, $verify_csrf_token=TRUE, $post_auto_escape=TRUE, $uri_whitelist='\w\/\.\-\_\?\=\&')
+	public static function firewall($ip_blacklist=[], $verify_csrf_token=TRUE, $post_auto_escape=TRUE, $uri_whitelist='\w\/\.\-\_\?\=\&')
 	{
-		// Allow only access from whitelisted IP addresses
-		if (isset($_SERVER['REMOTE_ADDR']) && ! in_array($_SERVER['REMOTE_ADDR'], $ip_allowed)) {
+		// Deny access from blacklisted IP addresses
+		if (isset($_SERVER['REMOTE_ADDR']) && in_array($_SERVER['REMOTE_ADDR'], $ip_blacklist)) {
 			self::apiResponse(403, 'You are not allowed to access the application using your IP address.');
 		}
 
 		// Verify CSRF token
 		if ($verify_csrf_token === TRUE) {
-			define('VERIFY_CSRF_TOKEN', TRUE); // Used for csrfToken()
-			session_start(); // Requires sessions
+			define('VERIFY_CSRF_TOKEN', TRUE); // Used for Basic::csrfToken()
+			session_start(); // Require sessions
 
 			if (isset($_POST['csrf-token']) && isset($_SESSION['csrf-token']) && ! hash_equals($_POST['csrf-token'], $_SESSION['csrf-token'])) {
 				self::apiResponse(400, 'Please check authenticity of CSRF token.');
@@ -381,22 +377,20 @@ class Basic
 			}
 		}
 
-		// Allow only URI WHITELISTED characters on the Request URI.
+		// Allow only whitelisted URI characters
 		if (! empty($uri_whitelist)) {
 
 			$regex_array = str_replace('w', 'alphanumeric', $uri_whitelist);
 			$regex_array = explode('\\', $regex_array);
 
 			if (isset($_SERVER['REQUEST_URI']) && preg_match('/[^' . $uri_whitelist . ']/i', $_SERVER['REQUEST_URI'])) {
-
 				header($_SERVER["SERVER_PROTOCOL"]." 400 Bad Request");
 				exit('<p>The URI should only contain alphanumeric and GET request characters:</p><p><ul>' . implode('<li>', $regex_array) . '</ul></p>');
-				
 			}
 
 		}
 
-		// // Deny $_POST BLACKLISTED characters. '\' is blacklisted by default.
+		// // Deny blacklisted $_POST characters. '\' is blacklisted by default.
 		// if (! empty($post_blacklist)) {
 		// 	$regex_array = explode('\\', $post_blacklist);
 
@@ -422,8 +416,8 @@ class Basic
 	/**
 	 * Enable encryption
 	 * 
-	 * @param string $pass_phrase - Pass phrase used for encryption
-	 * @param string $cipher_method - AES-256 CBC, CTR or GCM
+	 * @param string $pass_phrase   - Pass phrase used for encryption
+	 * @param string $cipher_method - Only AES-256 GCM, CTR or CBC
 	 */
 
 	public static function encryption($pass_phrase, $cipher_method='aes-256-gcm')
@@ -444,7 +438,7 @@ class Basic
 			case 'aes-256-cbc':
 				return;
 			default:
-				exit("Encryption cipher method should either be 'aes-256-gcm', 'aes-256-ctr' or 'aes-256-cbc'.");
+				self::apiResponse(501, "Encryption cipher method should either be 'aes-256-gcm', 'aes-256-ctr' or 'aes-256-cbc'.");
 		}
 	}
 
@@ -483,22 +477,22 @@ class Basic
 	/**
 	 * Render Homepage
 	 * 
-	 * @param string $page - 'HomeController@index' format
+	 * @param string $controller - 'HomeController@index' format
 	 */
 
-	public static function homePage($page)
+	public static function homePage($controller)
 	{
 		if ( empty(self::segment(1)) ) {
-			list($class, $method) = explode('@', $page);
-			$object = new $class();
+			list($class, $method) = explode('@', $controller);
 
+			$object = new $class();
 			$object->$method();
 			exit();
 		}
 	}
 
 	/**
-	 * Automatic routing of segment(1) and (2) as Class and method
+	 * Automatic routing of Basic::segment(1) and (2) as class and method
 	 * 'Controller' as default controller suffix
 	 * 'index' as default method name
 	 */
@@ -521,17 +515,16 @@ class Basic
 	}
 
 	/**
-	 * Configure application for JSON-RPC v2.0 protocol.
-	 * JSON-RPC v2.0 compatibility layer with 'method' member as 'class.method'
+	 * JSON-RPC v2.0 middleware with 'method' member as 'class.method'
 	 * 'Controller' as default controller suffix
 	 */
 
 	public static function jsonRpc()
 	{
-		// Check if there is POSTed data.
+		// Check if there is request body
 		if (file_get_contents('php://input') !== FALSE) {
 
-			// If POSTed data is in JSON format.
+			// If data in request body is in JSON format
 			if (json_decode(file_get_contents('php://input'), TRUE) !== NULL) {
 
 				$json_rpc = json_decode(file_get_contents('php://input'), TRUE);
@@ -563,7 +556,7 @@ class Basic
 
 			} else {
 				
-				// If POSTed data is not in JSON format.
+				// If data in request body is not in JSON format
 				exit(json_encode(['jsonrpc' => '2.0', 'error' => ['code' => -32700, 'message' => "Please provide data in valid JSON format."]]));
 			
 			}

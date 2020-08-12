@@ -15,7 +15,7 @@ require_once 'Basic.php';
 */
 
 Basic::errorReporting(TRUE); // Error reporting
-Basic::firewall(['::1']); // Enable firewall
+Basic::firewall(); // Enable firewall
 // Basic::https(); // Require TLS/HTTPS
 Basic::encryption('SecretPassPhrase123'); // Encryption cipher method and pass phrase
 Basic::autoloadClass(['classes', 'models', 'views', 'controllers']); // Autoload folders
