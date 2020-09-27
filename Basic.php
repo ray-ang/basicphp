@@ -499,8 +499,8 @@ class Basic
 
 	public static function autoRoute()
 	{
-		if (self::segment(1) !== FALSE) { $class = self::segment(1) . 'Controller'; }
-		if (self::segment(2) !== FALSE) { $method = self::segment(2); } else { $method = 'index'; }
+		if (self::segment(1) !== FALSE) { $class = ucfirst(strtolower(self::segment(1))) . 'Controller'; }
+		if (self::segment(2) !== FALSE) { $method = strtolower(self::segment(2)); } else { $method = 'index'; }
 
 		if (class_exists($class)) {
 			$object = new $class();

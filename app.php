@@ -60,20 +60,7 @@ Basic::route('GET', '/posts', function() {
     Basic::view('post_list', $data);
 });
 
-Basic::route('GET' || 'POST', '/posts/(:num)', function() {
-    if (isset($_POST['delete-post'])) {
-        $post = new PostModel;
-        $post->delete(Basic::segment(2));
-
-        header('Location: ' . BASE_URL . 'posts');
-        exit();
-    }
-
-    if (isset($_POST['goto-edit'])) {
-        header('Location: ' . BASE_URL . 'posts/' . Basic::segment(2) . '/edit');
-        exit();
-    }
-
+Basic::route('GET', '/posts/(:num)', function() {
     $post = new PostModel;
     $row = $post->view(Basic::segment(2));
 
@@ -91,16 +78,23 @@ Basic::route('GET' || 'POST', '/posts/(:num)', function() {
     }
 });
 
-Basic::route('GET' || 'POST', '/posts/(:num)/edit', function() {
-    $post = new PostModel;
+Basic::route('POST', '/posts/(:num)', function() {
+    if (isset($_POST['delete-post'])) {
+        $post = new PostModel;
+        $post->delete(Basic::segment(2));
 
-    if (isset($_POST['edit-post'])) {
-        $post->edit(Basic::segment(2));
-
-        header('Location: ' . BASE_URL . 'posts/' . Basic::segment(2));
+        header('Location: ' . BASE_URL . 'posts');
         exit();
     }
 
+    if (isset($_POST['goto-edit'])) {
+        header('Location: ' . BASE_URL . 'posts/' . Basic::segment(2) . '/edit');
+        exit();
+    }
+});
+
+Basic::route('GET', '/posts/(:num)/edit', function() {
+    $post = new PostModel;
     $row = $post->view( Basic::segment(2) );
 
     if ($row) {
@@ -117,9 +111,20 @@ Basic::route('GET' || 'POST', '/posts/(:num)/edit', function() {
     }
 });
 
+Basic::route('POST', '/posts/(:num)/edit', function() {
+    $post = new PostModel;
+
+    if (isset($_POST['edit-post'])) {
+        $post->edit(Basic::segment(2));
+
+        header('Location: ' . BASE_URL . 'posts/' . Basic::segment(2));
+        exit();
+    }
+});
+
 Basic::route('POST', '/api/request', function() {
     // $license_key as an array of valid license keys
-    $license_key = [];
+    $license_key = array();
     $license_key[] = ['user' => 'John', 'key' => 12345];
     $license_key[] = ['user' => 'James', 'key' => 12345];
     $license_key[] = ['user' => 'Peter', 'key' => 12345];
