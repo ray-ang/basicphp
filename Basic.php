@@ -117,11 +117,11 @@ class Basic
 	 * @param string $http_method - HTTP request method (e.g. 'GET', 'POST')
 	 * @param string $url         - URL of API endpoint
 	 * @param array $data         - Request body in array format
-	 * @param string $username    - Username
-	 * @param string $password    - Password
+	 * @param string $user_token  - Username or API token
+	 * @param string $password    - Password (no password for API token)
 	 */
 
-	public static function apiCall($http_method, $url, $data=NULL, $username=NULL, $password=NULL)
+	public static function apiCall($http_method, $url, $data=NULL, $user_token=NULL, $password=NULL)
 	{
 		$ch = curl_init(); // Initialize cURL
 		$data_json = json_encode($data); // Convert data to JSON
