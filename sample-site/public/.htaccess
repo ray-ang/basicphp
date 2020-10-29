@@ -1,7 +1,7 @@
 RewriteEngine On
 
 # Set RewriteBase to / if public folder is DocumentRoot
-RewriteBase /basicphp/public/
+RewriteBase /basicphp/sample-site/public/
 
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteCond %{REQUEST_FILENAME} !-f
