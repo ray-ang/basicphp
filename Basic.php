@@ -131,7 +131,7 @@ class Basic
 		curl_setopt($ch, CURLOPT_CUSTOMREQUEST, $http_method);
 		curl_setopt($ch, CURLOPT_POSTFIELDS, $data_json);
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
-		curl_setopt($ch, CURLOPT_USERPWD, "$username:$password");
+		curl_setopt($ch, CURLOPT_USERPWD, "$user_token:$password");
 		// curl_setopt($ch, CURLOPT_HTTPHEADER, array(                                                                          
 		// 	'Content-Type: application/json',                                                                                
 		// 	'Content-Length: ' . strlen($data_json))                                                                       
