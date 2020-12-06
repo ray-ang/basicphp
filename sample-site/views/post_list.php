@@ -9,10 +9,11 @@ require_once 'template/menu.php';
         <div class="col-lg-12">
           <h1 class="mt-5 text-center">List of Posts</h1>
          	<?php foreach($stmt as $row): ?>
-  				<div class="panel panel-default">
-  					<div class="panel-heading">Title: <a href="<?php echo BASE_URL . 'post/view/' . $row['post_id']; ?>"><?= $row['post_title'] ?></a></div>
-  					<div class="panel-body">Content:<br/><?= nl2br($row['post_content']) ?></div>
+  				<div class="card">
+  					<div class="card-header">Title: <a href="<?php echo BASE_URL . 'post/view/' . $row['post_id']; ?>"><?= $row['post_title'] ?></a></div>
+  					<div class="card-body">Content:<br/><?= nl2br($row['post_content']) ?></div>
   				</div>
+          <br />
       	 	<?php endforeach ?>
           <?php if ($_GET['order'] > 0): ?>
           <a href="<?php echo BASE_URL . 'post/list/?order=' . ($_GET['order'] - $per_page);?>"><button class="btn btn-info">Previous</button></a>
