@@ -30,8 +30,9 @@ class Basic
 	/**
 	 * Get URI segment value
 	 *
-	 * @param integer $order - URI substring position from base URL
-	 *                       - Basic::segment(1) as first URI segment
+	 * @param int $order    - URI segment position from base URL
+	 *                      - Basic::segment(1) as first URI segment
+	 * @return string|false - URI segment string or error
 	 */
 
 	public static function segment($order)
@@ -39,12 +40,14 @@ class Basic
 		if (isset($_SERVER['REQUEST_URI'])) {
 			$uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 			$uri = explode('/', $uri);
+		} else {
+			return FALSE;
 		}
 
 		// Number of subdirectories from hostname to index.php
 		$sub_dir = substr_count($_SERVER['SCRIPT_NAME'], '/') - 1;
 
-		if ( ! empty($uri[$order+$sub_dir]) ) {
+		if (! empty($uri[$order+$sub_dir])) {
 			return $uri[$order+$sub_dir];
 		} else {
 			return FALSE;
