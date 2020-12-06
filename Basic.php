@@ -84,7 +84,7 @@ class Basic
 						$object->$method();
 						exit;
 					}
-				} else {
+				} elseif (is_callable($class_method)) {
 					$class_method();
 					exit;
 				}
