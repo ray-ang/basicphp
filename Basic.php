@@ -100,17 +100,15 @@ class Basic
 	/**
 	 * Render view with data
 	 *
-	 * @param string $view - View file, excluding .php extension
+	 * @param string $view - View file inside 'views' folder (exclude .php extension)
 	 * @param array $data  - Data in array format
 	 */
 
 	public static function view($view, $data=NULL)
 	{
-		// Convert array keys to variables
-		if (isset($data)) { extract($data); }
-
-		// Render page view
-		require_once '../views/' . $view . '.php';
+		$file = '../views/' . $view . '.php';
+		if (! empty($data)) extract($data); // Convert array keys to variables
+		if (file_exists($file) && is_readable($file) && pathinfo($file)['extension'] === 'php') require_once $file; // Render page view
 	}
 
 	/**
