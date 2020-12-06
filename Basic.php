@@ -52,13 +52,13 @@ class Basic
 	}
 
 	/**
-	 * Run controller or closure based on HTTP method and URL path string
+	 * Controller or callable-based endpoint routing
 	 *
-	 * @param string $http_method - HTTP method (e.g. 'GET', 'POST', 'PUT', 'DELETE')
-	 * @param string $path        - URL path in the format '/url/string'
-	 *                            - Wildcard convention from CodeIgniter
-	 *                            - (:num) for number and (:any) for string
-	 * @param string $class_method - ClassController@method format
+	 * @param string $http_method           - HTTP method (e.g. 'GET', 'POST', 'PUT', 'DELETE')
+	 * @param string $path                  - URL path in the format '/url/path'
+	 *                                      - Wildcard convention from CodeIgniter
+	 *                                      - (:num) for number and (:any) for string
+	 * @param string|callable $class_method - 'ClassController@method' format or callable function
 	 */
 
 	public static function route($http_method, $path, $class_method)
@@ -66,17 +66,16 @@ class Basic
 		if ($_SERVER['REQUEST_METHOD'] === $http_method) {
 
 			// Convert '/' and wilcards (:num) and (:any) to RegEx
-			$pattern = str_ireplace( '/', '\/', $path );
-			$pattern = str_ireplace( '(:num)', '[0-9]+', $pattern );
-			$pattern = str_ireplace( '(:any)', '[^\/]+', $pattern );
+			$pattern = str_ireplace('/', '\/', $path);
+			$pattern = str_ireplace('(:num)', '[0-9]+', $pattern);
+			$pattern = str_ireplace('(:any)', '[^\/]+', $pattern);
 					
 			// Check for subfolders from DocumentRoot and include in endpoint
 			$sub = explode('/', dirname($_SERVER['SCRIPT_NAME']));
-			if (! empty($sub[1])) { $subfolder = implode('\/', $sub); } else { $subfolder = ''; }
+			$subfolder = (! empty($sub[1])) ? implode('\/', $sub) : '';
 
 			$uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 			if ( preg_match('/^' . $subfolder . $pattern . '+$/i', $uri) )  {
-
 				if (is_string($class_method)) {
 					if (strstr($class_method, '@')) {
 						list($class, $method) = explode('@', $class_method);
