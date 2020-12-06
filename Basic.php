@@ -83,11 +83,11 @@ class Basic
 
 						$object = new $class();
 						$object->$method();
-						exit();
+						exit;
 					}
 				} else {
 					$class_method();
-					exit();
+					exit;
 				}
 
 			}
@@ -411,7 +411,7 @@ class Basic
 	{
 		if (! isset($_SERVER['HTTPS']) || $_SERVER['HTTPS'] !== 'on') {
 			header('Location: https://' . $_SERVER['SERVER_NAME'] . $_SERVER['REQUEST_URI']);
-			exit();
+			exit;
 		}
 	}
 
@@ -489,7 +489,7 @@ class Basic
 
 			$object = new $class();
 			$object->$method();
-			exit();
+			exit;
 		}
 	}
 
@@ -508,10 +508,10 @@ class Basic
 			$object = new $class();
 			if (method_exists($object, $method)) {
 				$object->$method();
-				exit();
+				exit;
 			} else {
 				self::apiResponse(404, 'The page you requested could not be found.');
-				exit();
+				exit;
 			}
 		}
 	}
@@ -551,7 +551,7 @@ class Basic
 						$object = new $class();
 						if (method_exists($object, $method)) {
 							$object->$method();
-							exit();
+							exit;
 						} else { exit(json_encode(['jsonrpc' => '2.0', 'error' => ['code' => -32601, 'message' => "Method not found."], 'id' => $json_rpc['id']])); }
 					} else { exit(json_encode(['jsonrpc' => '2.0', 'error' => ['code' => -32601, 'message' => "Class not found."], 'id' => $json_rpc['id']])); }
 				}
