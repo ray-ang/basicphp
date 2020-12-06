@@ -119,6 +119,7 @@ class Basic
 	 * @param array $data         - Request body in array format
 	 * @param string $user_token  - Username or API token
 	 * @param string $password    - Password (no password for API token)
+	 * @return (int|string)[]     - HTTP response code and result of cURL execution
 	 */
 
 	public static function apiCall($http_method, $url, $data=NULL, $user_token=NULL, $password=NULL)
