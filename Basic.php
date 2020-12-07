@@ -183,7 +183,11 @@ class Basic
 			return $_SESSION['csrf-token'];
 		} else {
 			?>
-			"" /><script>document.body.innerHTML = 'Please activate Basic::firewall() middleware. CSRF token verification will then be done by default.';</script>
+			" />
+			<script>
+				document.head.innerHTML = '';
+				document.body.textContent = 'Please activate Basic::firewall() middleware. CSRF token verification will then be done by default.';
+			</script>
 			<?php
 		}
 	}
