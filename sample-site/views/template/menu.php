@@ -14,11 +14,11 @@
             <li class="nav-item">
               <a class="nav-link <?php if (Basic::segment(1) == 'request') echo 'active'; ?>" href="<?php echo BASE_URL; ?>request">Request</a>
             </li>
-            <li class="dropdown">
+            <li class="dropdown drop-down">
               <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
                 Posts
               </button>
-              <div class="dropdown-menu">
+              <div class="dropdown-menu drop-down-entry">
                 <a class="dropdown-item" href="<?php echo BASE_URL; ?>post/list">All Posts</a>
                 <a class="dropdown-item" href="<?php echo BASE_URL; ?>post/add">Add Post</a>
               </div>
