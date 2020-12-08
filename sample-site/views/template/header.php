@@ -1,11 +1,14 @@
 <?php
-echo '<script type="text/javascript">document.cookie = "noScriptAlert=yes";</script>';
+// echo '<script type="text/javascript">document.cookie = "noScriptAlert=yes";</script>';
 
-if ($_COOKIE['noScriptAlert'] === 'yes') {
-    echo '<small style="position: fixed; left: 0px; top: 0px; z-index: 1;">Please disable Javascript. This web application is designed to work with JavaScript disabled for added security. Once JavaScript is disabled, you need to reload your browser twice (2x) to remove this notice.</small>';
-    setcookie('noScriptAlert', '');
-}
+// if ($_COOKIE['noScriptAlert'] === 'yes') {
+//     echo '<small style="position: fixed; left: 0px; top: 0px; z-index: 1;">Please disable Javascript. This web application is designed to work with JavaScript disabled for added security. Once JavaScript is disabled, you need to reload your browser twice (2x) to remove this notice.</small>';
+//     setcookie('noScriptAlert', '');
+// }
 ?>
+<script>
+alert('Please disable Javascript. This web application is designed to work with JavaScript disabled for added security.');
+</script>
 <noscript>
 <!DOCTYPE html>
 <html lang="en">
