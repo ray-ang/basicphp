@@ -19,7 +19,6 @@ Basic::firewall(); // Enable firewall
 // Basic::https(); // Require TLS/HTTPS
 Basic::encryption('SecretPassPhrase123'); // Encryption cipher method and pass phrase
 Basic::autoloadClass(['classes', 'models', 'views', 'controllers']); // Autoload folders
-Basic::baseUrl('BASE_URL'); // Base URL - templating
 Basic::homePage('HomeController@index'); // Homepage
 Basic::autoRoute(); // Automatic '/class/method' routing
 
@@ -83,12 +82,12 @@ Basic::route('POST', '/posts/(:num)', function() {
         $post = new PostModel;
         $post->delete(Basic::segment(2));
 
-        header('Location: ' . BASE_URL . 'posts');
+        header('Location: ' . Basic::baseUrl() . 'posts');
         exit();
     }
 
     if (isset($_POST['goto-edit'])) {
-        header('Location: ' . BASE_URL . 'posts/' . Basic::segment(2) . '/edit');
+        header('Location: ' . Basic::baseUrl() . 'posts/' . Basic::segment(2) . '/edit');
         exit();
     }
 });
@@ -117,7 +116,7 @@ Basic::route('POST', '/posts/(:num)/edit', function() {
     if (isset($_POST['edit-post'])) {
         $post->edit(Basic::segment(2));
 
-        header('Location: ' . BASE_URL . 'posts/' . Basic::segment(2));
+        header('Location: ' . Basic::baseUrl() . 'posts/' . Basic::segment(2));
         exit();
     }
 });

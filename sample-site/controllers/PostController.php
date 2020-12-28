@@ -41,12 +41,12 @@ class PostController
 
 		if ($this->isPostDelete()) {
 			$this->delete();
-			header('Location: ' . BASE_URL . 'post/list');
+			header('Location: ' . Basic::baseUrl() . 'post/list');
 			exit();
 		}
 
 		if (isset($_POST['goto-edit'])) {
-			header('Location: ' . BASE_URL . 'post/edit/' . Basic::segment(3));
+			header('Location: ' . Basic::baseUrl() . 'post/edit/' . Basic::segment(3));
 			exit();
 		}
 
@@ -72,7 +72,7 @@ class PostController
 			$post = new PostModel;
 			$new_id = $post->add();
 
-			header('Location: ' . BASE_URL . 'post/view/' . $new_id);
+			header('Location: ' . Basic::baseUrl() . 'post/view/' . $new_id);
 			exit();
 		}
 
@@ -88,7 +88,7 @@ class PostController
 		if ($this->isPostEdit()) {
 			$post->edit( Basic::segment(3) );
 
-			header('Location: ' . BASE_URL . 'post/view/' . Basic::segment(3));
+			header('Location: ' . Basic::baseUrl() . 'post/view/' . Basic::segment(3));
 			exit();
 		}
 

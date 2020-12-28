@@ -171,6 +171,20 @@ class Basic
 	}
 
 	/**
+	 * Base URL - Templating
+	 *
+	 * @return string - Base URL
+	 */
+
+	public static function baseUrl()
+	{
+		$http_protocol = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on') ? 'https://' : 'http://';
+		$subfolder = (! empty(dirname($_SERVER['SCRIPT_NAME']))) ? dirname($_SERVER['SCRIPT_NAME']) : '';
+
+		return $http_protocol . $_SERVER['SERVER_NAME'] . $subfolder . '/';
+	}
+
+	/**
 	 * Prevent Cross-Site Request Forgery (CSRF)
 	 * Create a per request token to handle CSRF using sessions
 	 * Basic::firewall() should be executed. $verify_csrf_token = TRUE (default)
@@ -469,20 +483,6 @@ class Basic
 				}
 			}
 		});
-	}
-
-	/**
-	 * Base URL - Templating
-	 * 
-	 * @param string $const_name - Base URL constant
-	 */
-
-	public static function baseUrl($const_name)
-	{
-		$http_protocol = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on') ? 'https://' : 'http://';
-		$subfolder = (! empty(dirname($_SERVER['SCRIPT_NAME']))) ? dirname($_SERVER['SCRIPT_NAME']) : '';
-
-		define($const_name, $http_protocol . $_SERVER['SERVER_NAME'] . $subfolder . '/');
 	}
 
 	/**
