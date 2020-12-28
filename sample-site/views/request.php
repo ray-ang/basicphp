@@ -6,8 +6,10 @@ require_once 'template/menu.php';
     <!-- Page Content -->
     <div class="row">
         <div class="col-md text-center">
+            <form class="form-horizontal" method="post">
                 <p><input type="text" name="patient-name" placeholder="Patient Name" value="" class="form-control" required /></p>
                 <p><button type="submit" name="search-patient" class="btn btn-primary">Search</button></p>
+            </form>
         </div>
         <div class="col-md">
         </div>

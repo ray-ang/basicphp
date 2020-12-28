@@ -1,6 +1,6 @@
 
 <body>
-  <form class="container" method="post">
+  <div class="container">
 <!-- Navigation -->
     <nav class="navbar navbar-default">
         <a class="navbar-brand" href="<?php echo BASE_URL; ?>">BasicPHP Starter</a>

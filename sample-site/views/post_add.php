@@ -9,10 +9,12 @@ require_once 'template/menu.php';
 			<h1 class="mt-5 text-center">Add Post</h1>
 			<?php
 			$form = new Basic_Form;
+			$form->open();
 			$form->input('text', 'title', 'Title');
 			$form->textArea('content', 'Content');
 			$form->button('submit-post', 'Submit');
 			$form->csrfToken();
+			$form->close();
 			?>
 		</div>
 	</div>
