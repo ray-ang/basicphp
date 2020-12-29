@@ -148,12 +148,13 @@ class Basic
 	/**
 	 * Handle HTTP API response
 	 *
-	 * @param integer $code     - HTTP response code
-	 * @param string $data      - Data to transmit
-	 * @param string $message   - HTTP response message
+	 * @param integer $code        - HTTP response code
+	 * @param string $data         - Data to transmit
+	 * @param string $content_type - Header: Content-Type
+	 * @param string $message      - HTTP response message
 	 */
 
-	public static function apiResponse($code, $data=NULL, $message=NULL)
+	public static function apiResponse($code, $data=NULL, $content_type='text/plain', $message=NULL)
 	{
 		// OK response
 		if ($code > 199 && $code < 300) {
@@ -167,6 +168,7 @@ class Basic
 			header($_SERVER['SERVER_PROTOCOL'] . ' ' . $code . ' ' . $message); // Set HTTP response code and message
 		}
 
+		header('Content-Type: ' . $content_type);
 		exit($data); // Data in string format
 	}
 
@@ -195,14 +197,6 @@ class Basic
 		if (defined('VERIFY_CSRF_TOKEN') && VERIFY_CSRF_TOKEN === TRUE) {
 			$_SESSION['csrf-token'] = bin2hex(random_bytes(32));
 			return $_SESSION['csrf-token'];
-		} else {
-			?>
-			" />
-			<script>
-				document.head.innerHTML = '';
-				document.body.textContent = 'Please activate Basic::firewall() middleware. CSRF token verification will then be done by default.';
-			</script>
-			<?php
 		}
 	}
 
@@ -357,14 +351,14 @@ class Basic
 	 * @param boolean $boolean - TRUE or FALSE
 	 */
 
-	public static function errorReporting($boolean)
+	public static function setErrorReporting($boolean=TRUE)
 	{
 		if ($boolean === TRUE) {
 			error_reporting(E_ALL);
 		} elseif ($boolean === FALSE) {
 			error_reporting(0);
 		} else {
-			exit('Boolean parameter for Basic::errorReporting() can only be TRUE or FALSE.');
+			exit('Boolean parameter for Basic::setErrorReporting() can only be TRUE or FALSE.');
 		}
 	}
 
@@ -377,7 +371,7 @@ class Basic
 	 * @param string $uri_whitelist        - Whitelisted URI RegEx characters
 	 */
 
-	public static function firewall($ip_blacklist=[], $verify_csrf_token=TRUE, $post_auto_escape=TRUE, $uri_whitelist='\w\/\.\-\_\?\=\&')
+	public static function setFirewall($ip_blacklist=[], $verify_csrf_token=TRUE, $post_auto_escape=TRUE, $uri_whitelist='\w\/\.\-\_\?\=\&')
 	{
 		// Deny access from blacklisted IP addresses
 		if (isset($_SERVER['REMOTE_ADDR']) && in_array($_SERVER['REMOTE_ADDR'], $ip_blacklist)) {
@@ -430,7 +424,7 @@ class Basic
 	 * Force application to use TLS/HTTPS
 	 */
 
-	public static function https()
+	public static function setHttps()
 	{
 		if (! isset($_SERVER['HTTPS']) || $_SERVER['HTTPS'] !== 'on') {
 			header('Location: https://' . $_SERVER['SERVER_NAME'] . $_SERVER['REQUEST_URI']);
@@ -445,7 +439,7 @@ class Basic
 	 * @param string $cipher_method - Only AES-256 GCM, CTR or CBC
 	 */
 
-	public static function encryption($pass_phrase, $cipher_method='aes-256-gcm')
+	public static function setEncryption($pass_phrase, $cipher_method='aes-256-gcm')
 	{
 		if (! defined('PASS_PHRASE')) {
 			define('PASS_PHRASE', $pass_phrase);
@@ -473,7 +467,7 @@ class Basic
 	 * @param array $classes - Array of folders to autoload classes
 	 */
 
-	public static function autoloadClass($classes)
+	public static function setAutoloadClass($classes)
 	{
 		define('AUTOLOADED_FOLDERS', $classes);
 		spl_autoload_register(function ($class_name) {
@@ -491,7 +485,7 @@ class Basic
 	 * @param string $controller - 'HomeController@index' format
 	 */
 
-	public static function homePage($controller)
+	public static function setHomePage($controller)
 	{
 		if ( empty(self::segment(1)) ) {
 			list($class, $method) = explode('@', $controller);
@@ -508,7 +502,7 @@ class Basic
 	 * 'index' as default method name
 	 */
 
-	public static function autoRoute()
+	public static function setAutoRoute()
 	{
 		if (self::segment(1) !== FALSE) { $class = ucfirst(strtolower(self::segment(1))) . 'Controller'; }
 		if (self::segment(2) !== FALSE) { $method = strtolower(self::segment(2)); } else { $method = 'index'; }
@@ -530,7 +524,7 @@ class Basic
 	 * 'Controller' as default controller suffix
 	 */
 
-	public static function jsonRpc()
+	public static function setJsonRpc()
 	{
 		// Check if there is request body
 		if (file_get_contents('php://input') !== FALSE) {

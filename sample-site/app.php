@@ -14,13 +14,13 @@ require_once __DIR__ . '/../Basic.php';
 |--------------------------------------------------------------------------
 */
 
-Basic::errorReporting(TRUE); // Error reporting
-Basic::firewall(); // Enable firewall
-// Basic::https(); // Require TLS/HTTPS
-Basic::encryption('SecretPassPhrase123'); // Encryption cipher method and pass phrase
-Basic::autoloadClass(['classes', 'models', 'views', 'controllers']); // Autoload folders
-Basic::homePage('HomeController@index'); // Homepage
-Basic::autoRoute(); // Automatic '/class/method' routing
+Basic::setErrorReporting(); // Error reporting
+Basic::setFirewall(); // Enable firewall
+// Basic::setHttps(); // Require TLS/HTTPS
+Basic::setEncryption('SecretPassPhrase123'); // Encryption cipher method and pass phrase
+Basic::setAutoloadClass(['classes', 'models', 'views', 'controllers']); // Autoload folders
+Basic::setHomePage('HomeController@index'); // Homepage
+Basic::setAutoRoute(); // Automatic '/class/method' routing
 
 /*
 |--------------------------------------------------------------------------
@@ -29,7 +29,7 @@ Basic::autoRoute(); // Automatic '/class/method' routing
 */
 
 Basic::route('POST', '/jsonrpc', function() {
-    Basic::jsonRpc(); // JSON-RPC endpoint
+    Basic::setJsonRpc(); // JSON-RPC endpoint
 });
 
 Basic::route('GET', '/posts', function() {
@@ -158,7 +158,7 @@ Basic::route('POST', '/api/request', function() {
         }
 
         if (! empty($data_output)) {
-            Basic::apiResponse(200, json_encode($data_output));
+            Basic::apiResponse(200, json_encode($data_output), 'application/json');
         } else {
             Basic::apiResponse(400, 'No Patient name found on search.');
         }
