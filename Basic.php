@@ -189,7 +189,7 @@ class Basic
 	/**
 	 * Prevent Cross-Site Request Forgery (CSRF)
 	 * Create a per request token to handle CSRF using sessions
-	 * Basic::firewall() should be executed. $verify_csrf_token = TRUE (default)
+	 * Basic::setFirewall() should be executed. $verify_csrf_token = TRUE (default)
 	 */
 
 	public static function csrfToken()
@@ -211,7 +211,7 @@ class Basic
 	{
 		// Require encryption middleware
 		if (! defined('PASS_PHRASE') || ! defined('CIPHER_METHOD')) {
-			self::apiResponse(501, 'Please activate Basic::encryption() middleware and set the pass phrase.');
+			self::apiResponse(501, 'Please activate Basic::setEncryption() middleware and set the pass phrase.');
 		}
 
 		// Encryption - Version 1
@@ -261,7 +261,7 @@ class Basic
 	{
 		// Require encryption middleware
 		if (! defined('PASS_PHRASE') || ! defined('CIPHER_METHOD')) {
-			self::apiResponse(501, 'Please activate Basic::encryption() middleware and set the pass phrase.');
+			self::apiResponse(501, 'Please activate Basic::setEncryption() middleware and set the pass phrase.');
 		}
 
 		// Decryption - Version 1
@@ -360,6 +360,15 @@ class Basic
 		} else {
 			exit('Boolean parameter for Basic::setErrorReporting() can only be TRUE or FALSE.');
 		}
+	}
+
+	/**
+	 * JSON Request Body as $_POST
+	 */
+
+	public static function setJsonBodyAsPOST() {
+		$body = file_get_contents('php://input');
+		if ( ! empty($body) && is_array(json_decode($body, TRUE)) ) $_POST = json_decode($body, TRUE);
 	}
 
 	/**

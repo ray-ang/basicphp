@@ -15,6 +15,7 @@ require_once __DIR__ . '/../Basic.php';
 */
 
 Basic::setErrorReporting(); // Error reporting
+Basic::setJsonBodyAsPOST(); // JSON as $_POST
 Basic::setFirewall(); // Enable firewall
 // Basic::setHttps(); // Require TLS/HTTPS
 Basic::setEncryption('SecretPassPhrase123'); // Encryption cipher method and pass phrase
