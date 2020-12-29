@@ -6,7 +6,7 @@ class EncryptionController
 	public function index()
 	{
 		$page_title = 'Data Encryption';
-		$plaintext = 'ABC123';
+		$plaintext = '{"username":"user","role":"admin"}';
 		$encrypted = Basic::encrypt($plaintext);
 		$decrypted = Basic::decrypt($encrypted);
 

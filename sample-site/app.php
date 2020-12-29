@@ -18,7 +18,11 @@ Basic::setErrorReporting(); // Error reporting
 Basic::setJsonBodyAsPOST(); // JSON as $_POST
 Basic::setFirewall(); // Enable firewall
 // Basic::setHttps(); // Require TLS/HTTPS
+
 Basic::setEncryption('SecretPassPhrase123'); // Encryption cipher method and pass phrase
+setcookie('token', Basic::encrypt('{"username":"user","role":"admin"}'), NULL, NULL, NULL, NULL, TRUE); // Sample token
+// var_dump(json_decode(Basic::decrypt($_COOKIE['token']), TRUE));
+
 Basic::setAutoloadClass(['classes', 'models', 'views', 'controllers']); // Autoload folders
 Basic::setHomePage('HomeController@index'); // Homepage
 Basic::setAutoRoute(); // Automatic '/class/method' routing
