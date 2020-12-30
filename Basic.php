@@ -13,7 +13,7 @@
  *          - include/require Basic.php.
  *
  * @package  BasicPHP
- * @version  v0.9.5
+ * @version  v0.9.6
  * @author   Raymund John Ang <raymund@open-nis.org>
  * @license  MIT License
  */
@@ -363,7 +363,7 @@ class Basic
 	}
 
 	/**
-	 * JSON Request Body as $_POST
+	 * JSON Request Body as $_POST - API Access
 	 */
 
 	public static function setJsonBodyAsPOST() {
