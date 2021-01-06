@@ -497,11 +497,18 @@ class Basic
 	public static function setHomePage($controller)
 	{
 		if ( empty(self::segment(1)) ) {
-			list($class, $method) = explode('@', $controller);
+			if (is_string($controller)) {
+				if (strstr($controller, '@')) {
+					list($class, $method) = explode('@', $controller);
 
-			$object = new $class();
-			$object->$method();
-			exit;
+					$object = new $class();
+					$object->$method();
+					exit;
+				}
+			} elseif (is_callable($controller)) {
+				$controller();
+				exit;
+			}
 		}
 	}
 
