@@ -18,26 +18,26 @@ class Basic_Form
 		<?php
 	}
 
-	public function input($type, $name, $label, $value=NULL)
+	public function input($type, $name, $label, $value=NULL, $required=FALSE)
 	{
 		?>
 		<div class="form-group">
 			<label class="control-label col-sm-2" for="<?= $name ?>"><?= $label ?>:</label>
 			<div class="col-sm-10">
-				<input type="<?= $type ?>" class="form-control" id="<?= $name ?>" placeholder="Enter <?= $label ?>" name="<?= $name ?>" value="<?= $value ?>">
+				<input type="<?= $type ?>" class="form-control" id="<?= $name ?>" placeholder="Enter <?= $label ?>" name="<?= $name ?>" value="<?= $value ?>" <?php if ($required === TRUE) echo 'required'; ?> />
 			</div>
 		</div>
 		<?php
 	}
 
 
-	public function textArea($name, $label, $value=NULL)
+	public function textArea($name, $label, $value=NULL, $required=FALSE)
 	{
 		?>
 		<div class="form-group">
 			<label class="control-label col-sm-2" for="<?= $name ?>"><?= $label ?>:</label>
 			<div class="col-sm-10"> 
-				<textarea class="form-control" rows="5" id="<?= $name ?>" placeholder="Enter <?= $label ?>" name="<?= $name ?>"><?= $value ?></textarea>
+				<textarea class="form-control" rows="5" id="<?= $name ?>" placeholder="Enter <?= $label ?>" name="<?= $name ?>" <?php if ($required === TRUE) echo 'required'; ?>><?= $value ?></textarea>
 			</div>
 		</div>
 		<?php
