@@ -57,7 +57,7 @@ class Basic
 	/**
 	 * Controller or callable-based endpoint routing
 	 *
-	 * @param string $http_method           - HTTP method (e.g. 'GET', 'POST', 'PUT', 'DELETE')
+	 * @param string $http_method           - HTTP method (e.g. 'ANY', 'GET', 'POST', 'PUT', 'DELETE')
 	 * @param string $path                  - URL path in the format '/url/path'
 	 *                                      - Wildcard convention from CodeIgniter
 	 *                                      - (:num) for number and (:any) for string
@@ -66,6 +66,8 @@ class Basic
 
 	public static function route($http_method, $path, $class_method)
 	{
+		if ($http_method === 'ANY') $http_method = $_SERVER['REQUEST_METHOD']; // Any HTTP Method
+
 		if ($_SERVER['REQUEST_METHOD'] === $http_method) {
 
 			// Convert '/' and wilcards (:num) and (:any) to RegEx
