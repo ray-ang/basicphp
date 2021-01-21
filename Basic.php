@@ -382,7 +382,7 @@ class Basic
 	 * @param string $uri_whitelist        - Whitelisted URI RegEx characters
 	 */
 
-	public static function setFirewall($ip_blacklist=[], $verify_csrf_token=TRUE, $post_auto_escape=TRUE, $uri_whitelist='\w\/\.\-\_\?\=\&')
+	public static function setFirewall($ip_blacklist=[], $verify_csrf_token=TRUE, $post_auto_escape=TRUE, $uri_whitelist='\w\/\.\-\_\?\=\&\:')
 	{
 		// Deny access from blacklisted IP addresses
 		if (isset($_SERVER['REMOTE_ADDR']) && in_array($_SERVER['REMOTE_ADDR'], $ip_blacklist)) {
