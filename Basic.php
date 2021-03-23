@@ -538,52 +538,41 @@ class Basic
 	}
 
 	/**
-	 * JSON-RPC v2.0 middleware with 'method' member as 'class.method'
+	 * JSON-RPC v2.0 middleware with request Method member as 'class.method'
 	 * 'Controller' as default controller suffix
 	 */
 
 	public static function setJsonRpc()
 	{
-		// Check if there is request body
-		if (file_get_contents('php://input') !== FALSE) {
+		$body = file_get_contents('php://input'); // Request body
+		$array = json_decode($body, TRUE); // JSON body to array
 
-			// If data in request body is in JSON format
-			if (json_decode(file_get_contents('php://input'), TRUE) !== NULL) {
+		header('Content-Type: application/json'); // Set content type as JSON
 
-				$json_rpc = json_decode(file_get_contents('php://input'), TRUE);
+		if (! $body) exit(json_encode(['jsonrpc' => '2.0', 'error' => ['code' => -32700, 'message' => "Request should have a request body."]])); // Require request body
 
-				// Send error message if server request method is not 'POST'.
-				if (isset($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] !== 'POST') { exit(json_encode(['jsonrpc' => '2.0', 'error' => ['code' => -32600, 'message' => "Server request method should be 'POST'."]])); }
-				// Send error message if 'jsonrpc' and 'method' members are not set.
-				if (! isset($json_rpc['jsonrpc']) || ! isset($json_rpc['method']) ) { exit(json_encode(['jsonrpc' => '2.0', 'error' => ['code' => -32600, 'message' => "JSON-RPC 'version' and 'method' members should be set."]])); }
-				// Send error message if JSON-RPC version is not '2.0'.
-				if (isset($json_rpc['jsonrpc']) && $json_rpc['jsonrpc'] !== '2.0') { exit(json_encode(['jsonrpc' => '2.0', 'error' => ['code' => -32600, 'message' => "JSON-RPC version should be a string set to '2.0'."]])); }
-				// Send error message if 'method' member is not in the format 'class.method'.
-				if (isset($json_rpc['method']) && substr_count($json_rpc['method'], '.') !== 1) { exit(json_encode(['jsonrpc' => '2.0', 'error' => ['code' => -32602, 'message' => "The JSON-RPC 'method' member should have the format 'class.method'."]])); }
+		if ($body && ! $array) exit(json_encode(['jsonrpc' => '2.0', 'error' => ['code' => -32700, 'message' => "Provide request body data in valid JSON format."]])); // Require valid JSON
 
-				// Require 'jsonrpc' and 'method' members as minimum for the request object.
-				if (isset($json_rpc['jsonrpc']) && isset($json_rpc['method'])) {
+		if (! isset($array['jsonrpc']) || $array['jsonrpc'] !== '2.0') exit(json_encode(['jsonrpc' => '2.0', 'error' => ['code' => -32600, 'message' => "JSON-RPC 'version' member should be set, and assigned a value of '2.0'."]])); // JSON-RPC (version) member
 
-					list($class, $method) = explode('.', $json_rpc['method']);
-					$class = $class . 'Controller';
+		if (! isset($array['method']) || ! strstr($array['method'], '.')) exit(json_encode(['jsonrpc' => '2.0', 'error' => ['code' => -32600, 'message' => "JSON-RPC 'method' member should be set with the format 'class.method'."]])); // Method member
 
-					// Respond if class exists and 'id' member is set.
-					if (class_exists($class) && isset($json_rpc['id'])) {
-						$object = new $class();
-						if (method_exists($object, $method)) {
-							$object->$method();
-							exit;
-						} else { exit(json_encode(['jsonrpc' => '2.0', 'error' => ['code' => -32601, 'message' => "Method not found."], 'id' => $json_rpc['id']])); }
-					} else { exit(json_encode(['jsonrpc' => '2.0', 'error' => ['code' => -32601, 'message' => "Class not found."], 'id' => $json_rpc['id']])); }
-				}
+		list($class, $method) = explode('.', $array['method']); // Method member as 'class.method'
+		$class = $class . 'Controller'; // Default controller suffix
 
+		// If class exists
+		if (class_exists($class)) {
+			if (! isset($array['id'])) exit(json_encode(['jsonrpc' => '2.0', 'error' => ['code' => -32600, 'message' => "JSON-RPC 'id' member should be set."]])); // Require ID member
+
+			$object = new $class();
+			if (method_exists($object, $method)) {
+				$object->$method();
+				exit;
 			} else {
-				
-				// If data in request body is not in JSON format
-				exit(json_encode(['jsonrpc' => '2.0', 'error' => ['code' => -32700, 'message' => "Please provide data in valid JSON format."]]));
-			
+				exit(json_encode(['jsonrpc' => '2.0', 'error' => ['code' => -32601, 'message' => "Method not found."], 'id' => $array['id']]));
 			}
-		
+		} else {
+			exit(json_encode(['jsonrpc' => '2.0', 'error' => ['code' => -32601, 'message' => "Class not found."], 'id' => $array['id']]));
 		}
 	}
 
