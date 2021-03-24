@@ -2,6 +2,16 @@
 
 /*
 |--------------------------------------------------------------------------
+| Configuration - Constants and Variables
+|--------------------------------------------------------------------------
+*/
+
+define('DB_NAME', 'basicphp'); // Sample database name
+define('DB_USER', 'user'); // Sample database username
+define('DB_PASS', 'pass'); // Sample database password
+
+/*
+|--------------------------------------------------------------------------
 | Load BasicPHP Class Library
 |--------------------------------------------------------------------------
 */
