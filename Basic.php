@@ -135,10 +135,12 @@ class Basic
 		curl_setopt($ch, CURLOPT_POSTFIELDS, $data_json);
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
 		curl_setopt($ch, CURLOPT_USERPWD, "$user_token:$password");
-		// curl_setopt($ch, CURLOPT_HTTPHEADER, array(                                                                          
-		// 	'Content-Type: application/json',                                                                                
-		// 	'Content-Length: ' . strlen($data_json))                                                                       
-		// );
+		curl_setopt($ch, CURLOPT_HTTPHEADER,
+			array(
+			'Content-Type: text/plain', // Plain text string
+			'Content-Length: ' . strlen($data_json)
+			)
+		);
 
 		$result = curl_exec($ch); // Execute cURL
 		$http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE); // HTTP response code
