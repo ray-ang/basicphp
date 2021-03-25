@@ -209,7 +209,7 @@ class Basic
 	{
 		// Require encryption middleware
 		if (! defined('PASS_PHRASE') || ! defined('CIPHER_METHOD')) {
-			self::apiResponse(501, 'Please activate Basic::setEncryption() middleware and set the pass phrase.');
+			self::apiResponse(500, 'Please activate Basic::setEncryption() middleware and set the pass phrase.');
 		}
 
 		// Encryption - Version 1
@@ -259,7 +259,7 @@ class Basic
 	{
 		// Require encryption middleware
 		if (! defined('PASS_PHRASE') || ! defined('CIPHER_METHOD')) {
-			self::apiResponse(501, 'Please activate Basic::setEncryption() middleware and set the pass phrase.');
+			self::apiResponse(500, 'Please activate Basic::setEncryption() middleware and set the pass phrase.');
 		}
 
 		// Decryption - Version 1
@@ -464,7 +464,7 @@ class Basic
 			case 'aes-256-cbc':
 				return;
 			default:
-				self::apiResponse(501, "Encryption cipher method should either be 'aes-256-gcm', 'aes-256-ctr' or 'aes-256-cbc'.");
+				self::apiResponse(500, "Encryption cipher method should either be 'aes-256-gcm', 'aes-256-ctr' or 'aes-256-cbc'.");
 		}
 	}
 
