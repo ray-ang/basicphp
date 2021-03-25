@@ -208,8 +208,10 @@ class Basic
 	 * @return string             - Contains based64-encoded ciphertext
 	 */
 
-	public static function encrypt($plaintext, $pass_phrase, $cipher='aes-256-gcm')
+	public static function encrypt($plaintext, $pass_phrase=NULL, $cipher='aes-256-gcm')
 	{
+		if (! isset($pass_phrase)) self::apiResponse(500, 'Set passphrase as a constant.'); 
+
 		if ($cipher !== 'aes-256-gcm' && $cipher !== 'aes-256-ctr' && $cipher !== 'aes-256-cbc') self::apiResponse(500, "Encryption cipher method should either be 'aes-256-gcm', 'aes-256-ctr' or 'aes-256-cbc'.");
 
 		// Encryption - Version 1
@@ -257,8 +259,10 @@ class Basic
 	 * @return string             - Decrypted data
 	 */
 
-	public static function decrypt($encrypted, $pass_phrase, $cipher='aes-256-gcm')
+	public static function decrypt($encrypted, $pass_phrase=NULL, $cipher='aes-256-gcm')
 	{
+		if (! isset($pass_phrase)) self::apiResponse(500, 'Set passphrase as a constant.');
+
 		if ($cipher !== 'aes-256-gcm' && $cipher !== 'aes-256-ctr' && $cipher !== 'aes-256-cbc') self::apiResponse(500, "Encryption cipher method should either be 'aes-256-gcm', 'aes-256-ctr' or 'aes-256-cbc'.");
 
 		// Decryption - Version 1
