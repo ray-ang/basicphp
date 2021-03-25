@@ -37,21 +37,15 @@ class Basic
 
 	public static function segment($order)
 	{
-		if (isset($_SERVER['REQUEST_URI'])) {
-			$uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
-			$uri = explode('/', $uri);
-		} else {
-			return FALSE;
-		}
+		$uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
+		$uri = explode('/', $uri);
 
 		// Number of subdirectories from hostname to index.php
 		$sub_dir = substr_count($_SERVER['SCRIPT_NAME'], '/') - 1;
 
-		if (! empty($uri[$order+$sub_dir])) {
-			return $uri[$order+$sub_dir];
-		} else {
-			return FALSE;
-		}
+		if (empty($uri[$order+$sub_dir])) return FALSE;
+
+		return $uri[$order+$sub_dir];
 	}
 
 	/**
