@@ -437,35 +437,6 @@ class Basic
 	}
 
 	/**
-	 * Enable encryption
-	 * 
-	 * @param string $pass_phrase   - Pass phrase used for encryption
-	 * @param string $cipher_method - Only AES-256 GCM, CTR or CBC
-	 */
-
-	public static function setEncryption($pass_phrase, $cipher_method='aes-256-gcm')
-	{
-		if (! defined('PASS_PHRASE')) {
-			define('PASS_PHRASE', $pass_phrase);
-		}
-
-		if (! defined('CIPHER_METHOD')) {
-			define('CIPHER_METHOD', $cipher_method);
-		}
-
-		switch ($cipher_method) {
-			case 'aes-256-gcm':
-				return;
-			case 'aes-256-ctr':
-				return;
-			case 'aes-256-cbc':
-				return;
-			default:
-				self::apiResponse(500, "Encryption cipher method should either be 'aes-256-gcm', 'aes-256-ctr' or 'aes-256-cbc'.");
-		}
-	}
-
-	/**
 	 * Autoload Classes
 	 * 
 	 * @param array $classes - Array of folders to autoload classes
