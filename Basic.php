@@ -108,18 +108,21 @@ class Basic
 	}
 
 	/**
-	 * Handle HTTP API request call
+	 * HTTP API request call using cURL
 	 *
 	 * @param string $http_method - HTTP request method (e.g. 'GET', 'POST')
 	 * @param string $url         - URL of API endpoint
 	 * @param array $data         - Request body in array format
-	 * @param string $user_token  - Username or API token
-	 * @param string $password    - Password (no password for API token)
+	 * @param string $user_token  - Basic 'username:password' or Bearer token
+	 *
 	 * @return (int|string)[]     - HTTP response code and result of cURL execution
 	 */
 
-	public static function apiCall($http_method, $url, $data=NULL, $user_token=NULL, $password=NULL)
+	public static function apiCall($http_method, $url, $data=NULL, $user_token=NULL)
 	{
+		$auth_scheme = ( stristr($user_token, ':') ) ? 'Basic' : 'Bearer'; // Authorization scheme
+		$auth_cred = ( $auth_scheme === 'Basic' ) ? base64_encode($user_token) : $user_token; // Credentials
+
 		$ch = curl_init(); // Initialize cURL
 		$data_json = json_encode($data); // Convert data to JSON
 
@@ -128,11 +131,11 @@ class Basic
 		curl_setopt($ch, CURLOPT_CUSTOMREQUEST, $http_method);
 		curl_setopt($ch, CURLOPT_POSTFIELDS, $data_json);
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
-		curl_setopt($ch, CURLOPT_USERPWD, "$user_token:$password");
 		curl_setopt($ch, CURLOPT_HTTPHEADER,
 			array(
-			'Content-Type: text/plain', // Plain text string
-			'Content-Length: ' . strlen($data_json)
+				"Authorization: $auth_scheme $auth_cred",
+				'Content-Type: text/plain', // Plain text string
+				'Content-Length: ' . strlen($data_json)
 			)
 		);
 
