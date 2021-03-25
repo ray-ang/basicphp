@@ -13,7 +13,7 @@
  *          - include/require Basic.php.
  *
  * @package  BasicPHP
- * @version  v0.9.6
+ * @version  v0.9.7
  * @author   Raymund John Ang <raymund@open-nis.org>
  * @license  MIT License
  */
