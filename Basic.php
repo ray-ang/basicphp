@@ -389,7 +389,7 @@ class Basic
 		// Verify CSRF token
 		if ($verify_csrf_token === TRUE) {
 			define('VERIFY_CSRF_TOKEN', TRUE); // Used for Basic::csrfToken()
-			session_set_cookie_params(NULL, NULL, NULL, NULL, TRUE); // Httponly session cookie
+			session_set_cookie_params(NULL, NULL, NULL, TRUE, TRUE); // Secure and Httponly
 			session_start(); // Require sessions
 
 			if (isset($_POST['csrf-token']) && isset($_SESSION['csrf-token']) && ! hash_equals($_POST['csrf-token'], $_SESSION['csrf-token'])) {
