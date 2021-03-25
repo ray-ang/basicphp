@@ -10,6 +10,8 @@ define('DB_NAME', 'basicphp'); // Sample database name
 define('DB_USER', 'user'); // Sample database username
 define('DB_PASS', 'pass'); // Sample database password
 
+define('PASS_PHRASE', 'SecretPassPhrase123'); // Encryption passphrase
+
 /*
 |--------------------------------------------------------------------------
 | Load BasicPHP Class Library
@@ -29,9 +31,8 @@ Basic::setJsonBodyAsPOST(); // JSON as $_POST
 Basic::setFirewall(); // Enable firewall
 // Basic::setHttps(); // Require TLS/HTTPS
 
-Basic::setEncryption('SecretPassPhrase123'); // Encryption cipher method and pass phrase
-setcookie('token', Basic::encrypt('{"username":"user","role":"admin"}'), NULL, NULL, NULL, NULL, TRUE); // Sample token
-// var_dump(json_decode(Basic::decrypt($_COOKIE['token']), TRUE));
+setcookie('token', Basic::encrypt('{"username":"user","role":"admin"}', PASS_PHRASE), NULL, NULL, NULL, NULL, TRUE); // Sample token
+// var_dump(json_decode(Basic::decrypt($_COOKIE['token'], PASS_PHRASE), TRUE));
 
 Basic::setAutoloadClass(['classes', 'models', 'views', 'controllers']); // Autoload folders
 Basic::setHomePage('HomeController@index'); // Homepage

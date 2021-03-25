@@ -201,29 +201,28 @@ class Basic
 	/**
 	 * Encrypt data using AES GCM, CTR-HMAC or CBC-HMAC
 	 *
-	 * @param string $plaintext - Plaintext to be encrypted
-	 * @return string           - contains based64-encoded ciphertext
+	 * @param string $plaintext   - Plaintext to be encrypted
+	 * @param string $pass_phrase - Encryption passphrase
+	 * @param string $cipher      - Cipher method
+	 *
+	 * @return string             - Contains based64-encoded ciphertext
 	 */
 
-	public static function encrypt($plaintext)
+	public static function encrypt($plaintext, $pass_phrase, $cipher='aes-256-gcm')
 	{
-		// Require encryption middleware
-		if (! defined('PASS_PHRASE') || ! defined('CIPHER_METHOD')) {
-			self::apiResponse(500, 'Please activate Basic::setEncryption() middleware and set the pass phrase.');
-		}
+		if ($cipher !== 'aes-256-gcm' && $cipher !== 'aes-256-ctr' && $cipher !== 'aes-256-cbc') self::apiResponse(500, "Encryption cipher method should either be 'aes-256-gcm', 'aes-256-ctr' or 'aes-256-cbc'.");
 
 		// Encryption - Version 1
 		if (! function_exists('encrypt_v1')) {
 
-			function encrypt_v1($plaintext) {
+			function encrypt_v1($plaintext, $pass_phrase, $cipher) {
 
 				$version = 'enc-v1'; // Version
-				$cipher = CIPHER_METHOD; // Cipher method - GCM, CTR or CBC
 				$salt = random_bytes(16); // Salt
 				$iv = $salt; // Initialization Vector
 
 				// Derive keys
-				$masterKey = hash_pbkdf2('sha256', PASS_PHRASE, $salt, 10000); // Master key
+				$masterKey = hash_pbkdf2('sha256', $pass_phrase, $salt, 10000); // Master key
 				$encKey = hash_hkdf('sha256', $masterKey, 32, 'aes-256-encryption', $salt); // Encryption key
 				$hmacKey = hash_hkdf('sha256', $masterKey, 32, 'sha-256-authentication', $salt); // HMAC key
 
@@ -245,32 +244,30 @@ class Basic
 		}
 
 		/** Version-based encryption */
-		return encrypt_v1($plaintext); // Default encryption function
+		return encrypt_v1($plaintext, $pass_phrase, $cipher); // Default encryption function
 	}
 
 	/**
 	 * Decrypt data using AES GCM, CTR-HMAC or CBC-HMAC
 	 *
-	 * @param string $encrypted - contains base64-encoded ciphertext
-	 * @return string           - decrypted data
+	 * @param string $encrypted   - Contains base64-encoded ciphertext
+	 * @param string $pass_phrase - Encryption passphrase
+	 * @param string $cipher      - Cipher method
+	 *
+	 * @return string             - Decrypted data
 	 */
 
-	public static function decrypt($encrypted)
+	public static function decrypt($encrypted, $pass_phrase, $cipher='aes-256-gcm')
 	{
-		// Require encryption middleware
-		if (! defined('PASS_PHRASE') || ! defined('CIPHER_METHOD')) {
-			self::apiResponse(500, 'Please activate Basic::setEncryption() middleware and set the pass phrase.');
-		}
+		if ($cipher !== 'aes-256-gcm' && $cipher !== 'aes-256-ctr' && $cipher !== 'aes-256-cbc') self::apiResponse(500, "Encryption cipher method should either be 'aes-256-gcm', 'aes-256-ctr' or 'aes-256-cbc'.");
 
 		// Decryption - Version 1
 		if (! function_exists('decrypt_v1')) {
 
-			function decrypt_v1($encrypted) {
+			function decrypt_v1($encrypted, $pass_phrase, $cipher) {
 
 				// Return empty if $encrypted is not set or empty.
 				if (! isset($encrypted) || empty($encrypted)) { return ''; }
-
-				$cipher = CIPHER_METHOD; // Cipher method - GCM, CTR or CBC
 
 				if ($cipher === 'aes-256-gcm') {
 
@@ -282,7 +279,7 @@ class Basic
 					$iv = $salt; // Initialization Vector
 
 					// Derive keys
-					$masterKey = hash_pbkdf2('sha256', PASS_PHRASE, $salt, 10000); // Master key
+					$masterKey = hash_pbkdf2('sha256', $pass_phrase, $salt, 10000); // Master key
 					$encKey = hash_hkdf('sha256', $masterKey, 32, 'aes-256-encryption', $salt); // Encryption key
 					$hmacKey = hash_hkdf('sha256', $masterKey, 32, 'sha-256-authentication', $salt); // HMAC key
 
@@ -305,7 +302,7 @@ class Basic
 					$iv = $salt; // Initialization Vector
 
 					// Derive keys
-					$masterKey = hash_pbkdf2('sha256', PASS_PHRASE, $salt, 10000); // Master key
+					$masterKey = hash_pbkdf2('sha256', $pass_phrase, $salt, 10000); // Master key
 					$encKey = hash_hkdf('sha256', $masterKey, 32, 'aes-256-encryption', $salt); // Encryption key
 					$hmacKey = hash_hkdf('sha256', $masterKey, 32, 'sha-256-authentication', $salt); // HMAC key
 
@@ -330,7 +327,7 @@ class Basic
 		/** Version-based decryption */
 		switch ($version) {
 			case 'enc-v1':
-				return decrypt_v1($encrypted);
+				return decrypt_v1($encrypted, $pass_phrase, $cipher);
 				break;
 			default:
 				return $encrypted; // Return $encrypted if no encryption detected.
