@@ -356,7 +356,7 @@ class Basic
 		} elseif ($boolean === FALSE) {
 			error_reporting(0);
 		} else {
-			exit('Boolean parameter for Basic::setErrorReporting() can only be TRUE or FALSE.');
+			self::apiResponse(500, 'Boolean parameter for Basic::setErrorReporting() can only be TRUE or FALSE.');
 		}
 	}
 
