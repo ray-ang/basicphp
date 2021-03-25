@@ -31,7 +31,7 @@ Basic::setJsonBodyAsPOST(); // JSON as $_POST
 Basic::setFirewall(); // Enable firewall
 // Basic::setHttps(); // Require TLS/HTTPS
 
-setcookie('token', Basic::encrypt('{"username":"user","role":"admin"}', PASS_PHRASE), NULL, NULL, NULL, NULL, TRUE); // Sample token
+// setcookie('token', Basic::encrypt('{"username":"user","role":"admin"}', PASS_PHRASE), NULL, NULL, NULL, NULL, TRUE); // Sample token
 // var_dump(json_decode(Basic::decrypt($_COOKIE['token'], PASS_PHRASE), TRUE));
 
 Basic::setAutoloadClass(['classes', 'models', 'views', 'controllers']); // Autoload folders
