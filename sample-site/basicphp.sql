@@ -12,6 +12,6 @@ CREATE TABLE `posts` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 INSERT INTO `posts` (`post_id`, `post_title`, `post_content`) VALUES
-(1,	'First Title',	'Content\r\ncontent'),
-(2,	'Second Title',	'Content\r\n\r\ncontent'),
-(3,	'Third Title',	'Content\r\n\r\nContent');
+(1,	'First Title',	'First\r\nContent'),
+(2,	'Second Title',	'Second\r\nContent'),
+(3,	'Third Title',	'Third\r\nContent');

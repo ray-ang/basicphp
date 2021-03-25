@@ -1,6 +1,6 @@
 # BasicPHP
 
-[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=ray-ang_basicphp&metric=alert_status)](https://sonarcloud.io/dashboard?id=ray-ang_basicphp)
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=basicphp&metric=alert_status)](https://sonarcloud.io/dashboard?id=basicphp)
 
 A frameworkless class library for building web applications and application programming interfaces or API's. The aim of the project is for developers to build applications that are framework-independent using native PHP functions and API's.
 
