@@ -290,7 +290,7 @@ class Basic
 					$plaintext = openssl_decrypt($ciphertext, $cipher, $encKey, $options=0, $iv, $tag);
 
 					// GCM authentication
-					if ($plaintext) {
+					if ($plaintext !== FALSE) {
 						return $plaintext;
 					} else {
 						exit ('Please verify authenticity of ciphertext.');
