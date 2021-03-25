@@ -290,7 +290,7 @@ class Basic
 					$plaintext = openssl_decrypt($ciphertext, $cipher, $encKey, $options=0, $iv, $tag);
 
 					// GCM authentication
-					if ($plaintext !== FALSE) {
+					if ($plaintext) {
 						return $plaintext;
 					} else {
 						exit ('Please verify authenticity of ciphertext.');
@@ -490,8 +490,8 @@ class Basic
 
 	public static function setAutoRoute()
 	{
-		if (self::segment(1) !== FALSE) { $class = ucfirst(strtolower(self::segment(1))) . 'Controller'; }
-		if (self::segment(2) !== FALSE) { $method = strtolower(self::segment(2)); } else { $method = 'index'; }
+		if (self::segment(1)) { $class = ucfirst(strtolower(self::segment(1))) . 'Controller'; }
+		if (self::segment(2)) { $method = strtolower(self::segment(2)); } else { $method = 'index'; }
 
 		if (class_exists($class)) {
 			$object = new $class();
