@@ -192,7 +192,7 @@ class Basic
 
 	public static function csrfToken()
 	{
-		if (defined('VERIFY_CSRF_TOKEN') && VERIFY_CSRF_TOKEN === TRUE) {
+		if (defined('VERIFY_CSRF_TOKEN') && VERIFY_CSRF_TOKEN) {
 			$_SESSION['csrf-token'] = bin2hex(random_bytes(32));
 			return $_SESSION['csrf-token'];
 		}
