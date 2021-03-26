@@ -11,6 +11,7 @@ define('DB_USER', 'user'); // Sample database username
 define('DB_PASS', 'pass'); // Sample database password
 
 define('PASS_PHRASE', 'SecretPassPhrase123'); // Encryption passphrase
+define('AUTH_TOKEN', 'enc-v1.VWZUSXNEUVdQVmlPbnVVTVRDZkxibC9aM3YwT21raVhpdXRBNGZoR1dsUjllUT09.iJPEzvBUYueIhg0c8VD5Ag==.a1ycb+X3teBNAlAjQAQe/w=='); // Authorization Bearer token
 
 /*
 |--------------------------------------------------------------------------
@@ -150,7 +151,7 @@ Basic::route('POST', '/api/request', function() {
     $body = json_decode(file_get_contents("php://input"), TRUE);
 
     // Check Authorization Bearer token
-    if ( $_SERVER['HTTP_AUTHORIZATION'] !== 'Bearer enc-v1.VWZUSXNEUVdQVmlPbnVVTVRDZkxibC9aM3YwT21raVhpdXRBNGZoR1dsUjllUT09.iJPEzvBUYueIhg0c8VD5Ag==.a1ycb+X3teBNAlAjQAQe/w==' ) Basic::apiResponse(403, 'You do not have the right credentials.');
+    if ( $_SERVER['HTTP_AUTHORIZATION'] !== 'Bearer ' . AUTH_TOKEN ) Basic::apiResponse(403, 'You do not have the right credentials.');
 
     $data_output = array();
     foreach ($data as $row) {
