@@ -45,7 +45,7 @@ Basic::setAutoRoute(); // Automatic '/class/method' routing
 |--------------------------------------------------------------------------
 */
 
-Basic::route('POST', '/jsonrpc', function() {
+Basic::route('ANY', '/jsonrpc', function() {
     Basic::setJsonRpc(); // JSON-RPC endpoint
 });
 

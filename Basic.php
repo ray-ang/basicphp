@@ -520,9 +520,13 @@ class Basic
 
 		header('Content-Type: application/json'); // Set content type as JSON
 
-		if (! $body) exit(json_encode(['jsonrpc' => '2.0', 'error' => ['code' => -32700, 'message' => "Request should have a request body."]])); // Require request body
+		if ( $_SERVER['REQUEST_METHOD'] !== 'GET' && $_SERVER['REQUEST_METHOD'] !== 'POST' ) exit(json_encode(['jsonrpc' => '2.0', 'error' => ['code' => -32601, 'message' => 'Only GET and POST methods allowed.']])); // Only GET and POST
 
-		if ($body && ! $array) exit(json_encode(['jsonrpc' => '2.0', 'error' => ['code' => -32700, 'message' => "Provide request body data in valid JSON format."]])); // Require valid JSON
+		if ( $_SERVER['HTTP_CONTENT_TYPE'] !== 'application/json' ) exit(json_encode(['jsonrpc' => '2.0', 'error' => ['code' => -32700, 'message' => "Request content type should be 'application/json'."]])); // Accept only JSON request content type
+
+		if (! $body) exit(json_encode(['jsonrpc' => '2.0', 'error' => ['code' => -32700, 'message' => 'Request should have a request body.']])); // Require request body
+
+		if ($body && ! $array) exit(json_encode(['jsonrpc' => '2.0', 'error' => ['code' => -32700, 'message' => 'Provide request body data in valid JSON format.']])); // Require valid JSON
 
 		if (! isset($array['jsonrpc']) || $array['jsonrpc'] !== '2.0') exit(json_encode(['jsonrpc' => '2.0', 'error' => ['code' => -32600, 'message' => "JSON-RPC 'version' member should be set, and assigned a value of '2.0'."]])); // JSON-RPC (version) member
 
@@ -540,10 +544,10 @@ class Basic
 				$object->$method();
 				exit;
 			} else {
-				exit(json_encode(['jsonrpc' => '2.0', 'error' => ['code' => -32601, 'message' => "Method not found."], 'id' => $array['id']]));
+				exit(json_encode(['jsonrpc' => '2.0', 'error' => ['code' => -32601, 'message' => 'Method not found.'], 'id' => $array['id']]));
 			}
 		} else {
-			exit(json_encode(['jsonrpc' => '2.0', 'error' => ['code' => -32601, 'message' => "Class not found."], 'id' => $array['id']]));
+			exit(json_encode(['jsonrpc' => '2.0', 'error' => ['code' => -32601, 'message' => 'Class not found.'], 'id' => $array['id']]));
 		}
 	}
 
