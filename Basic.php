@@ -234,13 +234,13 @@ class Basic
 				if ($cipher === 'aes-256-gcm') {
 
 					$ciphertext = openssl_encrypt($plaintext, $cipher, $encKey, $options=0, $iv, $tag);
-					return $version . '::' . base64_encode($ciphertext) . '::' . base64_encode($tag) . '::' . base64_encode($salt);
+					return $version . '.' . base64_encode($ciphertext) . '.' . base64_encode($tag) . '.' . base64_encode($salt);
 
 				} else {
 
 					$ciphertext = openssl_encrypt($plaintext, $cipher, $encKey, $options=0, $iv);
 					$hash = hash_hmac('sha256', $ciphertext, $hmacKey);
-					return $version . '::' . base64_encode($ciphertext) . '::' . base64_encode($hash) . '::' . base64_encode($salt);
+					return $version . '.' . base64_encode($ciphertext) . '.' . base64_encode($hash) . '.' . base64_encode($salt);
 
 				}
 
@@ -278,7 +278,7 @@ class Basic
 
 				if ($cipher === 'aes-256-gcm') {
 
-					list($version, $ciphertext, $tag, $salt) = explode('::', $encrypted);
+					list($version, $ciphertext, $tag, $salt) = explode('.', $encrypted);
 					$ciphertext = base64_decode($ciphertext);
 					$tag = base64_decode($tag);
 					$salt = base64_decode($salt);
@@ -301,7 +301,7 @@ class Basic
 
 				} else {
 
-					list($version, $ciphertext, $hash, $salt) = explode('::', $encrypted);
+					list($version, $ciphertext, $hash, $salt) = explode('.', $encrypted);
 					$ciphertext = base64_decode($ciphertext);
 					$hash = base64_decode($hash);
 					$salt = base64_decode($salt);
@@ -329,7 +329,7 @@ class Basic
 
 		}
 
-		$version = explode('::', $encrypted)[0]; // Retrieve encryption version
+		$version = explode('.', $encrypted)[0]; // Retrieve encryption version
 
 		/** Version-based decryption */
 		switch ($version) {

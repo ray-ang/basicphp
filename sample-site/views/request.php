@@ -7,7 +7,7 @@ require_once 'template/menu.php';
     <div class="row">
         <div class="col-md text-center">
             <form class="form-horizontal" method="post">
-                <p><input type="text" name="patient-name" placeholder="Patient Name" value="" class="form-control" required /></p>
+                <p><input type="text" name="patient-name" placeholder="Name" value="" class="form-control" required /></p>
                 <p><button type="submit" name="search-patient" class="btn btn-primary">Search</button></p>
             </form>
         </div>
@@ -18,14 +18,14 @@ require_once 'template/menu.php';
         <div class="col-md">
             <?php
             if (isset($_POST['search-patient'])) {
-                // Execute if patient name contains search string
+                // Execute if name contains search string
                 if ($output['code'] == 200) {
-                    echo '<h3>List of Patients</h3>';
+                    echo '<h3>List of Names and Ages</h3>';
                     echo '<ol>';
 
                     $data = json_decode($output['data'], TRUE);
                     foreach ($data as $row) {
-                        echo "<li>The patient's name is " . $row['name'] . ', and his age is ' . $row['age'] . '.<br/></li>';
+                        echo "<li>The person's name is " . $row['name'] . ', and the age is ' . $row['age'] . '.<br/></li>';
                     }
 
                     echo '</ol>';
