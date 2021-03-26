@@ -173,4 +173,4 @@ Basic::route('POST', '/api/request', function() {
 |--------------------------------------------------------------------------
 */
 
-Basic::apiResponse(404, 'Page could not be found.'); // Not Found
+Basic::apiResponse(404, 'Page could not be found.', 'text/html'); // Not Found
