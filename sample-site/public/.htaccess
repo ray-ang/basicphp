@@ -12,3 +12,7 @@ RewriteRule ^(.+)$ index.php/$1 [QSA,L]
 # Allow HTTP Authorization Bearer
 RewriteCond %{HTTP:Authorization} ^(.*)
 RewriteRule .* - [e=HTTP_AUTHORIZATION:%1]
+
+# Allow HTTP Content Type
+RewriteCond %{HTTP:Content-Type} ^(.*)
+RewriteRule .* - [e=HTTP_CONTENT_TYPE:%1]
