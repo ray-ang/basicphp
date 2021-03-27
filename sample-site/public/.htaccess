@@ -3,16 +3,14 @@ RewriteEngine On
 # Comment out RewriteBase if public folder is DocumentRoot
 RewriteBase /basicphp/sample-site/public/
 
-RewriteCond %{REQUEST_FILENAME} !-d
 RewriteCond %{REQUEST_FILENAME} !-f
-RewriteCond %{REQUEST_FILENAME} !-l
-
+RewriteCond %{REQUEST_FILENAME} !-d
 RewriteRule ^(.+)$ index.php/$1 [QSA,L]
 
 # Allow HTTP Authorization Bearer
 RewriteCond %{HTTP:Authorization} ^(.*)
-RewriteRule .* - [e=HTTP_AUTHORIZATION:%1]
+RewriteRule .* - [E=HTTP_AUTHORIZATION:%1]
 
 # Allow HTTP Content Type
 RewriteCond %{HTTP:Content-Type} ^(.*)
-RewriteRule .* - [e=HTTP_CONTENT_TYPE:%1]
+RewriteRule .* - [E=HTTP_CONTENT_TYPE:%1]
