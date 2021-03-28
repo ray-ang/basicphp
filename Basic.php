@@ -222,7 +222,7 @@ class Basic
 
 			function encrypt_v1($plaintext, $pass_phrase, $cipher) {
 
-				$version = 'enc-v1'; // Version
+				$version = 'encv1'; // Version
 				$salt = random_bytes(16); // Salt
 				$iv = $salt; // Initialization Vector
 
@@ -333,7 +333,7 @@ class Basic
 
 		/** Version-based decryption */
 		switch ($version) {
-			case 'enc-v1':
+			case 'encv1':
 				return decrypt_v1($encrypted, $pass_phrase, $cipher);
 				break;
 			default:
