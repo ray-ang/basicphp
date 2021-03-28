@@ -213,7 +213,7 @@ class Basic
 
 	public static function encrypt($plaintext, $pass_phrase=NULL, $cipher='aes-256-gcm')
 	{
-		if (! isset($pass_phrase)) self::apiResponse(500, 'Set passphrase as a constant.'); 
+		if (! isset($pass_phrase)) self::apiResponse(500, 'Set passphrase as a constant.');
 
 		if ($cipher !== 'aes-256-gcm' && $cipher !== 'aes-256-ctr' && $cipher !== 'aes-256-cbc') self::apiResponse(500, "Encryption cipher method should either be 'aes-256-gcm', 'aes-256-ctr' or 'aes-256-cbc'.");
 
@@ -249,7 +249,8 @@ class Basic
 		}
 
 		/** Version-based encryption */
-		return encrypt_v1($plaintext, $pass_phrase, $cipher); // Default encryption function
+		if ( substr( ltrim($plaintext), 0, 5 ) !== 'encv1' ) return encrypt_v1($plaintext, $pass_phrase, $cipher);
+		return $plaintext;
 	}
 
 	/**
@@ -272,9 +273,6 @@ class Basic
 		if (! function_exists('decrypt_v1')) {
 
 			function decrypt_v1($encrypted, $pass_phrase, $cipher) {
-
-				// Return empty if $encrypted is not set or empty.
-				if (! isset($encrypted) || empty($encrypted)) { return ''; }
 
 				if ($cipher === 'aes-256-gcm') {
 
@@ -329,16 +327,10 @@ class Basic
 
 		}
 
-		$version = explode('.', $encrypted)[0]; // Retrieve encryption version
-
 		/** Version-based decryption */
-		switch ($version) {
-			case 'encv1':
-				return decrypt_v1($encrypted, $pass_phrase, $cipher);
-				break;
-			default:
-				return $encrypted; // Return $encrypted if no encryption detected.
-		}
+		if ( substr( ltrim($encrypted), 0, 5 ) === 'encv1' ) return decrypt_v1($encrypted, $pass_phrase, $cipher);
+		if (! isset($encrypted) || empty($encrypted)) { return ''; } // Return empty if $encrypted is not set or empty.
+		return $encrypted;
 	}
 
 	/*
