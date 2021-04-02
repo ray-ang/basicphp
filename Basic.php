@@ -228,6 +228,10 @@ class Basic
 
 				if ( filter_var($pass_phrase, FILTER_VALIDATE_URL) ) {
 					$api = $pass_phrase . '?action=encrypt';
+					$response = Basic::apiCall('POST', $api, ['key' => $pass_phrase]);
+
+					if ($response['code'] !== 200) Basic::apiResponse($response['code']);
+					
 					$pass_phrase = bin2hex( random_bytes(32) );
 				}
 
@@ -303,6 +307,9 @@ class Basic
 
 					if ( filter_var($pass_phrase, FILTER_VALIDATE_URL) ) {
 						$api = $pass_phrase . '?action=decrypt';
+						$response = Basic::apiCall('POST', $api, ['key' => $pass_phrase]);
+
+						if ($response['code'] !== 200) Basic::apiResponse($response['code']);
 
 						list($version, $ciphertext, $tag, $salt, $version_kek, $ciphertext_kek, $tag_kek, $salt_kek) = explode('.', $encrypted);
 
