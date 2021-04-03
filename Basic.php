@@ -232,7 +232,7 @@ class Basic
 
 					if ($response['code'] !== 200) Basic::apiResponse($response['code']);
 					
-					$pass_phrase = bin2hex( random_bytes(32) );
+					$pass_phrase = bin2hex( random_bytes(32) ); // Data encryption key
 				}
 
 				// Derive keys
@@ -245,12 +245,12 @@ class Basic
 					$ciphertext = openssl_encrypt($plaintext, $cipher, $encKey, $options=0, $iv, $tag);
 					$encrypted = $version . '.' . base64_encode($ciphertext) . '.' . base64_encode($tag) . '.' . base64_encode($salt);
 
-					if ( isset($api) ) {
+					if ( isset($api) && $response['code'] === 200 ) {
 						$response = Basic::apiCall('POST', $api, ['key' => $pass_phrase]);
-						$kek = json_decode($response['data'], TRUE);
-						$kek = $kek['key'];
+						$data = json_decode($response['data'], TRUE);
+						$dek_token = $data['key']; // Encrypted passphrase token
 
-						return str_replace('=', '', $encrypted . '.' . $kek); // Strip off '='
+						return str_replace('=', '', $encrypted . '.' . $dek_token); // Strip off '='
 					} else {
 						return str_replace('=', '', $encrypted); // Strip off '='
 					}
@@ -261,12 +261,12 @@ class Basic
 					$hash = hash_hmac('sha256', $ciphertext, $hmacKey);
 					$encrypted = $version . '.' . base64_encode($ciphertext) . '.' . base64_encode($hash) . '.' . base64_encode($salt);
 
-					if ( isset($api) ) {
+					if ( isset($api) && $response['code'] === 200 ) {
 						$response = Basic::apiCall('POST', $api, ['key' => $pass_phrase]);
-						$kek = json_decode($response['data'], TRUE);
-						$kek = $kek['key'];
+						$data = json_decode($response['data'], TRUE);
+						$dek_token = $data['key'];
 
-						return str_replace('=', '', $encrypted . '.' . $kek); // Strip off '='
+						return str_replace('=', '', $encrypted . '.' . $dek_token); // Strip off '='
 					} else {
 						return str_replace('=', '', $encrypted); // Strip off '='
 					}
@@ -311,7 +311,7 @@ class Basic
 
 						if ($response['code'] !== 200) Basic::apiResponse($response['code']);
 
-						list($version, $ciphertext, $tag, $salt, $version_kek, $ciphertext_kek, $tag_kek, $salt_kek) = explode('.', $encrypted);
+						list($version, $ciphertext, $tag, $salt, $version_dek, $ciphertext_dek, $tag_dek, $salt_dek) = explode('.', $encrypted);
 
 						$ciphertext = base64_decode($ciphertext);
 						$tag = base64_decode($tag);
@@ -326,10 +326,10 @@ class Basic
 						$iv = $salt; // Initialization Vector
 					}
 
-					if ( isset($api) ) {
-						$response = Basic::apiCall('POST', $api, ['key' => $version_kek . '.' . $ciphertext_kek . '.' . $tag_kek . '.' . $salt_kek]);
-						$kek = json_decode($response['data'], TRUE);
-						$pass_phrase = $kek['key'];
+					if ( isset($api) && $response['code'] === 200 ) {
+						$response = Basic::apiCall('POST', $api, ['key' => $version_dek . '.' . $ciphertext_dek . '.' . $tag_dek . '.' . $salt_dek]);
+						$data = json_decode($response['data'], TRUE);
+						$pass_phrase = $data['key']; // Decrypted passphrase
 					}
 
 					// Derive keys
@@ -348,12 +348,32 @@ class Basic
 
 				} else {
 
-					list($version, $ciphertext, $hash, $salt) = explode('.', $encrypted);
-					$ciphertext = base64_decode($ciphertext);
-					$hash = base64_decode($hash);
-					$salt = base64_decode($salt);
+					if ( filter_var($pass_phrase, FILTER_VALIDATE_URL) ) {
+						$api = $pass_phrase . '?action=decrypt';
+						$response = Basic::apiCall('POST', $api, ['key' => $pass_phrase]);
 
-					$iv = $salt; // Initialization Vector
+						if ($response['code'] !== 200) Basic::apiResponse($response['code']);
+
+						list($version, $ciphertext, $hash, $salt, $version_dek, $ciphertext_dek, $hash_dek, $salt_dek) = explode('.', $encrypted);
+
+						$ciphertext = base64_decode($ciphertext);
+						$hash = base64_decode($hash);
+						$salt = base64_decode($salt);
+						$iv = $salt; // Initialization Vector
+					} else {
+						list($version, $ciphertext, $hash, $salt) = explode('.', $encrypted);
+
+						$ciphertext = base64_decode($ciphertext);
+						$hash = base64_decode($hash);
+						$salt = base64_decode($salt);
+						$iv = $salt; // Initialization Vector
+					}
+
+					if ( isset($api) && $response['code'] === 200 ) {
+						$response = Basic::apiCall('POST', $api, ['key' => $version_dek . '.' . $ciphertext_dek . '.' . $hash_dek . '.' . $salt_dek]);
+						$data = json_decode($response['data'], TRUE);
+						$pass_phrase = $data['key']; // Decrypted passphrase
+					}
 
 					// Derive keys
 					$masterKey = hash_pbkdf2('sha256', $pass_phrase, $salt, 10000); // Master key
