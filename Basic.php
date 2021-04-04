@@ -206,12 +206,13 @@ class Basic
 	 *
 	 * @param string $plaintext   - Plaintext to be encrypted
 	 * @param string $pass_phrase - Passphrase or encryption API URL
+	 * @param string $header      - Encryption token version or JWE header
 	 * @param string $cipher      - Cipher method
 	 *
 	 * @return string             - Encryption token with base64-encoded ciphertext
 	 */
 
-	public static function encrypt($plaintext=NULL, $pass_phrase=NULL, $cipher='aes-256-gcm')
+	public static function encrypt($plaintext=NULL, $pass_phrase=NULL, $header='encv1', $cipher='aes-256-gcm')
 	{
 		if (! isset($plaintext)) self::apiResponse(500, 'Set plaintext for encryption.');
 		if (! isset($pass_phrase)) self::apiResponse(500, 'Set passphrase as a constant.');
@@ -221,9 +222,8 @@ class Basic
 		// Encryption - Version 1
 		if (! function_exists('encrypt_v1')) {
 
-			function encrypt_v1($plaintext, $pass_phrase, $cipher) {
+			function encrypt_v1($plaintext, $pass_phrase, $header, $cipher) {
 
-				$version = 'encv1'; // Version
 				$salt = random_bytes(16); // Salt
 				$iv = $salt; // Initialization Vector
 
@@ -244,7 +244,7 @@ class Basic
 				if ($cipher === 'aes-256-gcm' || $cipher === 'aes-128-gcm') {
 
 					$ciphertext = openssl_encrypt($plaintext, $cipher, $encKey, $options=0, $iv, $tag);
-					$encrypted = $version . '.' . base64_encode($ciphertext) . '.' . base64_encode($tag) . '.' . base64_encode($salt);
+					$encrypted = $header . '.' . base64_encode($ciphertext) . '.' . base64_encode($tag) . '.' . base64_encode($salt);
 
 					if ( isset($api) && $response['code'] === 200 ) {
 						$response = Basic::apiCall('POST', $api, ['key' => $pass_phrase]);
@@ -260,7 +260,7 @@ class Basic
 
 					$ciphertext = openssl_encrypt($plaintext, $cipher, $encKey, $options=0, $iv);
 					$hash = hash_hmac('sha256', $ciphertext, $hmacKey);
-					$encrypted = $version . '.' . base64_encode($ciphertext) . '.' . base64_encode($hash) . '.' . base64_encode($salt);
+					$encrypted = $header . '.' . base64_encode($ciphertext) . '.' . base64_encode($hash) . '.' . base64_encode($salt);
 
 					if ( isset($api) && $response['code'] === 200 ) {
 						$response = Basic::apiCall('POST', $api, ['key' => $pass_phrase]);
@@ -279,7 +279,7 @@ class Basic
 		}
 
 		/** Version-based encryption */
-		if ( substr( ltrim($plaintext), 0, 5 ) !== 'encv1' ) return encrypt_v1($plaintext, $pass_phrase, $cipher);
+		if ( substr( ltrim($plaintext), 0, 5 ) !== $header ) return encrypt_v1($plaintext, $pass_phrase, $header, $cipher);
 		return $plaintext;
 	}
 
@@ -288,12 +288,13 @@ class Basic
 	 *
 	 * @param string $encrypted   - Encryption token with base64-encoded ciphertext
 	 * @param string $pass_phrase - Passphrase or encryption API URL
+	 * @param string $header      - Encryption token version or JWE header
 	 * @param string $cipher      - Cipher method
 	 *
 	 * @return string             - Decrypted plaintext
 	 */
 
-	public static function decrypt($encrypted=NULL, $pass_phrase=NULL, $cipher='aes-256-gcm')
+	public static function decrypt($encrypted=NULL, $pass_phrase=NULL, $header='encv1', $cipher='aes-256-gcm')
 	{
 		if (! isset($encrypted)) self::apiResponse(500, 'Set encryption token for decryption.');
 		if (! isset($pass_phrase)) self::apiResponse(500, 'Set passphrase as a constant.');
@@ -303,7 +304,7 @@ class Basic
 		// Decryption - Version 1
 		if (! function_exists('decrypt_v1')) {
 
-			function decrypt_v1($encrypted, $pass_phrase, $cipher) {
+			function decrypt_v1($encrypted, $pass_phrase, $header, $cipher) {
 
 				if ($cipher === 'aes-256-gcm' || $cipher === 'aes-128-gcm') {
 
@@ -313,14 +314,14 @@ class Basic
 
 						if ($response['code'] !== 200) Basic::apiResponse($response['code']);
 
-						list($version, $ciphertext, $tag, $salt, $version_dek, $ciphertext_dek, $tag_dek, $salt_dek) = explode('.', $encrypted);
+						list($header, $ciphertext, $tag, $salt, $header_dek, $ciphertext_dek, $tag_dek, $salt_dek) = explode('.', $encrypted);
 
 						$ciphertext = base64_decode($ciphertext);
 						$tag = base64_decode($tag);
 						$salt = base64_decode($salt);
 						$iv = $salt; // Initialization Vector
 					} else {
-						list($version, $ciphertext, $tag, $salt) = explode('.', $encrypted);
+						list($header, $ciphertext, $tag, $salt) = explode('.', $encrypted);
 
 						$ciphertext = base64_decode($ciphertext);
 						$tag = base64_decode($tag);
@@ -329,7 +330,7 @@ class Basic
 					}
 
 					if ( isset($api) && $response['code'] === 200 ) {
-						$response = Basic::apiCall('POST', $api, ['key' => $version_dek . '.' . $ciphertext_dek . '.' . $tag_dek . '.' . $salt_dek]);
+						$response = Basic::apiCall('POST', $api, ['key' => $header_dek . '.' . $ciphertext_dek . '.' . $tag_dek . '.' . $salt_dek]);
 						$data = json_decode($response['data'], TRUE);
 						$pass_phrase = $data['key']; // Decrypted passphrase
 					}
@@ -356,14 +357,14 @@ class Basic
 
 						if ($response['code'] !== 200) Basic::apiResponse($response['code']);
 
-						list($version, $ciphertext, $hash, $salt, $version_dek, $ciphertext_dek, $hash_dek, $salt_dek) = explode('.', $encrypted);
+						list($header, $ciphertext, $hash, $salt, $header_dek, $ciphertext_dek, $hash_dek, $salt_dek) = explode('.', $encrypted);
 
 						$ciphertext = base64_decode($ciphertext);
 						$hash = base64_decode($hash);
 						$salt = base64_decode($salt);
 						$iv = $salt; // Initialization Vector
 					} else {
-						list($version, $ciphertext, $hash, $salt) = explode('.', $encrypted);
+						list($header, $ciphertext, $hash, $salt) = explode('.', $encrypted);
 
 						$ciphertext = base64_decode($ciphertext);
 						$hash = base64_decode($hash);
@@ -372,7 +373,7 @@ class Basic
 					}
 
 					if ( isset($api) && $response['code'] === 200 ) {
-						$response = Basic::apiCall('POST', $api, ['key' => $version_dek . '.' . $ciphertext_dek . '.' . $hash_dek . '.' . $salt_dek]);
+						$response = Basic::apiCall('POST', $api, ['key' => $header_dek . '.' . $ciphertext_dek . '.' . $hash_dek . '.' . $salt_dek]);
 						$data = json_decode($response['data'], TRUE);
 						$pass_phrase = $data['key']; // Decrypted passphrase
 					}
@@ -399,7 +400,7 @@ class Basic
 		}
 
 		/** Version-based decryption */
-		if ( substr( ltrim($encrypted), 0, 5 ) === 'encv1' ) return decrypt_v1($encrypted, $pass_phrase, $cipher);
+		if ( substr( ltrim($encrypted), 0, 5 ) === $header ) return decrypt_v1($encrypted, $pass_phrase, $header, $cipher);
 		if (! isset($encrypted) || empty($encrypted)) { return ''; } // Return empty if $encrypted is not set or empty.
 		return $encrypted;
 	}
