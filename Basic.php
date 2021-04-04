@@ -208,11 +208,12 @@ class Basic
 	 * @param string $pass_phrase - Passphrase or encryption API URL
 	 * @param string $header      - Encryption token version or JWE header
 	 * @param string $cipher      - Cipher method
+	 * @param string $hmac_algo   - HMAC algorithm
 	 *
 	 * @return string             - Encryption token with base64-encoded ciphertext
 	 */
 
-	public static function encrypt($plaintext=NULL, $pass_phrase=NULL, $header='encv1', $cipher='aes-256-gcm')
+	public static function encrypt($plaintext=NULL, $pass_phrase=NULL, $header='encv1', $cipher='aes-256-gcm', $hmac_algo='sha512')
 	{
 		if (! isset($plaintext)) self::apiResponse(500, 'Set plaintext for encryption.');
 		if (! isset($pass_phrase)) self::apiResponse(500, 'Set passphrase as a constant.');
@@ -222,7 +223,7 @@ class Basic
 		// Encryption - Version 1
 		if (! function_exists('encrypt_v1')) {
 
-			function encrypt_v1($plaintext, $pass_phrase, $header, $cipher) {
+			function encrypt_v1($plaintext, $pass_phrase, $header, $cipher, $hmac_algo) {
 
 				$salt = random_bytes(16); // Salt
 				$iv = $salt; // Initialization Vector
@@ -259,7 +260,7 @@ class Basic
 				} else {
 
 					$ciphertext = openssl_encrypt($plaintext, $cipher, $encKey, $options=0, $iv);
-					$hash = hash_hmac('sha256', $ciphertext, $hmacKey);
+					$hash = hash_hmac($hmac_algo, $ciphertext, $hmacKey);
 					$encrypted = $header . '.' . base64_encode($ciphertext) . '.' . base64_encode($hash) . '.' . base64_encode($salt);
 
 					if ( isset($api) && $response['code'] === 200 ) {
@@ -279,7 +280,7 @@ class Basic
 		}
 
 		/** Version-based encryption */
-		if ( substr( ltrim($plaintext), 0, 5 ) !== $header ) return encrypt_v1($plaintext, $pass_phrase, $header, $cipher);
+		if ( substr( ltrim($plaintext), 0, 5 ) !== $header ) return encrypt_v1($plaintext, $pass_phrase, $header, $cipher, $hmac_algo);
 		return $plaintext;
 	}
 
@@ -290,11 +291,12 @@ class Basic
 	 * @param string $pass_phrase - Passphrase or encryption API URL
 	 * @param string $header      - Encryption token version or JWE header
 	 * @param string $cipher      - Cipher method
+	 * @param string $hmac_algo   - HMAC algorithm
 	 *
 	 * @return string             - Decrypted plaintext
 	 */
 
-	public static function decrypt($encrypted=NULL, $pass_phrase=NULL, $header='encv1', $cipher='aes-256-gcm')
+	public static function decrypt($encrypted=NULL, $pass_phrase=NULL, $header='encv1', $cipher='aes-256-gcm', $hmac_algo='sha512')
 	{
 		if (! isset($encrypted)) self::apiResponse(500, 'Set encryption token for decryption.');
 		if (! isset($pass_phrase)) self::apiResponse(500, 'Set passphrase as a constant.');
@@ -304,7 +306,7 @@ class Basic
 		// Decryption - Version 1
 		if (! function_exists('decrypt_v1')) {
 
-			function decrypt_v1($encrypted, $pass_phrase, $header, $cipher) {
+			function decrypt_v1($encrypted, $pass_phrase, $header, $cipher, $hmac_algo) {
 
 				if ($cipher === 'aes-256-gcm' || $cipher === 'aes-128-gcm') {
 
@@ -383,7 +385,7 @@ class Basic
 					$encKey = hash_hkdf('sha256', $masterKey, 32, 'aes-256-encryption', $salt); // Encryption key
 					$hmacKey = hash_hkdf('sha256', $masterKey, 32, 'sha-256-authentication', $salt); // HMAC key
 
-					$digest = hash_hmac('sha256', $ciphertext, $hmacKey);
+					$digest = hash_hmac($hmac_algo, $ciphertext, $hmacKey);
 
 					// HMAC authentication
 					if  ( hash_equals($hash, $digest) ) {
@@ -400,7 +402,7 @@ class Basic
 		}
 
 		/** Version-based decryption */
-		if ( substr( ltrim($encrypted), 0, 5 ) === $header ) return decrypt_v1($encrypted, $pass_phrase, $header, $cipher);
+		if ( substr( ltrim($encrypted), 0, 5 ) === $header ) return decrypt_v1($encrypted, $pass_phrase, $header, $cipher, $hmac_algo);
 		if (! isset($encrypted) || empty($encrypted)) { return ''; } // Return empty if $encrypted is not set or empty.
 		return $encrypted;
 	}
