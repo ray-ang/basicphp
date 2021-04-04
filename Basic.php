@@ -215,7 +215,7 @@ class Basic
 	{
 		if (! isset($pass_phrase)) self::apiResponse(500, 'Set passphrase as a constant.');
 
-		if ($cipher !== 'aes-256-gcm' && $cipher !== 'aes-256-ctr' && $cipher !== 'aes-256-cbc') self::apiResponse(500, "Encryption cipher method should either be 'aes-256-gcm', 'aes-256-ctr' or 'aes-256-cbc'.");
+		if ($cipher !== 'aes-256-gcm' && $cipher !== 'aes-256-ctr' && $cipher !== 'aes-256-cbc' && $cipher !== 'aes-128-gcm' && $cipher !== 'aes-128-ctr' && $cipher !== 'aes-128-cbc') self::apiResponse(500, "Encryption cipher method should either be 'aes-256-gcm', 'aes-256-ctr', 'aes-256-cbc', 'aes-128-gcm', 'aes-128-ctr' or 'aes-128-cbc'.");
 
 		// Encryption - Version 1
 		if (! function_exists('encrypt_v1')) {
@@ -240,7 +240,7 @@ class Basic
 				$encKey = hash_hkdf('sha256', $masterKey, 32, 'aes-256-encryption', $salt); // Encryption key
 				$hmacKey = hash_hkdf('sha256', $masterKey, 32, 'sha-256-authentication', $salt); // HMAC key
 
-				if ($cipher === 'aes-256-gcm') {
+				if ($cipher === 'aes-256-gcm' || $cipher === 'aes-128-gcm') {
 
 					$ciphertext = openssl_encrypt($plaintext, $cipher, $encKey, $options=0, $iv, $tag);
 					$encrypted = $version . '.' . base64_encode($ciphertext) . '.' . base64_encode($tag) . '.' . base64_encode($salt);
@@ -296,14 +296,14 @@ class Basic
 	{
 		if (! isset($pass_phrase)) self::apiResponse(500, 'Set passphrase as a constant.');
 
-		if ($cipher !== 'aes-256-gcm' && $cipher !== 'aes-256-ctr' && $cipher !== 'aes-256-cbc') self::apiResponse(500, "Encryption cipher method should either be 'aes-256-gcm', 'aes-256-ctr' or 'aes-256-cbc'.");
+		if ($cipher !== 'aes-256-gcm' && $cipher !== 'aes-256-ctr' && $cipher !== 'aes-256-cbc' && $cipher !== 'aes-128-gcm' && $cipher !== 'aes-128-ctr' && $cipher !== 'aes-128-cbc') self::apiResponse(500, "Encryption cipher method should either be 'aes-256-gcm', 'aes-256-ctr', 'aes-256-cbc', 'aes-128-gcm', 'aes-128-ctr' or 'aes-128-cbc'.");
 
 		// Decryption - Version 1
 		if (! function_exists('decrypt_v1')) {
 
 			function decrypt_v1($encrypted, $pass_phrase, $cipher) {
 
-				if ($cipher === 'aes-256-gcm') {
+				if ($cipher === 'aes-256-gcm' || $cipher === 'aes-128-gcm') {
 
 					if ( filter_var($pass_phrase, FILTER_VALIDATE_URL) ) {
 						$api = $pass_phrase . '?action=decrypt';
