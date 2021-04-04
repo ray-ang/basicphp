@@ -225,7 +225,7 @@ class Basic
 
 			function encrypt_v1($plaintext, $pass_phrase, $header, $cipher, $hmac_algo) {
 
-				$salt = random_bytes(16); // Salt
+				$salt = random_bytes( openssl_cipher_iv_length($cipher) ); // Salt
 				$iv = $salt; // Initialization Vector
 
 				if ( filter_var($pass_phrase, FILTER_VALIDATE_URL) ) {
