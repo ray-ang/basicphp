@@ -208,11 +208,12 @@ class Basic
 	 * @param string $pass_phrase - Passphrase or encryption API URL
 	 * @param string $cipher      - Cipher method
 	 *
-	 * @return string             - Contains based64-encoded ciphertext
+	 * @return string             - Encryption token with base64-encoded ciphertext
 	 */
 
-	public static function encrypt($plaintext, $pass_phrase=NULL, $cipher='aes-256-gcm')
+	public static function encrypt($plaintext=NULL, $pass_phrase=NULL, $cipher='aes-256-gcm')
 	{
+		if (! isset($plaintext)) self::apiResponse(500, 'Set plaintext for encryption.');
 		if (! isset($pass_phrase)) self::apiResponse(500, 'Set passphrase as a constant.');
 
 		if ($cipher !== 'aes-256-gcm' && $cipher !== 'aes-256-ctr' && $cipher !== 'aes-256-cbc' && $cipher !== 'aes-128-gcm' && $cipher !== 'aes-128-ctr' && $cipher !== 'aes-128-cbc') self::apiResponse(500, "Encryption cipher method should either be 'aes-256-gcm', 'aes-256-ctr', 'aes-256-cbc', 'aes-128-gcm', 'aes-128-ctr' or 'aes-128-cbc'.");
@@ -285,15 +286,16 @@ class Basic
 	/**
 	 * Decrypt data using AES GCM, CTR-HMAC or CBC-HMAC
 	 *
-	 * @param string $encrypted   - Contains base64-encoded ciphertext
+	 * @param string $encrypted   - Encryption token with base64-encoded ciphertext
 	 * @param string $pass_phrase - Passphrase or encryption API URL
 	 * @param string $cipher      - Cipher method
 	 *
-	 * @return string             - Decrypted data
+	 * @return string             - Decrypted plaintext
 	 */
 
-	public static function decrypt($encrypted, $pass_phrase=NULL, $cipher='aes-256-gcm')
+	public static function decrypt($encrypted=NULL, $pass_phrase=NULL, $cipher='aes-256-gcm')
 	{
+		if (! isset($encrypted)) self::apiResponse(500, 'Set encryption token for decryption.');
 		if (! isset($pass_phrase)) self::apiResponse(500, 'Set passphrase as a constant.');
 
 		if ($cipher !== 'aes-256-gcm' && $cipher !== 'aes-256-ctr' && $cipher !== 'aes-256-cbc' && $cipher !== 'aes-128-gcm' && $cipher !== 'aes-128-ctr' && $cipher !== 'aes-128-cbc') self::apiResponse(500, "Encryption cipher method should either be 'aes-256-gcm', 'aes-256-ctr', 'aes-256-cbc', 'aes-128-gcm', 'aes-128-ctr' or 'aes-128-cbc'.");
