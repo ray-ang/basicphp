@@ -225,8 +225,8 @@ class Basic
 
 			function encrypt_v1($plaintext, $pass_phrase, $header, $cipher, $hmac_algo) {
 
-				$salt = random_bytes( openssl_cipher_iv_length($cipher) ); // Salt
-				$iv = $salt; // Initialization Vector
+				$iv = random_bytes( openssl_cipher_iv_length($cipher) ); // Initialization Vector
+				$salt = $iv; // Salt
 
 				if ( filter_var($pass_phrase, FILTER_VALIDATE_URL) ) {
 					$api = $pass_phrase . '?action=encrypt';
@@ -234,12 +234,12 @@ class Basic
 
 					if ($response['code'] !== 200) Basic::apiResponse($response['code']);
 					
-					$pass_phrase = bin2hex( random_bytes(32) ); // Data encryption key
+					$pass_phrase = bin2hex( random_bytes(32) ); // Random password
 				}
 
 				// Derive keys
 				$masterKey = hash_pbkdf2('sha256', $pass_phrase, $salt, 10000); // Master key
-				$encKey = hash_hkdf('sha256', $masterKey, 32, 'aes-256-encryption', $salt); // Encryption key
+				$encKey = hash_hkdf('sha256', $masterKey, 32, 'aes-256-encryption', $salt); // Data Encryption key
 				$hmacKey = hash_hkdf('sha256', $masterKey, 32, 'sha-256-authentication', $salt); // HMAC key
 
 				if ($cipher === 'aes-256-gcm' || $cipher === 'aes-128-gcm') {
@@ -334,12 +334,12 @@ class Basic
 					if ( isset($api) && $response['code'] === 200 ) {
 						$response = Basic::apiCall('POST', $api, ['key' => $header_dek . '.' . $ciphertext_dek . '.' . $tag_dek . '.' . $salt_dek]);
 						$data = json_decode($response['data'], TRUE);
-						$pass_phrase = $data['key']; // Decrypted passphrase
+						$pass_phrase = $data['key']; // Decrypted random password
 					}
 
 					// Derive keys
 					$masterKey = hash_pbkdf2('sha256', $pass_phrase, $salt, 10000); // Master key
-					$encKey = hash_hkdf('sha256', $masterKey, 32, 'aes-256-encryption', $salt); // Encryption key
+					$encKey = hash_hkdf('sha256', $masterKey, 32, 'aes-256-encryption', $salt); // Data Encryption key
 					$hmacKey = hash_hkdf('sha256', $masterKey, 32, 'sha-256-authentication', $salt); // HMAC key
 
 					$plaintext = openssl_decrypt($ciphertext, $cipher, $encKey, $options=0, $iv, $tag);
