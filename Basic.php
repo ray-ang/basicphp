@@ -529,14 +529,15 @@ class Basic
 
 	/**
 	 * Automatic routing of Basic::segment(1) and (2) as class and method
-	 * 'Controller' as default controller suffix
-	 * 'index' as default method name
+	 *
+	 * @param string $controller - Default controller suffix
+	 * @param string $method     - Default method name
 	 */
 
-	public static function setAutoRoute()
+	public static function setAutoRoute($controller='Controller', $method='index')
 	{
-		$class = ucfirst(strtolower(self::segment(1))) . 'Controller';
-		if (self::segment(2)) { $method = strtolower(self::segment(2)); } else { $method = 'index'; }
+		$class = ucfirst(strtolower(self::segment(1))) . $controller;
+		if (self::segment(2)) { $method = strtolower(self::segment(2)); } else { $method = $method; }
 
 		if (class_exists($class)) {
 			$object = new $class();
