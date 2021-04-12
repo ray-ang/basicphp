@@ -11,7 +11,7 @@ define('DB_USER', 'user'); // Sample database username
 define('DB_PASS', 'pass'); // Sample database password
 
 define('PASS_PHRASE', 'http://localhost/api/encryption/encryption.php'); // Passphrase or KEK API URL
-define('AUTH_TOKEN', 'enc-v1.VWZUSXNEUVdQVmlPbnVVTVRDZkxibC9aM3YwT21raVhpdXRBNGZoR1dsUjllUT09.iJPEzvBUYueIhg0c8VD5Ag==.a1ycb+X3teBNAlAjQAQe/w=='); // Authorization Bearer token
+define('AUTH_TOKEN', 'encv1.VWZUSXNEUVdQVmlPbnVVTVRDZkxibC9aM3YwT21raVhpdXRBNGZoR1dsUjllUT09.iJPEzvBUYueIhg0c8VD5Ag==.a1ycb+X3teBNAlAjQAQe/w=='); // Authorization Bearer token
 
 /*
 |--------------------------------------------------------------------------
