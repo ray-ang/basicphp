@@ -528,30 +528,6 @@ class Basic
 	}
 
 	/**
-	 * Render Homepage
-	 * 
-	 * @param string $controller - 'HomeController@index' format
-	 */
-
-	public static function setHomePage($controller)
-	{
-		if ( empty(self::segment(1)) ) {
-			if (is_string($controller)) {
-				if (strstr($controller, '@')) {
-					list($class, $method) = explode('@', $controller);
-
-					$object = new $class();
-					$object->$method();
-					exit;
-				}
-			} elseif (is_callable($controller)) {
-				$controller();
-				exit;
-			}
-		}
-	}
-
-	/**
 	 * Automatic routing of Basic::segment(1) and (2) as class and method
 	 * 'Controller' as default controller suffix
 	 * 'index' as default method name
@@ -559,7 +535,7 @@ class Basic
 
 	public static function setAutoRoute()
 	{
-		if (self::segment(1)) { $class = ucfirst(strtolower(self::segment(1))) . 'Controller'; }
+		$class = ucfirst(strtolower(self::segment(1))) . 'Controller';
 		if (self::segment(2)) { $method = strtolower(self::segment(2)); } else { $method = 'index'; }
 
 		if (class_exists($class)) {

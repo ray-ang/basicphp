@@ -36,7 +36,6 @@ Basic::setFirewall(); // Enable firewall
 // var_dump(json_decode(Basic::decrypt($_COOKIE['token'], PASS_PHRASE), TRUE));
 
 Basic::setAutoloadClass(['classes', 'models', 'views', 'controllers']); // Autoload folders
-Basic::setHomePage('HomeController@index'); // Homepage
 Basic::setAutoRoute(); // Automatic '/class/method' routing
 
 /*
@@ -44,6 +43,11 @@ Basic::setAutoRoute(); // Automatic '/class/method' routing
 | Endpoint Routes
 |--------------------------------------------------------------------------
 */
+
+Basic::route('GET', '/', function() { // Set homepage
+    $page_title = 'Starter Application';
+    Basic::view('home', compact('page_title'));
+});
 
 Basic::route('ANY', '/jsonrpc', function() {
     Basic::setJsonRpc(); // JSON-RPC endpoint
