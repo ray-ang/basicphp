@@ -537,7 +537,7 @@ class Basic
 	public static function setAutoRoute($controller='Controller', $method='index')
 	{
 		$class = ucfirst(strtolower(self::segment(1))) . $controller;
-		if (self::segment(2)) { $method = strtolower(self::segment(2)); } else { $method = $method; }
+		if (self::segment(2)) $method = strtolower(self::segment(2));
 
 		if (class_exists($class)) {
 			$object = new $class();
