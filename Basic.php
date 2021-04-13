@@ -545,7 +545,7 @@ class Basic
 				$object->$method();
 				exit;
 			} else {
-				self::apiResponse(404, 'The page you requested could not be found.');
+				self::apiResponse(404);
 				exit;
 			}
 		}
