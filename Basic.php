@@ -610,6 +610,39 @@ class Basic
 	}
 
 	/**
+	 * Remote Procedure Call (RPC) over HTTP
+	 *
+	 * @param string $action     - RPC GET parameter
+	 * @param string $controller - Default controller suffix
+	 */
+
+	public static function setHttpRpc($action='action', $controller='controller')
+	{
+		if (empty($_GET[$action])) self::apiResponse(400, "GET parameter '$action' should be set.");
+		if ( substr(trim($_GET[$action]), 0, 1) === '.' ) self::apiResponse(400, "GET parameter '$action' should not start with a period (.) .");
+		if (substr_count($_GET[$action], '.') < 1) self::apiResponse(400, "GET parameter '$action' should contain a period (.) to separate class and method.");
+		if (substr_count($_GET[$action], '.') > 1) self::apiResponse(400, "GET parameter '$action' should only contain one period (.) .");
+
+		list($class, $method) = explode('.', $_GET[$action]);
+		$class = ucfirst(strtolower($class)) . $controller;
+		$method = strtolower($method);
+
+		if (class_exists($class)) {
+			$object = new $class();
+			if (method_exists($object, $method)) {
+				$object->$method();
+				exit;
+			} else {
+				self::apiResponse(404);
+				exit;
+			}
+		} else {
+			self::apiResponse(404);
+			exit;
+		}
+	}
+
+	/**
 	 * JSON-RPC v2.0 middleware with request Method member as 'class.method'
 	 * 'Controller' as default controller suffix
 	 */
