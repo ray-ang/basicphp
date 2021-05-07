@@ -53,6 +53,10 @@ Basic::route('ANY', '/jsonrpc', function() {
     Basic::setJsonRpc(); // JSON-RPC endpoint
 });
 
+Basic::route('ANY', '/httprpc', function() {
+    Basic::setHttpRpc(); // RPC over HTTP
+});
+
 Basic::route('GET', '/posts', function() {
     if (! isset($_GET['order'])) $_GET['order'] = 0;
 
