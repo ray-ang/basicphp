@@ -644,10 +644,11 @@ class Basic
 
 	/**
 	 * JSON-RPC v2.0 middleware with request Method member as 'class.method'
-	 * 'Controller' as default controller suffix
+	 * 
+	 * @param string $controller - Default controller suffix
 	 */
 
-	public static function setJsonRpc()
+	public static function setJsonRpc($controller='Controller')
 	{
 		$body = file_get_contents('php://input'); // Request body
 		$array = json_decode($body, TRUE); // JSON body to array
@@ -669,7 +670,7 @@ class Basic
 		if (! isset($array['method']) || ! strstr($array['method'], '.')) exit(json_encode(['jsonrpc' => '2.0', 'error' => ['code' => -32600, 'message' => "JSON-RPC 'method' member should be set with the format 'class.method'."], 'id' => NULL])); // Method member
 
 		list($class, $method) = explode('.', $array['method']); // Method member as 'class.method'
-		$class = $class . 'Controller'; // Default controller suffix
+		$class = $class . $controller; // Default controller suffix
 
 		// If class exists
 		if (class_exists($class)) {
