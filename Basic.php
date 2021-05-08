@@ -153,23 +153,14 @@ class Basic
 	 * @param integer $code        - HTTP response code
 	 * @param string $data         - Data to transmit
 	 * @param string $content_type - Header: Content-Type
-	 * @param string $message      - HTTP response message
 	 */
 
-	public static function apiResponse($code, $data=NULL, $content_type='text/plain', $message=NULL)
+	public static function apiResponse($code, $data=NULL, $content_type='text/plain')
 	{
-		// OK response
-		if ($code > 199 && $code < 300) {
-			$message = 'OK';
-			header($_SERVER['SERVER_PROTOCOL'] . ' ' . $code . ' ' . $message); // Set HTTP response code and message
-		}
+		if ($code > 199 && $code < 300) $message = 'OK'; // OK response
+		if ($code < 200 || $code > 299) $message = $data; // If no data, $data = $message
 
-		// If no data, $data = $message
-		if (($code < 200 || $code > 299) && $message === NULL) {
-			$message = $data;
-			header($_SERVER['SERVER_PROTOCOL'] . ' ' . $code . ' ' . $message); // Set HTTP response code and message
-		}
-
+		header($_SERVER['SERVER_PROTOCOL'] . ' ' . $code . ' ' . $message); // Set HTTP response code and message
 		header('Content-Type: ' . $content_type);
 		exit($data); // Data in string format
 	}
