@@ -123,7 +123,7 @@ class Basic
 		$auth_scheme = ( stristr($user_token, ':') ) ? 'Basic' : 'Bearer'; // Authorization scheme
 		$auth_cred = ( $auth_scheme === 'Basic' ) ? base64_encode($user_token) : $user_token; // Credentials
 		$content_type = ( is_array($data) ) ? 'application/json' : 'text/plain'; // Content Type
-		$data = ( is_array($data) ) ? json_encode($data) : $data; // Data array to JSON
+		$data = ( is_array($data) ) ? json_encode($data) : htmlspecialchars($data, ENT_QUOTES, 'UTF-8'); // Data array to JSON
 
 		$ch = curl_init(); // Initialize cURL
 
