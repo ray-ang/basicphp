@@ -122,20 +122,21 @@ class Basic
 	{
 		$auth_scheme = ( stristr($user_token, ':') ) ? 'Basic' : 'Bearer'; // Authorization scheme
 		$auth_cred = ( $auth_scheme === 'Basic' ) ? base64_encode($user_token) : $user_token; // Credentials
+		$content_type = ( is_array($data) ) ? 'application/json' : 'text/plain'; // Content Type
+		$data = ( is_array($data) ) ? json_encode($data) : $data; // Data array to JSON
 
 		$ch = curl_init(); // Initialize cURL
-		$data_json = json_encode($data); // Convert data to JSON
 
 		// Set cURL options
 		curl_setopt($ch, CURLOPT_URL, $url);
 		curl_setopt($ch, CURLOPT_CUSTOMREQUEST, $http_method);
-		curl_setopt($ch, CURLOPT_POSTFIELDS, $data_json);
+		curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
 		curl_setopt($ch, CURLOPT_HTTPHEADER,
 			array(
 				"Authorization: $auth_scheme $auth_cred",
-				'Content-Type: text/plain', // Plain text string
-				'Content-Length: ' . strlen($data_json)
+				"Content-Type: $content_type",
+				'Content-Length: ' . strlen($data)
 			)
 		);
 
