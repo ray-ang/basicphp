@@ -120,8 +120,6 @@ class Basic
 
 	public static function apiCall($http_method, $url, $data=NULL, $user_token=NULL)
 	{
-		if ( substr( strtolower( trim($url) ), 0, 8) !== 'https://' ) self::apiResponse(400, 'API URL should start with "https://".'); // Require HTTPS API URL
-
 		$auth_scheme = ( stristr($user_token, ':') ) ? 'Basic' : 'Bearer'; // Authorization scheme
 		$auth_cred = ( $auth_scheme === 'Basic' ) ? base64_encode($user_token) : $user_token; // Credentials
 		$content_type = ( is_array($data) ) ? 'application/json' : 'text/plain'; // Content Type
@@ -134,8 +132,6 @@ class Basic
 		curl_setopt($ch, CURLOPT_CUSTOMREQUEST, $http_method);
 		curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
-		curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, FALSE);
-		curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
 		curl_setopt($ch, CURLOPT_HTTPHEADER,
 			array(
 				"Authorization: $auth_scheme $auth_cred",
@@ -161,6 +157,9 @@ class Basic
 
 	public static function apiResponse($code, $data=NULL, $content_type='text/plain')
 	{
+		$data = ( is_array($data) ) ? json_encode($data) : $data; // Data array to JSON
+		$data = ( is_object($data) ) ? json_encode($data) : $data; // Data object to JSON
+		
 		if ($code > 199 && $code < 300) $message = 'OK'; // OK response
 		if ($code < 200 || $code > 299) $message = $data; // If no data, $data = $message
 

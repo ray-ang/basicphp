@@ -172,7 +172,7 @@ Basic::route('POST', '/api/request', function() {
 
     if ( empty($data_output) ) Basic::apiResponse(400, 'No name found on search.');
 
-    Basic::apiResponse(200, json_encode($data_output), 'application/json');
+    Basic::apiResponse(200, $data_output, 'application/json');
 });
 
 /*
