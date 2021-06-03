@@ -216,7 +216,7 @@ class Basic
 	public static function encrypt($plaintext=NULL, $pass_phrase=NULL, $header='encv1', $cipher='aes-256-gcm', $hmac_algo='sha512')
 	{
 		if (! isset($plaintext)) self::apiResponse(500, 'Set plaintext for encryption.');
-		if (! isset($pass_phrase)) self::apiResponse(500, 'Set passphrase for the encryption key, or link for the encryption API.');
+		if (! isset($pass_phrase)) self::apiResponse(500, 'Set passphrase as a constant.');
 
 		if ($cipher !== 'aes-256-gcm' && $cipher !== 'aes-256-ctr' && $cipher !== 'aes-256-cbc' && $cipher !== 'aes-128-gcm' && $cipher !== 'aes-128-ctr' && $cipher !== 'aes-128-cbc') self::apiResponse(500, "Encryption cipher method should either be 'aes-256-gcm', 'aes-256-ctr', 'aes-256-cbc', 'aes-128-gcm', 'aes-128-ctr' or 'aes-128-cbc'.");
 
@@ -299,7 +299,7 @@ class Basic
 	public static function decrypt($encrypted=NULL, $pass_phrase=NULL, $header='encv1', $cipher='aes-256-gcm', $hmac_algo='sha512')
 	{
 		if (! isset($encrypted)) self::apiResponse(500, 'Set encryption token for decryption.');
-		if (! isset($pass_phrase)) self::apiResponse(500, 'Set passphrase for the encryption key, or link for the encryption API.');
+		if (! isset($pass_phrase)) self::apiResponse(500, 'Set passphrase as a constant.');
 
 		if ($cipher !== 'aes-256-gcm' && $cipher !== 'aes-256-ctr' && $cipher !== 'aes-256-cbc' && $cipher !== 'aes-128-gcm' && $cipher !== 'aes-128-ctr' && $cipher !== 'aes-128-cbc') self::apiResponse(500, "Encryption cipher method should either be 'aes-256-gcm', 'aes-256-ctr', 'aes-256-cbc', 'aes-128-gcm', 'aes-128-ctr' or 'aes-128-cbc'.");
 
@@ -555,13 +555,10 @@ class Basic
 	 * Encryption API - Key-Encryption-Key (KEK)
 	 * Credits: https://github.com/ray-ang/encryption-api
 	 *
-	 * @param string $pass_phrase - KEK master key
+	 * @param string $pass_phrase	- KEK master key
 	 */
 
-	public static function setEncryptApi($pass_phrase)
-	{
-		if (! isset($pass_phrase)) self::apiResponse(500, 'Set passphrase for the encryption key.');
-
+	public static function apiEncrypt($pass_phrase) {
 		/* Require POST method */
 		if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 			self::apiResponse(405, "Method should be 'POST'.");
