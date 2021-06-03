@@ -189,16 +189,15 @@ class Basic
 
 	/**
 	 * Prevent Cross-Site Request Forgery (CSRF)
-	 * Create a per request token to handle CSRF using sessions
+	 * Create a per request token to handle CSRF using httponly cookie
 	 * Basic::setFirewall() should be executed. $verify_csrf_token = TRUE (default)
 	 */
 
 	public static function csrfToken()
 	{
-		if (defined('VERIFY_CSRF_TOKEN') && VERIFY_CSRF_TOKEN) {
-			$_SESSION['csrf-token'] = bin2hex( random_bytes(32) );
-			return $_SESSION['csrf-token'];
-		}
+		$token = bin2hex( random_bytes(32) );
+		setcookie('csrf-token', $token, NULL, NULL, NULL, NULL, TRUE);
+		return $token;
 	}
 
 	/**
@@ -216,7 +215,7 @@ class Basic
 	public static function encrypt($plaintext=NULL, $pass_phrase=NULL, $header='encv1', $cipher='aes-256-gcm', $hmac_algo='sha512')
 	{
 		if (! isset($plaintext)) self::apiResponse(500, 'Set plaintext for encryption.');
-		if (! isset($pass_phrase)) self::apiResponse(500, 'Set passphrase as a constant.');
+		if (! isset($pass_phrase)) self::apiResponse(500, 'Set passphrase for the encryption key, or link for the encryption API.');
 
 		if ($cipher !== 'aes-256-gcm' && $cipher !== 'aes-256-ctr' && $cipher !== 'aes-256-cbc' && $cipher !== 'aes-128-gcm' && $cipher !== 'aes-128-ctr' && $cipher !== 'aes-128-cbc') self::apiResponse(500, "Encryption cipher method should either be 'aes-256-gcm', 'aes-256-ctr', 'aes-256-cbc', 'aes-128-gcm', 'aes-128-ctr' or 'aes-128-cbc'.");
 
@@ -299,7 +298,7 @@ class Basic
 	public static function decrypt($encrypted=NULL, $pass_phrase=NULL, $header='encv1', $cipher='aes-256-gcm', $hmac_algo='sha512')
 	{
 		if (! isset($encrypted)) self::apiResponse(500, 'Set encryption token for decryption.');
-		if (! isset($pass_phrase)) self::apiResponse(500, 'Set passphrase as a constant.');
+		if (! isset($pass_phrase)) self::apiResponse(500, 'Set passphrase for the encryption key, or link for the encryption API.');
 
 		if ($cipher !== 'aes-256-gcm' && $cipher !== 'aes-256-ctr' && $cipher !== 'aes-256-cbc' && $cipher !== 'aes-128-gcm' && $cipher !== 'aes-128-ctr' && $cipher !== 'aes-128-cbc') self::apiResponse(500, "Encryption cipher method should either be 'aes-256-gcm', 'aes-256-ctr', 'aes-256-cbc', 'aes-128-gcm', 'aes-128-ctr' or 'aes-128-cbc'.");
 
@@ -457,11 +456,7 @@ class Basic
 
 		// Verify CSRF token
 		if ($verify_csrf_token === TRUE) {
-			define('VERIFY_CSRF_TOKEN', TRUE); // Used for Basic::csrfToken()
-			session_set_cookie_params(NULL, NULL, NULL, TRUE, TRUE); // Secure and Httponly
-			session_start(); // Require sessions
-
-			if (isset($_POST['csrf-token']) && isset($_SESSION['csrf-token']) && ! hash_equals($_POST['csrf-token'], $_SESSION['csrf-token'])) {
+			if (isset($_POST['csrf-token']) && isset($_COOKIE['csrf-token']) && ! hash_equals($_POST['csrf-token'], $_COOKIE['csrf-token'])) {
 				self::apiResponse(400, 'Please check authenticity of CSRF token.');
 			}
 		}
@@ -555,10 +550,13 @@ class Basic
 	 * Encryption API - Key-Encryption-Key (KEK)
 	 * Credits: https://github.com/ray-ang/encryption-api
 	 *
-	 * @param string $pass_phrase	- KEK master key
+	 * @param string $pass_phrase - KEK master key
 	 */
 
-	public static function apiEncrypt($pass_phrase) {
+	public static function setEncryptApi($pass_phrase)
+	{
+		if (! isset($pass_phrase)) self::apiResponse(500, 'Set passphrase for the encryption key.');
+
 		/* Require POST method */
 		if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 			self::apiResponse(405, "Method should be 'POST'.");
