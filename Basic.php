@@ -189,14 +189,14 @@ class Basic
 
 	/**
 	 * Prevent Cross-Site Request Forgery (CSRF)
-	 * Create a per request token to handle CSRF using httponly cookie
+	 * Per request token using secure & httponly cookie
 	 * Basic::setFirewall() should be executed. $verify_csrf_token = TRUE (default)
 	 */
 
 	public static function csrfToken()
 	{
 		$token = bin2hex( random_bytes(32) );
-		setcookie('csrf-token', $token, NULL, NULL, NULL, NULL, TRUE);
+		setcookie('csrf-token', $token, NULL, NULL, NULL, TRUE, TRUE);
 		return $token;
 	}
 
