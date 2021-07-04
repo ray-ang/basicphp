@@ -9,7 +9,7 @@ class RequestController
 		if ( isset($_POST['search-patient']) ) {
 			$page_title = 'API Response';
 			$input = ['search' => $_POST['patient-name']]; // $data_input as an array
-			$output = Basic::apiCall('POST', Basic::baseUrl() . 'api/request', $input, AUTH_TOKEN);
+			$output = Basic::apiCall(Basic::baseUrl() . 'api/request', 'POST', $input, AUTH_TOKEN);
 
 			Basic::view('request', compact('page_title', 'output'));
 		} else {

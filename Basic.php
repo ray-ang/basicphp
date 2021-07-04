@@ -110,15 +110,15 @@ class Basic
 	/**
 	 * HTTP API request call using cURL
 	 *
-	 * @param string $http_method - HTTP request method (e.g. 'GET', 'POST')
 	 * @param string $url         - URL of API endpoint
+	 * @param string $http_method - HTTP request method (e.g. 'GET', 'POST')
 	 * @param array $data         - Request body in array format
 	 * @param string $user_token  - Basic 'username:password' or Bearer token
 	 *
 	 * @return (int|string)[]     - HTTP response code and result of cURL execution
 	 */
 
-	public static function apiCall($http_method, $url, $data=NULL, $user_token=NULL)
+	public static function apiCall($url, $http_method='GET', $data=NULL, $user_token=NULL)
 	{
 		if ( substr( strtolower( trim($url) ), 0, 16) !== 'http://localhost' && substr( strtolower( trim($url) ), 0, 8) !== 'https://' ) self::apiResponse(400, 'API URL should start with "https://".'); // Require HTTPS API URL
 
@@ -229,7 +229,7 @@ class Basic
 
 				if ( filter_var($pass_phrase, FILTER_VALIDATE_URL) ) {
 					$api = $pass_phrase . '?action=encrypt';
-					$response = Basic::apiCall('POST', $api, ['key' => $pass_phrase]);
+					$response = Basic::apiCall($api, 'POST', ['key' => $pass_phrase]);
 
 					if ($response['code'] !== 200) Basic::apiResponse($response['code']);
 					
@@ -247,7 +247,7 @@ class Basic
 					$encrypted = $header . '.' . base64_encode($ciphertext) . '.' . base64_encode($tag) . '.' . base64_encode($salt);
 
 					if ( isset($api) && $response['code'] === 200 ) {
-						$response = Basic::apiCall('POST', $api, ['key' => $pass_phrase]);
+						$response = Basic::apiCall($api, 'POST', ['key' => $pass_phrase]);
 						$data = json_decode($response['data'], TRUE);
 						$dek_token = $data['key']; // Encrypted passphrase token
 
@@ -263,7 +263,7 @@ class Basic
 					$encrypted = $header . '.' . base64_encode($ciphertext) . '.' . base64_encode($hash) . '.' . base64_encode($salt);
 
 					if ( isset($api) && $response['code'] === 200 ) {
-						$response = Basic::apiCall('POST', $api, ['key' => $pass_phrase]);
+						$response = Basic::apiCall($api, 'POST', ['key' => $pass_phrase]);
 						$data = json_decode($response['data'], TRUE);
 						$dek_token = $data['key'];
 
@@ -311,7 +311,7 @@ class Basic
 
 					if ( filter_var($pass_phrase, FILTER_VALIDATE_URL) ) {
 						$api = $pass_phrase . '?action=decrypt';
-						$response = Basic::apiCall('POST', $api, ['key' => $pass_phrase]);
+						$response = Basic::apiCall($api, 'POST', ['key' => $pass_phrase]);
 
 						if ($response['code'] !== 200) Basic::apiResponse($response['code']);
 
@@ -331,7 +331,7 @@ class Basic
 					}
 
 					if ( isset($api) && $response['code'] === 200 ) {
-						$response = Basic::apiCall('POST', $api, ['key' => $header_dek . '.' . $ciphertext_dek . '.' . $tag_dek . '.' . $salt_dek]);
+						$response = Basic::apiCall($api, 'POST', ['key' => $header_dek . '.' . $ciphertext_dek . '.' . $tag_dek . '.' . $salt_dek]);
 						$data = json_decode($response['data'], TRUE);
 						$pass_phrase = $data['key']; // Decrypted random password
 					}
@@ -354,7 +354,7 @@ class Basic
 
 					if ( filter_var($pass_phrase, FILTER_VALIDATE_URL) ) {
 						$api = $pass_phrase . '?action=decrypt';
-						$response = Basic::apiCall('POST', $api, ['key' => $pass_phrase]);
+						$response = Basic::apiCall($api, 'POST', ['key' => $pass_phrase]);
 
 						if ($response['code'] !== 200) Basic::apiResponse($response['code']);
 
@@ -374,7 +374,7 @@ class Basic
 					}
 
 					if ( isset($api) && $response['code'] === 200 ) {
-						$response = Basic::apiCall('POST', $api, ['key' => $header_dek . '.' . $ciphertext_dek . '.' . $hash_dek . '.' . $salt_dek]);
+						$response = Basic::apiCall($api, 'POST', ['key' => $header_dek . '.' . $ciphertext_dek . '.' . $hash_dek . '.' . $salt_dek]);
 						$data = json_decode($response['data'], TRUE);
 						$pass_phrase = $data['key']; // Decrypted passphrase
 					}
