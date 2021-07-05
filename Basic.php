@@ -512,6 +512,8 @@ class Basic
 
 	public static function setAutoloadClass($classes)
 	{
+		if (! is_array($classes)) Basic::apiResponse(500, 'Basic::setAutoloadClass() argument should be an array.');
+
 		define('AUTOLOADED_FOLDERS', $classes);
 		spl_autoload_register(function ($class_name) {
 			foreach (AUTOLOADED_FOLDERS as $folder) {
