@@ -344,10 +344,10 @@ class Basic
 					$plaintext = openssl_decrypt($ciphertext, $cipher, $encKey, $options=0, $iv, $tag);
 
 					// GCM authentication
-					if ($plaintext !== FALSE) {
+					if ($plaintext) {
 						return $plaintext;
 					} else {
-						exit ('Please verify authenticity of ciphertext.');
+						return FALSE;
 					}
 
 				} else {
@@ -391,7 +391,7 @@ class Basic
 						return openssl_decrypt($ciphertext, $cipher, $encKey, $options=0, $iv);
 						}
 					else {
-						exit ('Please verify authenticity of ciphertext.');
+						return FALSE;
 					}
 
 				}
@@ -420,9 +420,9 @@ class Basic
 
 	public static function setErrorReporting($boolean=TRUE)
 	{
-		if ($boolean === TRUE) {
+		if ($boolean) {
 			error_reporting(E_ALL);
-		} elseif ($boolean === FALSE) {
+		} elseif (! $boolean) {
 			error_reporting(0);
 		} else {
 			self::apiResponse(500, 'Boolean parameter for Basic::setErrorReporting() can only be TRUE or FALSE.');
@@ -455,14 +455,14 @@ class Basic
 		}
 
 		// Verify CSRF token
-		if ($verify_csrf_token === TRUE) {
+		if ($verify_csrf_token) {
 			if (isset($_POST['csrf-token']) && isset($_COOKIE['csrf-token']) && ! hash_equals($_POST['csrf-token'], $_COOKIE['csrf-token'])) {
 				self::apiResponse(400, 'Please check authenticity of CSRF token.');
 			}
 		}
 
 		// Automatically escape $_POST values using htmlspecialchars()
-		if ($post_auto_escape === TRUE && isset($_POST)) {
+		if ($post_auto_escape && isset($_POST)) {
 			foreach ($_POST as $key => $value) {
 				$_POST[$key] = htmlspecialchars($value, ENT_QUOTES, 'UTF-8');
 			}
