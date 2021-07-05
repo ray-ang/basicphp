@@ -241,7 +241,7 @@ class Basic
 				$encKey = hash_hkdf('sha256', $masterKey, 32, 'aes-256-encryption', $salt); // Data Encryption key
 				$hmacKey = hash_hkdf('sha256', $masterKey, 32, 'sha-256-authentication', $salt); // HMAC key
 
-				if ($cipher === 'aes-256-gcm' || $cipher === 'aes-128-gcm') {
+				if ($cipher === 'aes-256-gcm') {
 
 					$ciphertext = openssl_encrypt($plaintext, $cipher, $encKey, $options=0, $iv, $tag);
 					$encrypted = $header . '.' . base64_encode($ciphertext) . '.' . base64_encode($tag) . '.' . base64_encode($salt);
@@ -307,7 +307,7 @@ class Basic
 
 			function decrypt_v1($encrypted, $pass_phrase, $header, $cipher, $hmac_algo) {
 
-				if ($cipher === 'aes-256-gcm' || $cipher === 'aes-128-gcm') {
+				if ($cipher === 'aes-256-gcm') {
 
 					if ( filter_var($pass_phrase, FILTER_VALIDATE_URL) ) {
 						$api = $pass_phrase . '?action=decrypt';
