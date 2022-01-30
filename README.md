@@ -26,7 +26,7 @@ Features include class autoloading, REST and JSON-RPC routing, functions/middlew
 The Sample Site default configuration is set to a development environment with 'basicphp' folder located under the server DocumentRoot (localhost). Once installed under the server root directory for development use, the site can be accessed at:
 
 ```
-http://localhost/basicphp/sample-site/public/
+http://localhost/basicphp/app/public/
 ```
 
 In production, the 'public' folder is set as DocumentRoot. You can access the application using the domain name.
