@@ -224,8 +224,9 @@ class Basic
 
 			function encrypt_v1($plaintext, $pass_phrase, $header, $cipher, $hmac_algo) {
 
-				$iv = random_bytes( openssl_cipher_iv_length($cipher) ); // Initialization Vector
-				$salt = $iv; // Salt
+				$nonce = random_bytes( openssl_cipher_iv_length($cipher) ); // Number once
+				$iv = $nonce; // Initialization Vector
+				$salt = $nonce; // Salt
 
 				if ( filter_var($pass_phrase, FILTER_VALIDATE_URL) ) {
 					$api = $pass_phrase . '?action=encrypt';
@@ -244,7 +245,7 @@ class Basic
 				if ($cipher === 'aes-256-gcm') {
 
 					$ciphertext = openssl_encrypt($plaintext, $cipher, $encKey, $options=0, $iv, $tag);
-					$encrypted = $header . '.' . base64_encode($ciphertext) . '.' . base64_encode($tag) . '.' . base64_encode($salt);
+					$encrypted = $header . '.' . base64_encode($ciphertext) . '.' . base64_encode($tag) . '.' . base64_encode($nonce);
 
 					if ( isset($api) && $response['code'] === 200 ) {
 						$response = Basic::apiCall($api, 'POST', ['key' => $pass_phrase]);
@@ -260,7 +261,7 @@ class Basic
 
 					$ciphertext = openssl_encrypt($plaintext, $cipher, $encKey, $options=0, $iv);
 					$hash = hash_hmac($hmac_algo, $ciphertext, $hmacKey);
-					$encrypted = $header . '.' . base64_encode($ciphertext) . '.' . base64_encode($hash) . '.' . base64_encode($salt);
+					$encrypted = $header . '.' . base64_encode($ciphertext) . '.' . base64_encode($hash) . '.' . base64_encode($nonce);
 
 					if ( isset($api) && $response['code'] === 200 ) {
 						$response = Basic::apiCall($api, 'POST', ['key' => $pass_phrase]);
@@ -315,23 +316,25 @@ class Basic
 
 						if ($response['code'] !== 200) Basic::apiResponse($response['code']);
 
-						list($header, $ciphertext, $tag, $salt, $header_dek, $ciphertext_dek, $tag_dek, $salt_dek) = explode('.', $encrypted);
+						list($header, $ciphertext, $tag, $nonce, $header_dek, $ciphertext_dek, $tag_dek, $nonce_dek) = explode('.', $encrypted);
 
 						$ciphertext = base64_decode($ciphertext);
 						$tag = base64_decode($tag);
-						$salt = base64_decode($salt);
-						$iv = $salt; // Initialization Vector
+						$nonce = base64_decode($nonce); // Nonce
+						$iv = $nonce; // IV
+						$salt = $nonce; // Salt
 					} else {
-						list($header, $ciphertext, $tag, $salt) = explode('.', $encrypted);
+						list($header, $ciphertext, $tag, $nonce) = explode('.', $encrypted);
 
 						$ciphertext = base64_decode($ciphertext);
 						$tag = base64_decode($tag);
-						$salt = base64_decode($salt);
-						$iv = $salt; // Initialization Vector
+						$nonce = base64_decode($nonce); // Nonce
+						$iv = $nonce; // IV
+						$salt = $nonce; // Salt
 					}
 
 					if ( isset($api) && $response['code'] === 200 ) {
-						$response = Basic::apiCall($api, 'POST', ['key' => $header_dek . '.' . $ciphertext_dek . '.' . $tag_dek . '.' . $salt_dek]);
+						$response = Basic::apiCall($api, 'POST', ['key' => $header_dek . '.' . $ciphertext_dek . '.' . $tag_dek . '.' . $nonce_dek]);
 						$data = json_decode($response['data'], TRUE);
 						$pass_phrase = $data['key']; // Decrypted random password
 					}
@@ -358,23 +361,25 @@ class Basic
 
 						if ($response['code'] !== 200) Basic::apiResponse($response['code']);
 
-						list($header, $ciphertext, $hash, $salt, $header_dek, $ciphertext_dek, $hash_dek, $salt_dek) = explode('.', $encrypted);
+						list($header, $ciphertext, $hash, $nonce, $header_dek, $ciphertext_dek, $hash_dek, $nonce_dek) = explode('.', $encrypted);
 
 						$ciphertext = base64_decode($ciphertext);
 						$hash = base64_decode($hash);
-						$salt = base64_decode($salt);
-						$iv = $salt; // Initialization Vector
+						$nonce = base64_decode($nonce); // Nonce
+						$iv = $nonce; // IV
+						$salt = $nonce; // Salt
 					} else {
-						list($header, $ciphertext, $hash, $salt) = explode('.', $encrypted);
+						list($header, $ciphertext, $hash, $nonce) = explode('.', $encrypted);
 
 						$ciphertext = base64_decode($ciphertext);
 						$hash = base64_decode($hash);
-						$salt = base64_decode($salt);
-						$iv = $salt; // Initialization Vector
+						$nonce = base64_decode($nonce);
+						$iv = $nonce; // IV
+						$salt = $nonce; // Salt
 					}
 
 					if ( isset($api) && $response['code'] === 200 ) {
-						$response = Basic::apiCall($api, 'POST', ['key' => $header_dek . '.' . $ciphertext_dek . '.' . $hash_dek . '.' . $salt_dek]);
+						$response = Basic::apiCall($api, 'POST', ['key' => $header_dek . '.' . $ciphertext_dek . '.' . $hash_dek . '.' . $nonce_dek]);
 						$data = json_decode($response['data'], TRUE);
 						$pass_phrase = $data['key']; // Decrypted passphrase
 					}
