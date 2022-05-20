@@ -10,7 +10,7 @@ define('DB_NAME', 'basicphp'); // Sample database name
 define('DB_USER', 'user'); // Sample database username
 define('DB_PASS', 'pass'); // Sample database password
 
-define('PASS_PHRASE', 'https://open-nis.org/api/encryption'); // Passphrase or KEK API URL
+define('PASS_PHRASE', 'SecretPassPhrase123'); // Passphrase or KEK API URL
 define('AUTH_TOKEN', 'encv1.VWZUSXNEUVdQVmlPbnVVTVRDZkxibC9aM3YwT21raVhpdXRBNGZoR1dsUjllUT09.iJPEzvBUYueIhg0c8VD5Ag==.a1ycb+X3teBNAlAjQAQe/w=='); // Authorization Bearer token
 
 /*
