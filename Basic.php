@@ -219,6 +219,42 @@ class Basic
 
 		if ($cipher !== 'aes-256-gcm' && $cipher !== 'aes-256-ctr' && $cipher !== 'aes-256-cbc') self::apiResponse(500, "Encryption cipher method should either be 'aes-256-gcm', 'aes-256-ctr', 'aes-256-cbc'.");
 
+		// Encryption - Version 2
+		if (! function_exists('encrypt_v2')) {
+
+			function encrypt_v2($plaintext, $pass_phrase, $header, $cipher, $hmac_algo) {
+
+				if ( filter_var($pass_phrase, FILTER_VALIDATE_URL) ) {
+					$api = $pass_phrase . '?action=encrypt';
+					$response = Basic::apiCall($api, 'POST', ['key' => $pass_phrase]);
+
+					if ($response['code'] !== 200) Basic::apiResponse($response['code']);
+					
+					$pass_phrase = bin2hex( random_bytes(32) ); // Random password
+				}
+
+				// Derive keys
+				$salt = hash('sha3-256', $pass_phrase);
+				$masterKey = hash_pbkdf2('sha256', $pass_phrase, $salt, 10000); // Master key
+				$encKey = hash_hkdf('sha256', $masterKey, 32, 'aes-256-encryption', $salt); // Data Encryption key
+
+				$ciphertext = openssl_encrypt($plaintext, $cipher, $encKey, $options=0);
+				$encrypted = $header . '.' . $ciphertext;
+
+				if ( isset($api) && $response['code'] === 200 ) {
+					$response = Basic::apiCall($api, 'POST', ['key' => $pass_phrase]);
+					$data = json_decode($response['data'], TRUE);
+					$dek_token = $data['key'];
+
+					return str_replace('=', '', $encrypted . '.' . $dek_token); // Strip off '='
+				} else {
+					return str_replace('=', '', $encrypted); // Strip off '='
+				}
+
+			}
+
+		}
+
 		// Encryption - Version 1
 		if (! function_exists('encrypt_v1')) {
 
@@ -280,7 +316,8 @@ class Basic
 		}
 
 		/** Version-based encryption */
-		if ( substr( ltrim($plaintext), 0, 5 ) !== $header ) return encrypt_v1($plaintext, $pass_phrase, $header, $cipher, $hmac_algo);
+		if ( $header == 'encv2' ) return encrypt_v2($plaintext, $pass_phrase, $header='encv2', $cipher='aes-256-ecb', $hmac_algo);
+		if ( $header == 'encv1' ) return encrypt_v1($plaintext, $pass_phrase, $header, $cipher, $hmac_algo);
 		return $plaintext;
 	}
 
@@ -302,6 +339,39 @@ class Basic
 		if (! isset($pass_phrase)) self::apiResponse(500, 'Set passphrase for the encryption key, or link for the encryption API.');
 
 		if ($cipher !== 'aes-256-gcm' && $cipher !== 'aes-256-ctr' && $cipher !== 'aes-256-cbc') self::apiResponse(500, "Encryption cipher method should either be 'aes-256-gcm', 'aes-256-ctr', 'aes-256-cbc'.");
+
+		// Decryption - Version 2
+		if (! function_exists('decrypt_v2')) {
+
+			function decrypt_v2($encrypted, $pass_phrase, $header, $cipher, $hmac_algo) {
+
+				if ( filter_var($pass_phrase, FILTER_VALIDATE_URL) ) {
+					$api = $pass_phrase . '?action=decrypt';
+					$response = Basic::apiCall($api, 'POST', ['key' => $pass_phrase]);
+
+					if ($response['code'] !== 200) Basic::apiResponse($response['code']);
+
+					list($header, $ciphertext, $header_dek, $ciphertext_dek) = explode('.', $encrypted);
+				} else {
+					list($header, $ciphertext) = explode('.', $encrypted);
+				}
+
+				if ( isset($api) && $response['code'] === 200 ) {
+					$response = Basic::apiCall($api, 'POST', ['key' => $header_dek . '.' . $ciphertext_dek]);
+					$data = json_decode($response['data'], TRUE);
+					$pass_phrase = $data['key']; // Decrypted passphrase
+				}
+
+				// Derive keys
+				$salt = hash('sha3-256', $pass_phrase);
+				$masterKey = hash_pbkdf2('sha256', $pass_phrase, $salt, 10000); // Master key
+				$encKey = hash_hkdf('sha256', $masterKey, 32, 'aes-256-encryption', $salt); // Encryption key
+
+				return openssl_decrypt($ciphertext, $cipher, $encKey, $options=0);
+
+			}
+
+		}
 
 		// Decryption - Version 1
 		if (! function_exists('decrypt_v1')) {
@@ -406,7 +476,8 @@ class Basic
 		}
 
 		/** Version-based decryption */
-		if ( substr( ltrim($encrypted), 0, 5 ) === $header ) return decrypt_v1($encrypted, $pass_phrase, $header, $cipher, $hmac_algo);
+		if ( $header == 'encv2' ) return decrypt_v2($encrypted, $pass_phrase, $header='encv2', $cipher='aes-256-ecb', $hmac_algo);
+		if ( $header == 'encv1' ) return decrypt_v1($encrypted, $pass_phrase, $header, $cipher, $hmac_algo);
 		if (! isset($encrypted) || empty($encrypted)) { return ''; } // Return empty if $encrypted is not set or empty.
 		return $encrypted;
 	}
