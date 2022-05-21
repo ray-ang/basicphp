@@ -11,7 +11,7 @@ require_once 'template/menu.php';
             $post_title = $row['post_title'];
             $post_content = $row['post_content'];
 
-            $form = new Basic_Form();
+            $form = new BasicForm();
             $form->open();
             $form->input('text', 'title', 'Title', $post_title);
             $form->textArea('content', 'Content', $post_content);

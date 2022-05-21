@@ -13,7 +13,7 @@ require_once 'template/menu.php';
           <p><?= nl2br($row['post_content']) ?></p>
           <br/>
           <?php
-            $form = new Basic_Form;
+            $form = new BasicForm;
             $form->open('form-inline');
             $form->button('goto-edit', 'Edit');
             $form->button('delete-post', 'Delete', 'btn btn-warning');

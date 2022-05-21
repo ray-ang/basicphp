@@ -8,7 +8,7 @@ require_once 'template/menu.php';
 		<div class="col-lg-12">
 			<h1 class="mt-5 text-center">Add Post</h1>
 			<?php
-			$form = new Basic_Form;
+			$form = new BasicForm;
 			$form->open();
 			$form->input('text', 'title', 'Title');
 			$form->textArea('content', 'Content');
