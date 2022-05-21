@@ -9,7 +9,7 @@
  *          - and API's.
  *
  * @package   BasicPHP
- * @version   v0.9.9
+ * @version   v0.9.10
  * @link      https://github.com/ray-ang/basicphp
  * @author    Raymund John Ang <raymund@open-nis.org>
  * @copyright Copyright (c) 2019-2022 Raymund John Ang <raymund@open-nis.org>
