@@ -1,21 +1,19 @@
 <?php
 
 /**
- * BasicPHP - A frameworkless library-based approach for building web applications
- *          - and application programming interfaces or API's.
- *          - The aim of the project is for developers to build applications that
- *          - are framework-independent using native PHP functions and API's.
+ * BasicPHP - A frameworkless class library for developing web applications and
+ *          - application programming interfaces or API's.
  *          -
- *          - To embed the application to any framework, copy BasicPHP class library
- *          - (Basic.php), and the 'classes', 'models', 'views' and 'controllers'
- *          - folders one (1) folder above the front controller (index.php) of the
- *          - chosen framework. In the controller file, at the top of the script,
- *          - include/require Basic.php.
+ *          - The purpose of the library is for developers to build applications
+ *          - and services that are framework agnostic using native PHP functions
+ *          - and API's.
  *
- * @package  BasicPHP
- * @version  v0.9.9
- * @author   Raymund John Ang <raymund@open-nis.org>
- * @license  MIT License
+ * @package   BasicPHP
+ * @version   v0.9.9
+ * @link      https://github.com/ray-ang/basicphp
+ * @author    Raymund John Ang <raymund@open-nis.org>
+ * @copyright Copyright (c) 2019-2022 Raymund John Ang <raymund@open-nis.org>
+ * @license   MIT License
  */
 
 class Basic
