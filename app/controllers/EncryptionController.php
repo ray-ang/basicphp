@@ -12,5 +12,4 @@ class EncryptionController
 
 		Basic::view('encryption', compact('page_title', 'plaintext', 'encrypted', 'decrypted'));
 	}
-
 }

@@ -14,10 +14,9 @@ class PostModel
 			$conn = new PDO('mysql:host=localhost;dbname=' . DB_NAME, DB_USER, DB_PASS);
 			$conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 			return $conn;
-		} catch(PDOException $e) {
+		} catch (PDOException $e) {
 			echo "Connection failed: " . $e->getMessage();
 		}
-
 	}
 
 	public function total()
@@ -29,7 +28,6 @@ class PostModel
 		$result = $stmt->rowCount();
 
 		return $result;
-
 	}
 
 	public function list($per_page, $order)
@@ -41,7 +39,6 @@ class PostModel
 		$result = $stmt->fetchAll();
 
 		return $result;
-
 	}
 
 	public function view($post_id)
@@ -54,7 +51,6 @@ class PostModel
 		$result = $stmt->fetch();
 
 		return $result;
-
 	}
 
 	public function add()
@@ -67,7 +63,6 @@ class PostModel
 		$stmt->execute();
 
 		return $conn->lastInsertId();
-
 	}
 
 	public function edit($post_id)
@@ -79,7 +74,6 @@ class PostModel
 		$stmt->bindParam(':post_content', $_POST['content']);
 		$stmt->bindParam(':post_id', $post_id);
 		$stmt->execute();
-
 	}
 
 	public function delete($post_id)
@@ -89,7 +83,5 @@ class PostModel
 		$stmt = $conn->prepare("DELETE FROM posts WHERE post_id = :post_id");
 		$stmt->bindParam(':post_id', $post_id);
 		$stmt->execute();
-
 	}
-
 }

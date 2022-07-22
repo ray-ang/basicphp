@@ -7,12 +7,12 @@ class PostController
 	{
 		$this->list();
 	}
-	
+
 	public function list()
 	{
 
-		if (! isset($_GET['order'])) $_GET['order'] = 0;
-		if (! is_numeric($_GET['order'])) {
+		if (!isset($_GET['order'])) $_GET['order'] = 0;
+		if (!is_numeric($_GET['order'])) {
 			$page_title = 'Error in order parameter';
 			$error_message = 'Post order value should be numeric.';
 
@@ -25,7 +25,7 @@ class PostController
 		$order = intval($_GET['order']);
 
 		$post = new PostModel;
-		$stmt = $post->list( $per_page, $order );
+		$stmt = $post->list($per_page, $order);
 		$total = $post->total();
 
 		if (isset($_GET['order']) && $_GET['order'] > $total) $_GET['order'] = $total;
@@ -33,7 +33,6 @@ class PostController
 		$page_title = 'List of Posts';
 
 		Basic::view('post_list', compact('page_title', 'per_page', 'stmt', 'total'));
-
 	}
 
 	public function view()
@@ -51,7 +50,7 @@ class PostController
 		}
 
 		$post = new PostModel;
-		$row = $post->view( Basic::segment(3) );
+		$row = $post->view(Basic::segment(3));
 
 		if ($row) {
 			$page_title = 'View Post';
@@ -63,7 +62,6 @@ class PostController
 
 			Basic::view('error', compact('page_title', 'error_message'));
 		}
-
 	}
 
 	public function add()
@@ -86,13 +84,13 @@ class PostController
 		$post = new PostModel;
 
 		if ($this->isPostEdit()) {
-			$post->edit( Basic::segment(3) );
+			$post->edit(Basic::segment(3));
 
 			header('Location: ' . Basic::baseUrl() . 'post/view/' . Basic::segment(3));
 			exit();
 		}
 
-		$row = $post->view( Basic::segment(3) );
+		$row = $post->view(Basic::segment(3));
 
 		if ($row) {
 			$page_title = 'Edit Post';
@@ -109,7 +107,7 @@ class PostController
 	public function delete()
 	{
 		$post = new PostModel;
-		$post->delete( Basic::segment(3) );
+		$post->delete(Basic::segment(3));
 	}
 
 	private function isPostAdd()
@@ -126,5 +124,4 @@ class PostController
 	{
 		if (isset($_POST['delete-post'])) return TRUE;
 	}
-
 }

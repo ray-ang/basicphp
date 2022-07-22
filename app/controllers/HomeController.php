@@ -9,5 +9,4 @@ class HomeController
 
 		Basic::view('home', compact('page_title'));
 	}
-
 }

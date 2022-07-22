@@ -41,9 +41,9 @@ class Basic
 		// Number of subdirectories from hostname to index.php
 		$sub_dir = substr_count($_SERVER['SCRIPT_NAME'], '/') - 1;
 
-		if (! isset($uri[$order+$sub_dir])) return FALSE;
+		if (!isset($uri[$order + $sub_dir])) return FALSE;
 
-		return $uri[$order+$sub_dir];
+		return $uri[$order + $sub_dir];
 	}
 
 	/**
@@ -66,13 +66,13 @@ class Basic
 			$pattern = str_ireplace('/', '\/', $path);
 			$pattern = str_ireplace('(:num)', '[0-9]+', $pattern);
 			$pattern = str_ireplace('(:any)', '[^\/]+', $pattern);
-					
+
 			// Check for subfolders from DocumentRoot and include in endpoint
 			$sub = explode('/', dirname($_SERVER['SCRIPT_NAME']));
-			$subfolder = (! empty($sub[1])) ? implode('\/', $sub) : '';
+			$subfolder = (!empty($sub[1])) ? implode('\/', $sub) : '';
 
 			$uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
-			if ( preg_match('/^' . $subfolder . $pattern . '+$/i', $uri) )  {
+			if (preg_match('/^' . $subfolder . $pattern . '+$/i', $uri)) {
 				if (is_string($class_method)) {
 					if (strstr($class_method, '@')) {
 						list($class, $method) = explode('@', $class_method);
@@ -85,9 +85,7 @@ class Basic
 					$class_method();
 					exit;
 				}
-
 			}
-
 		}
 	}
 
@@ -98,10 +96,10 @@ class Basic
 	 * @param array $data  - Data in array format
 	 */
 
-	public static function view($view, $data=NULL)
+	public static function view($view, $data = NULL)
 	{
 		$file = '../views/' . $view . '.php';
-		if (! empty($data)) extract($data); // Convert array keys to variables
+		if (!empty($data)) extract($data); // Convert array keys to variables
 		if (file_exists($file) && is_readable($file) && pathinfo($file)['extension'] === 'php') require_once $file; // Render page view
 	}
 
@@ -116,15 +114,15 @@ class Basic
 	 * @return (int|string)[]     - HTTP response code and result of cURL execution
 	 */
 
-	public static function apiCall($url, $http_method='GET', $data=NULL, $user_token=NULL)
+	public static function apiCall($url, $http_method = 'GET', $data = NULL, $user_token = NULL)
 	{
-		if ( substr( strtolower( trim($url) ), 0, 16) !== 'http://localhost' && substr( strtolower( trim($url) ), 0, 8) !== 'https://' ) self::apiResponse(400, 'API URL should start with "https://".'); // Require HTTPS API URL
+		if (substr(strtolower(trim($url)), 0, 16) !== 'http://localhost' && substr(strtolower(trim($url)), 0, 8) !== 'https://') self::apiResponse(400, 'API URL should start with "https://".'); // Require HTTPS API URL
 
-		$auth_scheme = ( stristr($user_token, ':') ) ? 'Basic' : 'Bearer'; // Authorization scheme
-		$auth_cred = ( $auth_scheme === 'Basic' ) ? base64_encode($user_token) : $user_token; // Credentials
-		$content_type = ( is_array($data) ) ? 'application/json' : 'text/plain'; // Content Type
-		$data = ( is_array($data) ) ? json_encode($data) : $data; // Data array to JSON
-		$data = ( is_object($data) ) ? json_encode($data) : $data; // Data object to JSON
+		$auth_scheme = (stristr($user_token, ':')) ? 'Basic' : 'Bearer'; // Authorization scheme
+		$auth_cred = ($auth_scheme === 'Basic') ? base64_encode($user_token) : $user_token; // Credentials
+		$content_type = (is_array($data)) ? 'application/json' : 'text/plain'; // Content Type
+		$data = (is_array($data)) ? json_encode($data) : $data; // Data array to JSON
+		$data = (is_object($data)) ? json_encode($data) : $data; // Data object to JSON
 
 		$ch = curl_init(); // Initialize cURL
 
@@ -135,7 +133,9 @@ class Basic
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
 		curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, FALSE);
 		curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
-		curl_setopt($ch, CURLOPT_HTTPHEADER,
+		curl_setopt(
+			$ch,
+			CURLOPT_HTTPHEADER,
 			array(
 				"Authorization: $auth_scheme $auth_cred",
 				"Content-Type: $content_type",
@@ -145,7 +145,7 @@ class Basic
 
 		$result = curl_exec($ch); // Execute cURL
 		$http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE); // HTTP response code
-		curl_close ($ch); // Close cURL connection
+		curl_close($ch); // Close cURL connection
 
 		return ['code' => $http_code, 'data' => $result];
 	}
@@ -158,11 +158,11 @@ class Basic
 	 * @param string $content_type - Header: Content-Type
 	 */
 
-	public static function apiResponse($code, $data=NULL, $content_type='text/plain')
+	public static function apiResponse($code, $data = NULL, $content_type = 'text/plain')
 	{
-		$data = ( is_array($data) ) ? json_encode($data) : $data; // Data array to JSON
-		$data = ( is_object($data) ) ? json_encode($data) : $data; // Data object to JSON
-		
+		$data = (is_array($data)) ? json_encode($data) : $data; // Data array to JSON
+		$data = (is_object($data)) ? json_encode($data) : $data; // Data object to JSON
+
 		if ($code > 199 && $code < 300) $message = 'OK'; // OK response
 		if ($code < 200 || $code > 299) $message = $data; // If no data, $data = $message
 
@@ -180,7 +180,7 @@ class Basic
 	public static function baseUrl()
 	{
 		$http_protocol = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on') ? 'https://' : 'http://';
-		$subfolder = (! empty(dirname($_SERVER['SCRIPT_NAME']))) ? dirname($_SERVER['SCRIPT_NAME']) : '';
+		$subfolder = (!empty(dirname($_SERVER['SCRIPT_NAME']))) ? dirname($_SERVER['SCRIPT_NAME']) : '';
 
 		return $http_protocol . $_SERVER['SERVER_NAME'] . $subfolder . '/';
 	}
@@ -193,7 +193,7 @@ class Basic
 
 	public static function csrfToken()
 	{
-		$token = bin2hex( random_bytes(32) );
+		$token = bin2hex(random_bytes(32));
 		setcookie('csrf-token', $token, NULL, NULL, NULL, TRUE, TRUE);
 		return $token;
 	}
@@ -210,25 +210,26 @@ class Basic
 	 * @return string             - Encryption token with base64-encoded ciphertext
 	 */
 
-	public static function encrypt($plaintext=NULL, $pass_phrase=NULL, $header='encv1', $cipher='aes-256-gcm', $hmac_algo='sha512')
+	public static function encrypt($plaintext = NULL, $pass_phrase = NULL, $header = 'encv1', $cipher = 'aes-256-gcm', $hmac_algo = 'sha512')
 	{
-		if (! isset($plaintext)) self::apiResponse(500, 'Set plaintext for encryption.');
-		if (! isset($pass_phrase)) self::apiResponse(500, 'Set passphrase for the encryption key, or link for the encryption API.');
+		if (!isset($plaintext)) self::apiResponse(500, 'Set plaintext for encryption.');
+		if (!isset($pass_phrase)) self::apiResponse(500, 'Set passphrase for the encryption key, or link for the encryption API.');
 
 		if ($cipher !== 'aes-256-gcm' && $cipher !== 'aes-256-ctr' && $cipher !== 'aes-256-cbc') self::apiResponse(500, "Encryption cipher method should either be 'aes-256-gcm', 'aes-256-ctr', 'aes-256-cbc'.");
 
 		// Encryption - Version 2
-		if (! function_exists('encrypt_v2')) {
+		if (!function_exists('encrypt_v2')) {
 
-			function encrypt_v2($plaintext, $pass_phrase, $header, $cipher, $hmac_algo) {
+			function encrypt_v2($plaintext, $pass_phrase, $header, $cipher, $hmac_algo)
+			{
 
-				if ( filter_var($pass_phrase, FILTER_VALIDATE_URL) ) {
+				if (filter_var($pass_phrase, FILTER_VALIDATE_URL)) {
 					$api = $pass_phrase . '?action=encrypt';
 					$response = Basic::apiCall($api, 'POST', ['key' => $pass_phrase]);
 
 					if ($response['code'] !== 200) Basic::apiResponse($response['code']);
-					
-					$pass_phrase = bin2hex( random_bytes(32) ); // Random password
+
+					$pass_phrase = bin2hex(random_bytes(32)); // Random password
 				}
 
 				// Derive keys
@@ -236,10 +237,10 @@ class Basic
 				$masterKey = hash_pbkdf2('sha256', $pass_phrase, $salt, 10000); // Master key
 				$encKey = hash_hkdf('sha256', $masterKey, 32, 'aes-256-encryption', $salt); // Data Encryption key
 
-				$ciphertext = openssl_encrypt($plaintext, $cipher, $encKey, $options=0);
+				$ciphertext = openssl_encrypt($plaintext, $cipher, $encKey, $options = 0);
 				$encrypted = $header . '.' . $ciphertext;
 
-				if ( isset($api) && $response['code'] === 200 ) {
+				if (isset($api) && $response['code'] === 200) {
 					$response = Basic::apiCall($api, 'POST', ['key' => $pass_phrase]);
 					$data = json_decode($response['data'], TRUE);
 					$dek_token = $data['key'];
@@ -248,27 +249,26 @@ class Basic
 				} else {
 					return str_replace('=', '', $encrypted); // Strip off '='
 				}
-
 			}
-
 		}
 
 		// Encryption - Version 1
-		if (! function_exists('encrypt_v1')) {
+		if (!function_exists('encrypt_v1')) {
 
-			function encrypt_v1($plaintext, $pass_phrase, $header, $cipher, $hmac_algo) {
+			function encrypt_v1($plaintext, $pass_phrase, $header, $cipher, $hmac_algo)
+			{
 
-				$nonce = random_bytes( openssl_cipher_iv_length($cipher) ); // Number once
+				$nonce = random_bytes(openssl_cipher_iv_length($cipher)); // Number once
 				$iv = $nonce; // Initialization Vector
 				$salt = $nonce; // Salt
 
-				if ( filter_var($pass_phrase, FILTER_VALIDATE_URL) ) {
+				if (filter_var($pass_phrase, FILTER_VALIDATE_URL)) {
 					$api = $pass_phrase . '?action=encrypt';
 					$response = Basic::apiCall($api, 'POST', ['key' => $pass_phrase]);
 
 					if ($response['code'] !== 200) Basic::apiResponse($response['code']);
-					
-					$pass_phrase = bin2hex( random_bytes(32) ); // Random password
+
+					$pass_phrase = bin2hex(random_bytes(32)); // Random password
 				}
 
 				// Derive keys
@@ -278,10 +278,10 @@ class Basic
 
 				if ($cipher === 'aes-256-gcm') {
 
-					$ciphertext = openssl_encrypt($plaintext, $cipher, $encKey, $options=0, $iv, $tag);
+					$ciphertext = openssl_encrypt($plaintext, $cipher, $encKey, $options = 0, $iv, $tag);
 					$encrypted = $header . '.' . base64_encode($ciphertext) . '.' . base64_encode($tag) . '.' . base64_encode($nonce);
 
-					if ( isset($api) && $response['code'] === 200 ) {
+					if (isset($api) && $response['code'] === 200) {
 						$response = Basic::apiCall($api, 'POST', ['key' => $pass_phrase]);
 						$data = json_decode($response['data'], TRUE);
 						$dek_token = $data['key']; // Encrypted passphrase token
@@ -290,14 +290,13 @@ class Basic
 					} else {
 						return str_replace('=', '', $encrypted); // Strip off '='
 					}
-
 				} else {
 
-					$ciphertext = openssl_encrypt($plaintext, $cipher, $encKey, $options=0, $iv);
+					$ciphertext = openssl_encrypt($plaintext, $cipher, $encKey, $options = 0, $iv);
 					$hash = hash_hmac($hmac_algo, $ciphertext, $hmacKey);
 					$encrypted = $header . '.' . base64_encode($ciphertext) . '.' . base64_encode($hash) . '.' . base64_encode($nonce);
 
-					if ( isset($api) && $response['code'] === 200 ) {
+					if (isset($api) && $response['code'] === 200) {
 						$response = Basic::apiCall($api, 'POST', ['key' => $pass_phrase]);
 						$data = json_decode($response['data'], TRUE);
 						$dek_token = $data['key'];
@@ -306,16 +305,13 @@ class Basic
 					} else {
 						return str_replace('=', '', $encrypted); // Strip off '='
 					}
-
 				}
-
 			}
-
 		}
 
 		/** Version-based encryption */
-		if ( $header == 'encv2' ) return encrypt_v2($plaintext, $pass_phrase, $header='encv2', $cipher='aes-256-ecb', $hmac_algo);
-		if ( $header == 'encv1' ) return encrypt_v1($plaintext, $pass_phrase, $header, $cipher, $hmac_algo);
+		if ($header == 'encv2') return encrypt_v2($plaintext, $pass_phrase, $header = 'encv2', $cipher = 'aes-256-ecb', $hmac_algo);
+		if ($header == 'encv1') return encrypt_v1($plaintext, $pass_phrase, $header, $cipher, $hmac_algo);
 		return $plaintext;
 	}
 
@@ -331,19 +327,20 @@ class Basic
 	 * @return string             - Decrypted plaintext
 	 */
 
-	public static function decrypt($encrypted=NULL, $pass_phrase=NULL, $header='encv1', $cipher='aes-256-gcm', $hmac_algo='sha512')
+	public static function decrypt($encrypted = NULL, $pass_phrase = NULL, $header = 'encv1', $cipher = 'aes-256-gcm', $hmac_algo = 'sha512')
 	{
-		if (! isset($encrypted)) self::apiResponse(500, 'Set encryption token for decryption.');
-		if (! isset($pass_phrase)) self::apiResponse(500, 'Set passphrase for the encryption key, or link for the encryption API.');
+		if (!isset($encrypted)) self::apiResponse(500, 'Set encryption token for decryption.');
+		if (!isset($pass_phrase)) self::apiResponse(500, 'Set passphrase for the encryption key, or link for the encryption API.');
 
 		if ($cipher !== 'aes-256-gcm' && $cipher !== 'aes-256-ctr' && $cipher !== 'aes-256-cbc') self::apiResponse(500, "Encryption cipher method should either be 'aes-256-gcm', 'aes-256-ctr', 'aes-256-cbc'.");
 
 		// Decryption - Version 2
-		if (! function_exists('decrypt_v2')) {
+		if (!function_exists('decrypt_v2')) {
 
-			function decrypt_v2($encrypted, $pass_phrase, $header, $cipher, $hmac_algo) {
+			function decrypt_v2($encrypted, $pass_phrase, $header, $cipher, $hmac_algo)
+			{
 
-				if ( filter_var($pass_phrase, FILTER_VALIDATE_URL) ) {
+				if (filter_var($pass_phrase, FILTER_VALIDATE_URL)) {
 					$api = $pass_phrase . '?action=decrypt';
 					$response = Basic::apiCall($api, 'POST', ['key' => $pass_phrase]);
 
@@ -354,7 +351,7 @@ class Basic
 					list($header, $ciphertext) = explode('.', $encrypted);
 				}
 
-				if ( isset($api) && $response['code'] === 200 ) {
+				if (isset($api) && $response['code'] === 200) {
 					$response = Basic::apiCall($api, 'POST', ['key' => $header_dek . '.' . $ciphertext_dek]);
 					$data = json_decode($response['data'], TRUE);
 					$pass_phrase = $data['key']; // Decrypted passphrase
@@ -365,20 +362,19 @@ class Basic
 				$masterKey = hash_pbkdf2('sha256', $pass_phrase, $salt, 10000); // Master key
 				$encKey = hash_hkdf('sha256', $masterKey, 32, 'aes-256-encryption', $salt); // Encryption key
 
-				return openssl_decrypt($ciphertext, $cipher, $encKey, $options=0);
-
+				return openssl_decrypt($ciphertext, $cipher, $encKey, $options = 0);
 			}
-
 		}
 
 		// Decryption - Version 1
-		if (! function_exists('decrypt_v1')) {
+		if (!function_exists('decrypt_v1')) {
 
-			function decrypt_v1($encrypted, $pass_phrase, $header, $cipher, $hmac_algo) {
+			function decrypt_v1($encrypted, $pass_phrase, $header, $cipher, $hmac_algo)
+			{
 
 				if ($cipher === 'aes-256-gcm') {
 
-					if ( filter_var($pass_phrase, FILTER_VALIDATE_URL) ) {
+					if (filter_var($pass_phrase, FILTER_VALIDATE_URL)) {
 						$api = $pass_phrase . '?action=decrypt';
 						$response = Basic::apiCall($api, 'POST', ['key' => $pass_phrase]);
 
@@ -401,7 +397,7 @@ class Basic
 						$salt = $nonce; // Salt
 					}
 
-					if ( isset($api) && $response['code'] === 200 ) {
+					if (isset($api) && $response['code'] === 200) {
 						$response = Basic::apiCall($api, 'POST', ['key' => $header_dek . '.' . $ciphertext_dek . '.' . $tag_dek . '.' . $nonce_dek]);
 						$data = json_decode($response['data'], TRUE);
 						$pass_phrase = $data['key']; // Decrypted random password
@@ -412,7 +408,7 @@ class Basic
 					$encKey = hash_hkdf('sha256', $masterKey, 32, 'aes-256-encryption', $salt); // Data Encryption key
 					$hmacKey = hash_hkdf('sha256', $masterKey, 32, 'sha-256-authentication', $salt); // HMAC key
 
-					$plaintext = openssl_decrypt($ciphertext, $cipher, $encKey, $options=0, $iv, $tag);
+					$plaintext = openssl_decrypt($ciphertext, $cipher, $encKey, $options = 0, $iv, $tag);
 
 					// GCM authentication
 					if ($plaintext) {
@@ -420,10 +416,9 @@ class Basic
 					} else {
 						return FALSE;
 					}
-
 				} else {
 
-					if ( filter_var($pass_phrase, FILTER_VALIDATE_URL) ) {
+					if (filter_var($pass_phrase, FILTER_VALIDATE_URL)) {
 						$api = $pass_phrase . '?action=decrypt';
 						$response = Basic::apiCall($api, 'POST', ['key' => $pass_phrase]);
 
@@ -446,7 +441,7 @@ class Basic
 						$salt = $nonce; // Salt
 					}
 
-					if ( isset($api) && $response['code'] === 200 ) {
+					if (isset($api) && $response['code'] === 200) {
 						$response = Basic::apiCall($api, 'POST', ['key' => $header_dek . '.' . $ciphertext_dek . '.' . $hash_dek . '.' . $nonce_dek]);
 						$data = json_decode($response['data'], TRUE);
 						$pass_phrase = $data['key']; // Decrypted passphrase
@@ -460,23 +455,21 @@ class Basic
 					$digest = hash_hmac($hmac_algo, $ciphertext, $hmacKey);
 
 					// HMAC authentication
-					if  ( hash_equals($hash, $digest) ) {
-						return openssl_decrypt($ciphertext, $cipher, $encKey, $options=0, $iv);
-						}
-					else {
+					if (hash_equals($hash, $digest)) {
+						return openssl_decrypt($ciphertext, $cipher, $encKey, $options = 0, $iv);
+					} else {
 						return FALSE;
 					}
-
 				}
-
 			}
-
 		}
 
 		/** Version-based decryption */
-		if ( $header == 'encv2' ) return decrypt_v2($encrypted, $pass_phrase, $header='encv2', $cipher='aes-256-ecb', $hmac_algo);
-		if ( $header == 'encv1' ) return decrypt_v1($encrypted, $pass_phrase, $header, $cipher, $hmac_algo);
-		if (! isset($encrypted) || empty($encrypted)) { return ''; } // Return empty if $encrypted is not set or empty.
+		if ($header == 'encv2') return decrypt_v2($encrypted, $pass_phrase, $header = 'encv2', $cipher = 'aes-256-ecb', $hmac_algo);
+		if ($header == 'encv1') return decrypt_v1($encrypted, $pass_phrase, $header, $cipher, $hmac_algo);
+		if (!isset($encrypted) || empty($encrypted)) {
+			return '';
+		} // Return empty if $encrypted is not set or empty.
 		return $encrypted;
 	}
 
@@ -484,7 +477,7 @@ class Basic
 	|--------------------------------------------------------------------------
 	| MIDDLEWARE
 	|--------------------------------------------------------------------------
-	*/ 
+	*/
 
 	/**
 	 * Error Reporting
@@ -492,11 +485,11 @@ class Basic
 	 * @param boolean $boolean - TRUE or FALSE
 	 */
 
-	public static function setErrorReporting($boolean=TRUE)
+	public static function setErrorReporting($boolean = TRUE)
 	{
 		if ($boolean) {
 			error_reporting(E_ALL);
-		} elseif (! $boolean) {
+		} elseif (!$boolean) {
 			error_reporting(0);
 		} else {
 			self::apiResponse(500, 'Boolean parameter for Basic::setErrorReporting() can only be TRUE or FALSE.');
@@ -507,9 +500,10 @@ class Basic
 	 * JSON Request Body as $_POST - API Access
 	 */
 
-	public static function setJsonBodyAsPOST() {
+	public static function setJsonBodyAsPOST()
+	{
 		$body = file_get_contents('php://input');
-		if ( ! empty($body) && is_array(json_decode($body, TRUE)) ) $_POST = json_decode($body, TRUE);
+		if (!empty($body) && is_array(json_decode($body, TRUE))) $_POST = json_decode($body, TRUE);
 	}
 
 	/**
@@ -521,7 +515,7 @@ class Basic
 	 * @param string $uri_whitelist        - Whitelisted URI RegEx characters
 	 */
 
-	public static function setFirewall($ip_blacklist=[], $verify_csrf_token=TRUE, $post_auto_escape=TRUE, $uri_whitelist='\w\/\.\-\_\?\=\&\:\$')
+	public static function setFirewall($ip_blacklist = [], $verify_csrf_token = TRUE, $post_auto_escape = TRUE, $uri_whitelist = '\w\/\.\-\_\?\=\&\:\$')
 	{
 		// Deny access from blacklisted IP addresses
 		if (isset($_SERVER['REMOTE_ADDR']) && in_array($_SERVER['REMOTE_ADDR'], $ip_blacklist)) {
@@ -530,7 +524,7 @@ class Basic
 
 		// Verify CSRF token
 		if ($verify_csrf_token) {
-			if (isset($_POST['csrf-token']) && isset($_COOKIE['csrf-token']) && ! hash_equals($_POST['csrf-token'], $_COOKIE['csrf-token'])) {
+			if (isset($_POST['csrf-token']) && isset($_COOKIE['csrf-token']) && !hash_equals($_POST['csrf-token'], $_COOKIE['csrf-token'])) {
 				self::apiResponse(400, 'Please check authenticity of CSRF token.');
 			}
 		}
@@ -543,16 +537,15 @@ class Basic
 		}
 
 		// Allow only whitelisted URI characters
-		if (! empty($uri_whitelist)) {
+		if (!empty($uri_whitelist)) {
 
 			$regex_array = str_replace('w', 'alphanumeric', $uri_whitelist);
 			$regex_array = explode('\\', $regex_array);
 
 			if (isset($_SERVER['REQUEST_URI']) && preg_match('/[^' . $uri_whitelist . ']/i', $_SERVER['REQUEST_URI'])) {
-				header($_SERVER["SERVER_PROTOCOL"]." 400 Bad Request");
+				header($_SERVER["SERVER_PROTOCOL"] . " 400 Bad Request");
 				exit('<p>The URI should only contain alphanumeric and GET request characters:</p><p><ul>' . implode('<li>', $regex_array) . '</ul></p>');
 			}
-
 		}
 
 		// // Deny blacklisted $_POST characters. '\' is blacklisted by default.
@@ -572,7 +565,7 @@ class Basic
 
 	public static function setHttps()
 	{
-		if (! isset($_SERVER['HTTPS']) || $_SERVER['HTTPS'] !== 'on') {
+		if (!isset($_SERVER['HTTPS']) || $_SERVER['HTTPS'] !== 'on') {
 			header('Location: https://' . $_SERVER['SERVER_NAME'] . $_SERVER['REQUEST_URI']);
 			exit;
 		}
@@ -586,7 +579,7 @@ class Basic
 
 	public static function setAutoloadClass($classes)
 	{
-		if (! is_array($classes)) Basic::apiResponse(500, 'Basic::setAutoloadClass() argument should be an array.');
+		if (!is_array($classes)) Basic::apiResponse(500, 'Basic::setAutoloadClass() argument should be an array.');
 
 		define('AUTOLOADED_FOLDERS', $classes);
 		spl_autoload_register(function ($class_name) {
@@ -605,7 +598,7 @@ class Basic
 	 * @param string $method     - Default method name
 	 */
 
-	public static function setAutoRoute($controller='Controller', $method='index')
+	public static function setAutoRoute($controller = 'Controller', $method = 'index')
 	{
 		$class = ucfirst(strtolower(self::segment(1))) . $controller;
 		if (self::segment(2)) $method = strtolower(self::segment(2));
@@ -631,7 +624,7 @@ class Basic
 
 	public static function setEncryptApi($pass_phrase)
 	{
-		if (! isset($pass_phrase)) self::apiResponse(500, 'Set passphrase for the encryption key.');
+		if (!isset($pass_phrase)) self::apiResponse(500, 'Set passphrase for the encryption key.');
 
 		/* Require POST method */
 		if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
@@ -642,7 +635,7 @@ class Basic
 		$body = file_get_contents('php://input'); // Request body
 
 		/* Require request body (not enctype="multipart/form-data") */
-		if ( empty($body) ) {
+		if (empty($body)) {
 			self::apiResponse(400, 'The request should have a body, and must not be enctype="multipart/form-data".');
 			exit();
 		}
@@ -650,13 +643,13 @@ class Basic
 		/* Require request body to be in JSON format */
 		$body_array = json_decode($body, TRUE); // Convert JSON body string into array
 
-		if (! is_array($body_array)) {
+		if (!is_array($body_array)) {
 			self::apiResponse(400, 'The request body should be in JSON format.');
 			exit();
 		}
 
 		/* Require parameter "action" */
-		if (! isset($_GET['action']) || empty($_GET['action'])) {
+		if (!isset($_GET['action']) || empty($_GET['action'])) {
 			self::apiResponse(400, 'Please set "action" parameter to either "encrypt" or "decrypt".');
 			exit();
 		}
@@ -665,14 +658,14 @@ class Basic
 		switch ($_GET['action']) {
 			case 'encrypt':
 				$data = array();
-				foreach($body_array as $key => $value) {
+				foreach ($body_array as $key => $value) {
 					$data[$key] = self::encrypt($value, $pass_phrase);
 				}
 				echo json_encode($data);
 				break;
 			case 'decrypt':
 				$data = array();
-				foreach($body_array as $key => $value) {
+				foreach ($body_array as $key => $value) {
 					$data[$key] = self::decrypt($value, $pass_phrase);
 				}
 				echo json_encode($data);
@@ -690,10 +683,10 @@ class Basic
 	 * @param string $controller - Default controller suffix
 	 */
 
-	public static function setHttpRpc($action='action', $controller='controller')
+	public static function setHttpRpc($action = 'action', $controller = 'controller')
 	{
 		if (empty($_GET[$action])) self::apiResponse(400, "GET parameter '$action' should be set.");
-		if ( substr(trim($_GET[$action]), 0, 1) === '.' ) self::apiResponse(400, "GET parameter '$action' should not start with a period (.) .");
+		if (substr(trim($_GET[$action]), 0, 1) === '.') self::apiResponse(400, "GET parameter '$action' should not start with a period (.) .");
 		if (substr_count($_GET[$action], '.') < 1) self::apiResponse(400, "GET parameter '$action' should contain a period (.) to separate class and method.");
 		if (substr_count($_GET[$action], '.') > 1) self::apiResponse(400, "GET parameter '$action' should only contain one period (.) .");
 
@@ -722,33 +715,33 @@ class Basic
 	 * @param string $controller - Default controller suffix
 	 */
 
-	public static function setJsonRpc($controller='Controller')
+	public static function setJsonRpc($controller = 'Controller')
 	{
 		$body = file_get_contents('php://input'); // Request body
 		$array = json_decode($body, TRUE); // JSON body to array
 
 		header('Content-Type: application/json'); // Set content type as JSON
 
-		if ( $_SERVER['REQUEST_METHOD'] !== 'GET' && $_SERVER['REQUEST_METHOD'] !== 'POST' ) exit(json_encode(['jsonrpc' => '2.0', 'error' => ['code' => -32601, 'message' => 'Only GET and POST methods allowed.'], 'id' => NULL])); // Only GET and POST
+		if ($_SERVER['REQUEST_METHOD'] !== 'GET' && $_SERVER['REQUEST_METHOD'] !== 'POST') exit(json_encode(['jsonrpc' => '2.0', 'error' => ['code' => -32601, 'message' => 'Only GET and POST methods allowed.'], 'id' => NULL])); // Only GET and POST
 
-		if ( $_SERVER['HTTP_CONTENT_TYPE'] !== 'application/json' ) exit(json_encode(['jsonrpc' => '2.0', 'error' => ['code' => -32700, 'message' => "Request content type should be 'application/json'."], 'id' => NULL])); // Accept only JSON request content type
+		if ($_SERVER['HTTP_CONTENT_TYPE'] !== 'application/json') exit(json_encode(['jsonrpc' => '2.0', 'error' => ['code' => -32700, 'message' => "Request content type should be 'application/json'."], 'id' => NULL])); // Accept only JSON request content type
 
-		if (! $body) exit(json_encode(['jsonrpc' => '2.0', 'error' => ['code' => -32700, 'message' => 'Request should have a request body.'], 'id' => NULL])); // Require request body
+		if (!$body) exit(json_encode(['jsonrpc' => '2.0', 'error' => ['code' => -32700, 'message' => 'Request should have a request body.'], 'id' => NULL])); // Require request body
 
-		if ($body && ! $array) exit(json_encode(['jsonrpc' => '2.0', 'error' => ['code' => -32700, 'message' => 'Provide request body data in valid JSON format.'], 'id' => NULL])); // Require valid JSON
+		if ($body && !$array) exit(json_encode(['jsonrpc' => '2.0', 'error' => ['code' => -32700, 'message' => 'Provide request body data in valid JSON format.'], 'id' => NULL])); // Require valid JSON
 
-		if ( strpos(ltrim($body), '[') === 0 ) exit(json_encode(['jsonrpc' => '2.0', 'error' => ['code' => -32700, 'message' => 'Batch processing not supported at this time.'], 'id' => NULL])); // No batch processing
+		if (strpos(ltrim($body), '[') === 0) exit(json_encode(['jsonrpc' => '2.0', 'error' => ['code' => -32700, 'message' => 'Batch processing not supported at this time.'], 'id' => NULL])); // No batch processing
 
-		if (! isset($array['jsonrpc']) || $array['jsonrpc'] !== '2.0') exit(json_encode(['jsonrpc' => '2.0', 'error' => ['code' => -32600, 'message' => "JSON-RPC 'version' member should be set, and assigned a value of '2.0'."], 'id' => NULL])); // JSON-RPC (version) member
+		if (!isset($array['jsonrpc']) || $array['jsonrpc'] !== '2.0') exit(json_encode(['jsonrpc' => '2.0', 'error' => ['code' => -32600, 'message' => "JSON-RPC 'version' member should be set, and assigned a value of '2.0'."], 'id' => NULL])); // JSON-RPC (version) member
 
-		if (! isset($array['method']) || ! strstr($array['method'], '.')) exit(json_encode(['jsonrpc' => '2.0', 'error' => ['code' => -32600, 'message' => "JSON-RPC 'method' member should be set with the format 'class.method'."], 'id' => NULL])); // Method member
+		if (!isset($array['method']) || !strstr($array['method'], '.')) exit(json_encode(['jsonrpc' => '2.0', 'error' => ['code' => -32600, 'message' => "JSON-RPC 'method' member should be set with the format 'class.method'."], 'id' => NULL])); // Method member
 
 		list($class, $method) = explode('.', $array['method']); // Method member as 'class.method'
 		$class = $class . $controller; // Default controller suffix
 
 		// If class exists
 		if (class_exists($class)) {
-			if (! isset($array['id'])) exit(json_encode(['jsonrpc' => '2.0', 'error' => ['code' => -32600, 'message' => "JSON-RPC 'id' member should be set."], 'id' => NULL])); // Require ID member
+			if (!isset($array['id'])) exit(json_encode(['jsonrpc' => '2.0', 'error' => ['code' => -32600, 'message' => "JSON-RPC 'id' member should be set."], 'id' => NULL])); // Require ID member
 
 			$object = new $class();
 			if (method_exists($object, $method)) {
@@ -761,5 +754,4 @@ class Basic
 			exit(json_encode(['jsonrpc' => '2.0', 'error' => ['code' => -32601, 'message' => 'Class not found.'], 'id' => NULL]));
 		}
 	}
-
 }

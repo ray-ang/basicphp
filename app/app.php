@@ -44,23 +44,23 @@ Basic::setAutoRoute(); // Automatic '/class/method' routing
 |--------------------------------------------------------------------------
 */
 
-Basic::route('GET', '/', function() { // Set homepage
+Basic::route('GET', '/', function () { // Set homepage
     $page_title = 'Starter Application';
     Basic::view('home', compact('page_title'));
 });
 
-Basic::route('ANY', '/jsonrpc', function() {
+Basic::route('ANY', '/jsonrpc', function () {
     Basic::setJsonRpc(); // JSON-RPC endpoint
 });
 
-Basic::route('ANY', '/httprpc', function() {
+Basic::route('ANY', '/httprpc', function () {
     Basic::setHttpRpc(); // RPC over HTTP
 });
 
-Basic::route('GET', '/posts', function() {
-    if (! isset($_GET['order'])) $_GET['order'] = 0;
+Basic::route('GET', '/posts', function () {
+    if (!isset($_GET['order'])) $_GET['order'] = 0;
 
-    if (! is_numeric($_GET['order'])) {
+    if (!is_numeric($_GET['order'])) {
         $error_message = 'Post order value should be numeric.';
         $page_title = 'Error in order parameter';
 
@@ -73,7 +73,7 @@ Basic::route('GET', '/posts', function() {
     $order = intval($_GET['order']);
 
     $post = new PostModel;
-    $stmt = $post->list( $per_page, $order );
+    $stmt = $post->list($per_page, $order);
     $total = $post->total();
 
     if (isset($_GET['order']) && $_GET['order'] > $total) $_GET['order'] = $total;
@@ -84,7 +84,7 @@ Basic::route('GET', '/posts', function() {
     Basic::view('post_list', $data);
 });
 
-Basic::route('GET', '/posts/(:num)', function() {
+Basic::route('GET', '/posts/(:num)', function () {
     $post = new PostModel;
     $row = $post->view(Basic::segment(2));
 
@@ -102,7 +102,7 @@ Basic::route('GET', '/posts/(:num)', function() {
     }
 });
 
-Basic::route('POST', '/posts/(:num)', function() {
+Basic::route('POST', '/posts/(:num)', function () {
     if (isset($_POST['delete-post'])) {
         $post = new PostModel;
         $post->delete(Basic::segment(2));
@@ -117,9 +117,9 @@ Basic::route('POST', '/posts/(:num)', function() {
     }
 });
 
-Basic::route('GET', '/posts/(:num)/edit', function() {
+Basic::route('GET', '/posts/(:num)/edit', function () {
     $post = new PostModel;
-    $row = $post->view( Basic::segment(2) );
+    $row = $post->view(Basic::segment(2));
 
     if ($row) {
         $page_title = 'Edit Post';
@@ -135,7 +135,7 @@ Basic::route('GET', '/posts/(:num)/edit', function() {
     }
 });
 
-Basic::route('POST', '/posts/(:num)/edit', function() {
+Basic::route('POST', '/posts/(:num)/edit', function () {
     $post = new PostModel;
 
     if (isset($_POST['edit-post'])) {
@@ -146,7 +146,7 @@ Basic::route('POST', '/posts/(:num)/edit', function() {
     }
 });
 
-Basic::route('POST', '/api/request', function() {
+Basic::route('POST', '/api/request', function () {
     // $data as an array of name and age
     $data = array();
     $data[] = ['name' => 'John', 'age' => 32];
@@ -159,18 +159,18 @@ Basic::route('POST', '/api/request', function() {
     $body = json_decode(file_get_contents("php://input"), TRUE);
 
     // Check Authorization Bearer token
-    if ( $_SERVER['HTTP_AUTHORIZATION'] !== 'Bearer ' . AUTH_TOKEN ) Basic::apiResponse(403, 'You do not have the right credentials.');
+    if ($_SERVER['HTTP_AUTHORIZATION'] !== 'Bearer ' . AUTH_TOKEN) Basic::apiResponse(403, 'You do not have the right credentials.');
 
     $data_output = array();
     foreach ($data as $row) {
         // Add to $data_output array if name contains search string
-        if ( stristr($row['name'], $body['search']) == TRUE ) {
+        if (stristr($row['name'], $body['search']) == TRUE) {
             // Change $data_output key names to hide database column names
-            $data_output[] = ['name'=>$row['name'], 'age'=>$row['age']];
+            $data_output[] = ['name' => $row['name'], 'age' => $row['age']];
         }
     }
 
-    if ( empty($data_output) ) Basic::apiResponse(400, 'No name found on search.');
+    if (empty($data_output)) Basic::apiResponse(400, 'No name found on search.');
 
     Basic::apiResponse(200, $data_output, 'application/json');
 });
