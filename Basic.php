@@ -720,7 +720,7 @@ class Basic
 		$body = file_get_contents('php://input'); // Request body
 		$array = json_decode($body, TRUE); // JSON body to array
 
-		header('Content-Type: application/json'); // Set content type as JSON
+		header('Content-Type: application/json-rpc'); // Set content type as JSON
 
 		if ($_SERVER['REQUEST_METHOD'] !== 'GET' && $_SERVER['REQUEST_METHOD'] !== 'POST') exit(json_encode(['jsonrpc' => '2.0', 'error' => ['code' => -32601, 'message' => 'Only GET and POST methods allowed.'], 'id' => NULL])); // Only GET and POST
 
