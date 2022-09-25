@@ -49,7 +49,7 @@ Basic::route('GET', '/', function () { // Set homepage
     Basic::view('home', compact('page_title'));
 });
 
-Basic::route('ANY', '/jsonrpc', function () {
+Basic::route('ANY', '/api/jsonrpc', function () {
     Basic::setJsonRpc(); // JSON-RPC endpoint
 });
 
