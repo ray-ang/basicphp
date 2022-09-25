@@ -723,35 +723,69 @@ class Basic
 		header('Content-Type: application/json-rpc'); // Set content type as JSON
 
 		if ($_SERVER['REQUEST_METHOD'] !== 'GET' && $_SERVER['REQUEST_METHOD'] !== 'POST') exit(json_encode(['jsonrpc' => '2.0', 'error' => ['code' => -32601, 'message' => 'Only GET and POST methods allowed.'], 'id' => NULL])); // Only GET and POST
-
 		if ($_SERVER['HTTP_CONTENT_TYPE'] !== 'application/json') exit(json_encode(['jsonrpc' => '2.0', 'error' => ['code' => -32700, 'message' => "Request content type should be 'application/json'."], 'id' => NULL])); // Accept only JSON request content type
-
 		if (! $body) exit(json_encode(['jsonrpc' => '2.0', 'error' => ['code' => -32700, 'message' => 'Request should have a request body.'], 'id' => NULL])); // Require request body
-
 		if ($body && ! $array) exit(json_encode(['jsonrpc' => '2.0', 'error' => ['code' => -32700, 'message' => 'Provide request body data in valid JSON format.'], 'id' => NULL])); // Require valid JSON
 
-		if (strpos(ltrim($body), '[') === 0) exit(json_encode(['jsonrpc' => '2.0', 'error' => ['code' => -32700, 'message' => 'Batch processing not supported at this time.'], 'id' => NULL])); // No batch processing
+		/* Batch processing */
+		if (is_array($array) && ! empty($array[0])) {
+			$res = '[';
+			foreach ($array as $json) {
+				$json_id = (! empty($json['id'])) ? $json['id'] : NULL;
+				$params = (! empty($json['params'])) ? $json['params'] : NULL;
 
-		if (! isset($array['jsonrpc']) || $array['jsonrpc'] !== '2.0') exit(json_encode(['jsonrpc' => '2.0', 'error' => ['code' => -32600, 'message' => "JSON-RPC 'version' member should be set, and assigned a value of '2.0'."], 'id' => NULL])); // JSON-RPC (version) member
+				// Request validation - JSON-RPC version and Method
+				if (! isset($json['jsonrpc']) || $json['jsonrpc'] !== '2.0') $res .= json_encode(['jsonrpc' => '2.0', 'error' => ['code' => -32600, 'message' => "JSON-RPC 'version' member should be set, and assigned a value of '2.0'."], 'id' => $json_id]) . ',';
+				if (! isset($json['method']) || ! strstr($json['method'], '.')) $res .= json_encode(['jsonrpc' => '2.0', 'error' => ['code' => -32600, 'message' => "JSON-RPC 'method' member should be set with the format 'class.method'."], 'id' => $json_id]) . ',';
+				
+				list($class, $method) = explode('.', $json['method']); // Method member as 'class.method'
+				$class = $class . $controller; // Default controller suffix
+		
+				// If class exists
+				if (class_exists($class)) {
+					if ($json['jsonrpc'] == '2.0') {
+						$object = new $class();
+						if (method_exists($object, $method)) {
+							$res .= $object->$method($params, $json_id) . ',';
+						} else {
+							$res .= json_encode(['jsonrpc' => '2.0', 'error' => ['code' => -32601, 'message' => 'Method not found.'], 'id' => $json_id]) . ',';
+						}
+					}
+				} else {
+					$res .= json_encode(['jsonrpc' => '2.0', 'error' => ['code' => -32601, 'message' => 'Class not found.'], 'id' => $json_id]) . ',';
+				}
+			}
 
-		if (! isset($array['method']) || ! strstr($array['method'], '.')) exit(json_encode(['jsonrpc' => '2.0', 'error' => ['code' => -32600, 'message' => "JSON-RPC 'method' member should be set with the format 'class.method'."], 'id' => NULL])); // Method member
+			$res = $res . ']';
+			$res = str_replace(',]', ']', $res);
+			http_response_code(200);
+			echo $res;
+			exit;
+		}
+
+		/* Individual request */
+		$array_id = (! empty($array['id'])) ? $array['id'] : NULL;
+		$params = (! empty($array['params'])) ? $array['params'] : NULL;
+
+		// Request validation - JSON-RPC version and Method
+		if (! isset($array['jsonrpc']) || $array['jsonrpc'] !== '2.0') exit(json_encode(['jsonrpc' => '2.0', 'error' => ['code' => -32600, 'message' => "JSON-RPC 'version' member should be set, and assigned a value of '2.0'."], 'id' => $array_id]));
+		if (! isset($array['method']) || ! strstr($array['method'], '.')) exit(json_encode(['jsonrpc' => '2.0', 'error' => ['code' => -32600, 'message' => "JSON-RPC 'method' member should be set with the format 'class.method'."], 'id' => $array_id]));
 
 		list($class, $method) = explode('.', $array['method']); // Method member as 'class.method'
 		$class = $class . $controller; // Default controller suffix
 
 		// If class exists
 		if (class_exists($class)) {
-			if (! isset($array['id'])) exit(json_encode(['jsonrpc' => '2.0', 'error' => ['code' => -32600, 'message' => "JSON-RPC 'id' member should be set."], 'id' => NULL])); // Require ID member
-
 			$object = new $class();
 			if (method_exists($object, $method)) {
-				$object->$method();
+				http_response_code(200);
+				echo $object->$method($params, $array_id);
 				exit;
 			} else {
-				exit(json_encode(['jsonrpc' => '2.0', 'error' => ['code' => -32601, 'message' => 'Method not found.'], 'id' => NULL]));
+				exit(json_encode(['jsonrpc' => '2.0', 'error' => ['code' => -32601, 'message' => 'Method not found.'], 'id' => $array_id]));
 			}
 		} else {
-			exit(json_encode(['jsonrpc' => '2.0', 'error' => ['code' => -32601, 'message' => 'Class not found.'], 'id' => NULL]));
+			exit(json_encode(['jsonrpc' => '2.0', 'error' => ['code' => -32601, 'message' => 'Class not found.'], 'id' => $array_id]));
 		}
 	}
 }
