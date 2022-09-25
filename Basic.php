@@ -41,7 +41,7 @@ class Basic
 		// Number of subdirectories from hostname to index.php
 		$sub_dir = substr_count($_SERVER['SCRIPT_NAME'], '/') - 1;
 
-		if (!isset($uri[$order + $sub_dir])) return FALSE;
+		if (! isset($uri[$order + $sub_dir])) return FALSE;
 
 		return $uri[$order + $sub_dir];
 	}
@@ -69,7 +69,7 @@ class Basic
 
 			// Check for subfolders from DocumentRoot and include in endpoint
 			$sub = explode('/', dirname($_SERVER['SCRIPT_NAME']));
-			$subfolder = (!empty($sub[1])) ? implode('\/', $sub) : '';
+			$subfolder = (! empty($sub[1])) ? implode('\/', $sub) : '';
 
 			$uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 			if (preg_match('/^' . $subfolder . $pattern . '+$/i', $uri)) {
@@ -99,7 +99,7 @@ class Basic
 	public static function view($view, $data = NULL)
 	{
 		$file = '../views/' . $view . '.php';
-		if (!empty($data)) extract($data); // Convert array keys to variables
+		if (! empty($data)) extract($data); // Convert array keys to variables
 		if (file_exists($file) && is_readable($file) && pathinfo($file)['extension'] === 'php') require_once $file; // Render page view
 	}
 
@@ -180,7 +180,7 @@ class Basic
 	public static function baseUrl()
 	{
 		$http_protocol = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on') ? 'https://' : 'http://';
-		$subfolder = (!empty(dirname($_SERVER['SCRIPT_NAME']))) ? dirname($_SERVER['SCRIPT_NAME']) : '';
+		$subfolder = (! empty(dirname($_SERVER['SCRIPT_NAME']))) ? dirname($_SERVER['SCRIPT_NAME']) : '';
 
 		return $http_protocol . $_SERVER['SERVER_NAME'] . $subfolder . '/';
 	}
@@ -212,13 +212,13 @@ class Basic
 
 	public static function encrypt($plaintext = NULL, $pass_phrase = NULL, $header = 'encv1', $cipher = 'aes-256-gcm', $hmac_algo = 'sha512')
 	{
-		if (!isset($plaintext)) self::apiResponse(500, 'Set plaintext for encryption.');
-		if (!isset($pass_phrase)) self::apiResponse(500, 'Set passphrase for the encryption key, or link for the encryption API.');
+		if (! isset($plaintext)) self::apiResponse(500, 'Set plaintext for encryption.');
+		if (! isset($pass_phrase)) self::apiResponse(500, 'Set passphrase for the encryption key, or link for the encryption API.');
 
 		if ($cipher !== 'aes-256-gcm' && $cipher !== 'aes-256-ctr' && $cipher !== 'aes-256-cbc') self::apiResponse(500, "Encryption cipher method should either be 'aes-256-gcm', 'aes-256-ctr', 'aes-256-cbc'.");
 
 		// Encryption - Version 2
-		if (!function_exists('encrypt_v2')) {
+		if (! function_exists('encrypt_v2')) {
 
 			function encrypt_v2($plaintext, $pass_phrase, $header, $cipher, $hmac_algo)
 			{
@@ -253,7 +253,7 @@ class Basic
 		}
 
 		// Encryption - Version 1
-		if (!function_exists('encrypt_v1')) {
+		if (! function_exists('encrypt_v1')) {
 
 			function encrypt_v1($plaintext, $pass_phrase, $header, $cipher, $hmac_algo)
 			{
@@ -329,13 +329,13 @@ class Basic
 
 	public static function decrypt($encrypted = NULL, $pass_phrase = NULL, $header = 'encv1', $cipher = 'aes-256-gcm', $hmac_algo = 'sha512')
 	{
-		if (!isset($encrypted)) self::apiResponse(500, 'Set encryption token for decryption.');
-		if (!isset($pass_phrase)) self::apiResponse(500, 'Set passphrase for the encryption key, or link for the encryption API.');
+		if (! isset($encrypted)) self::apiResponse(500, 'Set encryption token for decryption.');
+		if (! isset($pass_phrase)) self::apiResponse(500, 'Set passphrase for the encryption key, or link for the encryption API.');
 
 		if ($cipher !== 'aes-256-gcm' && $cipher !== 'aes-256-ctr' && $cipher !== 'aes-256-cbc') self::apiResponse(500, "Encryption cipher method should either be 'aes-256-gcm', 'aes-256-ctr', 'aes-256-cbc'.");
 
 		// Decryption - Version 2
-		if (!function_exists('decrypt_v2')) {
+		if (! function_exists('decrypt_v2')) {
 
 			function decrypt_v2($encrypted, $pass_phrase, $header, $cipher, $hmac_algo)
 			{
@@ -367,7 +367,7 @@ class Basic
 		}
 
 		// Decryption - Version 1
-		if (!function_exists('decrypt_v1')) {
+		if (! function_exists('decrypt_v1')) {
 
 			function decrypt_v1($encrypted, $pass_phrase, $header, $cipher, $hmac_algo)
 			{
@@ -467,7 +467,7 @@ class Basic
 		/** Version-based decryption */
 		if ($header == 'encv2') return decrypt_v2($encrypted, $pass_phrase, $header = 'encv2', $cipher = 'aes-256-ecb', $hmac_algo);
 		if ($header == 'encv1') return decrypt_v1($encrypted, $pass_phrase, $header, $cipher, $hmac_algo);
-		if (!isset($encrypted) || empty($encrypted)) {
+		if (! isset($encrypted) || empty($encrypted)) {
 			return '';
 		} // Return empty if $encrypted is not set or empty.
 		return $encrypted;
@@ -489,7 +489,7 @@ class Basic
 	{
 		if ($boolean) {
 			error_reporting(E_ALL);
-		} elseif (!$boolean) {
+		} elseif (! $boolean) {
 			error_reporting(0);
 		} else {
 			self::apiResponse(500, 'Boolean parameter for Basic::setErrorReporting() can only be TRUE or FALSE.');
@@ -503,7 +503,7 @@ class Basic
 	public static function setJsonBodyAsPOST()
 	{
 		$body = file_get_contents('php://input');
-		if (!empty($body) && is_array(json_decode($body, TRUE))) $_POST = json_decode($body, TRUE);
+		if (! empty($body) && is_array(json_decode($body, TRUE))) $_POST = json_decode($body, TRUE);
 	}
 
 	/**
@@ -524,7 +524,7 @@ class Basic
 
 		// Verify CSRF token
 		if ($verify_csrf_token) {
-			if (isset($_POST['csrf-token']) && isset($_COOKIE['csrf-token']) && !hash_equals($_POST['csrf-token'], $_COOKIE['csrf-token'])) {
+			if (isset($_POST['csrf-token']) && isset($_COOKIE['csrf-token']) && ! hash_equals($_POST['csrf-token'], $_COOKIE['csrf-token'])) {
 				self::apiResponse(400, 'Please check authenticity of CSRF token.');
 			}
 		}
@@ -537,7 +537,7 @@ class Basic
 		}
 
 		// Allow only whitelisted URI characters
-		if (!empty($uri_whitelist)) {
+		if (! empty($uri_whitelist)) {
 
 			$regex_array = str_replace('w', 'alphanumeric', $uri_whitelist);
 			$regex_array = explode('\\', $regex_array);
@@ -565,7 +565,7 @@ class Basic
 
 	public static function setHttps()
 	{
-		if (!isset($_SERVER['HTTPS']) || $_SERVER['HTTPS'] !== 'on') {
+		if (! isset($_SERVER['HTTPS']) || $_SERVER['HTTPS'] !== 'on') {
 			header('Location: https://' . $_SERVER['SERVER_NAME'] . $_SERVER['REQUEST_URI']);
 			exit;
 		}
@@ -579,7 +579,7 @@ class Basic
 
 	public static function setAutoloadClass($classes)
 	{
-		if (!is_array($classes)) Basic::apiResponse(500, 'Basic::setAutoloadClass() argument should be an array.');
+		if (! is_array($classes)) Basic::apiResponse(500, 'Basic::setAutoloadClass() argument should be an array.');
 
 		define('AUTOLOADED_FOLDERS', $classes);
 		spl_autoload_register(function ($class_name) {
@@ -624,7 +624,7 @@ class Basic
 
 	public static function setEncryptApi($pass_phrase)
 	{
-		if (!isset($pass_phrase)) self::apiResponse(500, 'Set passphrase for the encryption key.');
+		if (! isset($pass_phrase)) self::apiResponse(500, 'Set passphrase for the encryption key.');
 
 		/* Require POST method */
 		if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
@@ -643,13 +643,13 @@ class Basic
 		/* Require request body to be in JSON format */
 		$body_array = json_decode($body, TRUE); // Convert JSON body string into array
 
-		if (!is_array($body_array)) {
+		if (! is_array($body_array)) {
 			self::apiResponse(400, 'The request body should be in JSON format.');
 			exit();
 		}
 
 		/* Require parameter "action" */
-		if (!isset($_GET['action']) || empty($_GET['action'])) {
+		if (! isset($_GET['action']) || empty($_GET['action'])) {
 			self::apiResponse(400, 'Please set "action" parameter to either "encrypt" or "decrypt".');
 			exit();
 		}
@@ -726,22 +726,22 @@ class Basic
 
 		if ($_SERVER['HTTP_CONTENT_TYPE'] !== 'application/json') exit(json_encode(['jsonrpc' => '2.0', 'error' => ['code' => -32700, 'message' => "Request content type should be 'application/json'."], 'id' => NULL])); // Accept only JSON request content type
 
-		if (!$body) exit(json_encode(['jsonrpc' => '2.0', 'error' => ['code' => -32700, 'message' => 'Request should have a request body.'], 'id' => NULL])); // Require request body
+		if (! $body) exit(json_encode(['jsonrpc' => '2.0', 'error' => ['code' => -32700, 'message' => 'Request should have a request body.'], 'id' => NULL])); // Require request body
 
-		if ($body && !$array) exit(json_encode(['jsonrpc' => '2.0', 'error' => ['code' => -32700, 'message' => 'Provide request body data in valid JSON format.'], 'id' => NULL])); // Require valid JSON
+		if ($body && ! $array) exit(json_encode(['jsonrpc' => '2.0', 'error' => ['code' => -32700, 'message' => 'Provide request body data in valid JSON format.'], 'id' => NULL])); // Require valid JSON
 
 		if (strpos(ltrim($body), '[') === 0) exit(json_encode(['jsonrpc' => '2.0', 'error' => ['code' => -32700, 'message' => 'Batch processing not supported at this time.'], 'id' => NULL])); // No batch processing
 
-		if (!isset($array['jsonrpc']) || $array['jsonrpc'] !== '2.0') exit(json_encode(['jsonrpc' => '2.0', 'error' => ['code' => -32600, 'message' => "JSON-RPC 'version' member should be set, and assigned a value of '2.0'."], 'id' => NULL])); // JSON-RPC (version) member
+		if (! isset($array['jsonrpc']) || $array['jsonrpc'] !== '2.0') exit(json_encode(['jsonrpc' => '2.0', 'error' => ['code' => -32600, 'message' => "JSON-RPC 'version' member should be set, and assigned a value of '2.0'."], 'id' => NULL])); // JSON-RPC (version) member
 
-		if (!isset($array['method']) || !strstr($array['method'], '.')) exit(json_encode(['jsonrpc' => '2.0', 'error' => ['code' => -32600, 'message' => "JSON-RPC 'method' member should be set with the format 'class.method'."], 'id' => NULL])); // Method member
+		if (! isset($array['method']) || ! strstr($array['method'], '.')) exit(json_encode(['jsonrpc' => '2.0', 'error' => ['code' => -32600, 'message' => "JSON-RPC 'method' member should be set with the format 'class.method'."], 'id' => NULL])); // Method member
 
 		list($class, $method) = explode('.', $array['method']); // Method member as 'class.method'
 		$class = $class . $controller; // Default controller suffix
 
 		// If class exists
 		if (class_exists($class)) {
-			if (!isset($array['id'])) exit(json_encode(['jsonrpc' => '2.0', 'error' => ['code' => -32600, 'message' => "JSON-RPC 'id' member should be set."], 'id' => NULL])); // Require ID member
+			if (! isset($array['id'])) exit(json_encode(['jsonrpc' => '2.0', 'error' => ['code' => -32600, 'message' => "JSON-RPC 'id' member should be set."], 'id' => NULL])); // Require ID member
 
 			$object = new $class();
 			if (method_exists($object, $method)) {
