@@ -168,7 +168,8 @@ class Basic
 
 		header($_SERVER['SERVER_PROTOCOL'] . ' ' . $code . ' ' . $message); // Set HTTP response code and message
 		header('Content-Type: ' . $content_type);
-		exit($data); // Data in string format
+		echo $data; // Data in string format
+		exit;
 	}
 
 	/**
@@ -697,15 +698,13 @@ class Basic
 		if (class_exists($class)) {
 			$object = new $class();
 			if (method_exists($object, $method)) {
-				$object->$method();
-				exit;
+				$res = $object->$method();
+				self::apiResponse(200, $res);
 			} else {
-				self::apiResponse(404);
-				exit;
+				self::apiResponse(400);
 			}
 		} else {
-			self::apiResponse(404);
-			exit;
+			self::apiResponse(400);
 		}
 	}
 

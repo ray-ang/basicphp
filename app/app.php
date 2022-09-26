@@ -53,7 +53,7 @@ Basic::route('ANY', '/api/jsonrpc', function () {
     Basic::setJsonRpc(); // JSON-RPC endpoint
 });
 
-Basic::route('ANY', '/httprpc', function () {
+Basic::route('ANY', '/api/httprpc', function () {
     Basic::setHttpRpc(); // RPC over HTTP
 });
 
